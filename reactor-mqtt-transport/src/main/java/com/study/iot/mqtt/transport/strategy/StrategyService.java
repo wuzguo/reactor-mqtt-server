@@ -3,6 +3,7 @@ package com.study.iot.mqtt.transport.strategy;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.lang.annotation.*;
 
@@ -19,9 +20,9 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Component
-public @interface StrategyComponent {
+public @interface StrategyService {
 
-    @AliasFor(value = "value", annotation = Component.class)
+    @AliasFor(value = "value", annotation = Service.class)
     String value() default "";
 
     /**
@@ -29,5 +30,11 @@ public @interface StrategyComponent {
      *
      * @return {@link MqttMessageType}
      */
-    MqttMessageType strategyValue();
+    MqttMessageType type();
+
+    /**
+     * 策略组
+     * @return {@link MqttMessageType}
+     */
+    String group();
 }

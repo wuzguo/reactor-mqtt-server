@@ -79,12 +79,10 @@ public class TransportServer {
             return this;
         }
 
-
         public TransportBuilder auth(BiFunction<String, String, Boolean> auth) {
             config.setAuth(auth);
             return this;
         }
-
 
         public TransportBuilder messageHandler(MessageHandler messageHandler) {
             Optional.ofNullable(messageHandler)
@@ -97,7 +95,6 @@ public class TransportServer {
                     .ifPresent(config::setThrowableConsumer);
             return this;
         }
-
 
         public Mono<ServerSession> start() {
             config.checkConfig();
