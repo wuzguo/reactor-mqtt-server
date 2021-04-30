@@ -24,7 +24,7 @@ public class ServerMessageRouter {
 
     public void handler(MqttMessage message, TransportConnection connection) {
         if(message.decoderResult().isSuccess()){
-            log.info("accept message channel {} info{}",connection.getConnection(),message);
+            log.info("accept message channel {} info {}",connection.getConnection(),message);
             DirectHandler handler=directHandlerAdaptor.handler(message.fixedHeader().messageType()).loadHandler();
              handler.handler(message,connection,config);
         }
