@@ -1,7 +1,13 @@
 package com.study.iot.mqtt.protocal.config;
 
 
+import com.study.iot.mqtt.protocal.ChannelManager;
 import com.study.iot.mqtt.protocal.ConnectConfiguration;
+import com.study.iot.mqtt.protocal.MessageHandler;
+import com.study.iot.mqtt.protocal.TopicManager;
+import com.study.iot.mqtt.protocal.handler.MemoryChannelManager;
+import com.study.iot.mqtt.protocal.handler.MemoryMessageHandler;
+import com.study.iot.mqtt.protocal.handler.MemoryTopicManager;
 import lombok.Data;
 
 import java.util.Objects;
@@ -60,6 +66,12 @@ public class ServerConfig implements ConnectConfiguration {
 
     private Consumer<Throwable> throwableConsumer = throwable -> {
     };
+
+    private MessageHandler messageHandler = new MemoryMessageHandler();
+
+    private ChannelManager channelManager= new MemoryChannelManager();
+
+    private TopicManager topicManager = new MemoryTopicManager();
 
     @Override
     public void checkConfig() {
