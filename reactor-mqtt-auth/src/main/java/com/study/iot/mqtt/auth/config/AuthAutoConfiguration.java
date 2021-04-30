@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
  * @date 2021/4/30 8:34
  */
 
-@Configuration
 @Slf4j
+@Configuration
 public class AuthAutoConfiguration {
 
     @Bean
