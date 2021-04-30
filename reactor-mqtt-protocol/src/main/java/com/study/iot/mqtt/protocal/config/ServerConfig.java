@@ -28,7 +28,7 @@ public class ServerConfig implements ConnectConfiguration {
      * 默认 32k
      */
     private int sendBufSize = 32 * 1024;
-    
+
     /**
      * 接收缓冲区大小
      * 默认 32k

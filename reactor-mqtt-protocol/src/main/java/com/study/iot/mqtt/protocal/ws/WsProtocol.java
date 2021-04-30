@@ -19,7 +19,7 @@ import java.util.List;
 public class WsProtocol implements Protocol {
 
     @Override
-    public boolean support(ProtocolType protocolType) {
+    public Boolean support(ProtocolType protocolType) {
         return protocolType == ProtocolType.WEB_SOCKET;
     }
 

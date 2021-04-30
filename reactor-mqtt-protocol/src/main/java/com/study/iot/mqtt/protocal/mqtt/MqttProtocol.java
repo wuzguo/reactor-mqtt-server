@@ -14,7 +14,7 @@ import java.util.List;
 public class MqttProtocol implements Protocol {
 
     @Override
-    public boolean support(ProtocolType protocolType) {
+    public Boolean support(ProtocolType protocolType) {
         return protocolType == ProtocolType.MQTT;
     }
 
