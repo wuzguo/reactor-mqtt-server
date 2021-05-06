@@ -49,12 +49,12 @@ public class IgniteAutoConfig {
 
     @Bean
     public Ignite ignite() throws Exception {
-        IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
+        IgniteConfiguration configuration = new IgniteConfiguration();
         // Ignite实例名称
-        igniteConfiguration.setIgniteInstanceName(instanceName);
+        configuration.setIgniteInstanceName(instanceName);
         // Ignite日志
         Logger logger = LoggerFactory.getLogger("org.apache.ignite");
-        igniteConfiguration.setGridLogger(new Slf4jLogger(logger));
+        configuration.setGridLogger(new Slf4jLogger(logger));
         // 非持久化数据区域
         DataRegionConfiguration notPersistence = new DataRegionConfiguration().setPersistenceEnabled(false)
                 .setInitialSize(igniteProperties().getNotPersistenceInitialSize() * 1024 * 1024)
@@ -68,7 +68,7 @@ public class IgniteAutoConfig {
                 .setWalArchivePath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties().getPersistenceStorePath() : null)
                 .setWalPath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties().getPersistenceStorePath() : null)
                 .setStoragePath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties().getPersistenceStorePath() : null);
-        igniteConfiguration.setDataStorageConfiguration(dataStorageConfiguration);
+        configuration.setDataStorageConfiguration(dataStorageConfiguration);
         // 集群, 基于组播或静态IP配置
         TcpDiscoverySpi tcpDiscoverySpi = new TcpDiscoverySpi();
         if (this.enableMulticastGroup) {
@@ -80,8 +80,8 @@ public class IgniteAutoConfig {
             tcpDiscoveryVmIpFinder.setAddresses(Arrays.asList(staticIpAddresses));
             tcpDiscoverySpi.setIpFinder(tcpDiscoveryVmIpFinder);
         }
-        igniteConfiguration.setDiscoverySpi(tcpDiscoverySpi);
-        Ignite ignite = Ignition.start(igniteConfiguration);
+        configuration.setDiscoverySpi(tcpDiscoverySpi);
+        Ignite ignite = Ignition.start(configuration);
         ignite.cluster().active(true);
         return ignite;
     }
