@@ -31,7 +31,8 @@ public class TransportServerFactory {
 
     public Mono<ServerSession> start(ServerConfig config) {
         this.config = config;
-        if (config.getProtocol() == ProtocolType.MQTT.name()) { // 开启
+        // 开启
+        if (config.getProtocol().equals(ProtocolType.MQTT.name())) {
             WsTransport wsTransport = new WsTransport(new WsProtocol());
             ServerConfig wsConfig = copy(config);
             wsServer = wsTransport.start(wsConfig, unicastProcessor).block();

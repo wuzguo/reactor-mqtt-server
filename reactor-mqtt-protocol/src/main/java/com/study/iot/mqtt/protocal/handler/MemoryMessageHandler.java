@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.protocal.handler;
 
-import com.study.iot.mqtt.common.connection.RetainMessage;
+import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.protocal.MessageHandler;
 
 import java.util.Optional;

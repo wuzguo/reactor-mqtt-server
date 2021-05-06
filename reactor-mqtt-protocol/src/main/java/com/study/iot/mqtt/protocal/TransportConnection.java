@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.protocal;
 
-import com.study.iot.mqtt.common.connection.TransportMessage;
+import com.study.iot.mqtt.common.message.TransportMessage;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;

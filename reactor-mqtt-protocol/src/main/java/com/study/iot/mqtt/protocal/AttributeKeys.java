@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.protocal;
 
 
-import com.study.iot.mqtt.common.connection.WillMessage;
+import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.protocal.session.ClientSession;
 import com.study.iot.mqtt.protocal.session.ServerSession;
 import io.netty.util.AttributeKey;

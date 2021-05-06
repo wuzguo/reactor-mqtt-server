@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.common.connection;
+package com.study.iot.mqtt.common.message;
 
 import lombok.*;
 
