@@ -1,15 +1,14 @@
 package com.study.iot.mqtt.transport.server.handler;
 
 
-import com.study.iot.mqtt.protocal.ConnectConfiguration;
-import com.study.iot.mqtt.protocal.TransportConnection;
+import com.study.iot.mqtt.protocol.ConnectConfiguration;
+import com.study.iot.mqtt.protocol.TransportConnection;
 import com.study.iot.mqtt.transport.constant.Group;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <B>说明：描述</B>

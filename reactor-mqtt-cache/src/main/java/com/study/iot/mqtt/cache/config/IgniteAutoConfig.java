@@ -26,6 +26,7 @@ import java.util.Arrays;
 /**
  * 自动配置apache ignite
  */
+
 @Configuration
 public class IgniteAutoConfig {
 

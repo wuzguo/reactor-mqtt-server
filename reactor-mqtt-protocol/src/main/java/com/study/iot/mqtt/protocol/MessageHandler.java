@@ -1,0 +1,13 @@
+package com.study.iot.mqtt.protocol;
+
+
+import com.study.iot.mqtt.common.message.RetainMessage;
+
+import java.util.Optional;
+
+public interface MessageHandler {
+
+    void saveRetain(boolean dup, boolean retain, int qos, String topicName, byte[] copyByteBuf);
+
+    Optional<RetainMessage> getRetain(String topicName);
+}

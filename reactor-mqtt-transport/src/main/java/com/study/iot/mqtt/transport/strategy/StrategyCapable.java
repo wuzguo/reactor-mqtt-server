@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.transport.strategy;
 
 
-import com.study.iot.mqtt.protocal.ConnectConfiguration;
-import com.study.iot.mqtt.protocal.TransportConnection;
+import com.study.iot.mqtt.protocol.ConnectConfiguration;
+import com.study.iot.mqtt.protocol.TransportConnection;
 import io.netty.handler.codec.mqtt.MqttMessage;
 
 /**

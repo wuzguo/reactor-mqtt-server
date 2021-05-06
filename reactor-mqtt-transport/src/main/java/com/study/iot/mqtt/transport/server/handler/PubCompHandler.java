@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.server.handler;
 
-import com.study.iot.mqtt.protocal.ConnectConfiguration;
-import com.study.iot.mqtt.protocal.TransportConnection;
+import com.study.iot.mqtt.protocol.ConnectConfiguration;
+import com.study.iot.mqtt.protocol.TransportConnection;
 import com.study.iot.mqtt.transport.constant.Group;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;

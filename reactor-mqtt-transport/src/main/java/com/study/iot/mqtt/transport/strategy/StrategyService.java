@@ -19,7 +19,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Component
+@Service
 public @interface StrategyService {
 
     @AliasFor(value = "value", annotation = Service.class)

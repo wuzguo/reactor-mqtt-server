@@ -2,8 +2,8 @@ package com.study.iot.mqtt.transport.client;
 
 
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.protocal.config.ClientConfiguration;
-import com.study.iot.mqtt.protocal.session.ClientSession;
+import com.study.iot.mqtt.protocol.config.ClientConfiguration;
+import com.study.iot.mqtt.protocol.session.ClientSession;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import reactor.core.publisher.Mono;
 

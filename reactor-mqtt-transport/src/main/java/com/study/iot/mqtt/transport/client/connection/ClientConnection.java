@@ -1,11 +1,11 @@
 package com.study.iot.mqtt.transport.client.connection;
 
 import com.google.common.collect.Lists;
-import com.study.iot.mqtt.protocal.AttributeKeys;
-import com.study.iot.mqtt.protocal.MqttMessageApi;
-import com.study.iot.mqtt.protocal.TransportConnection;
-import com.study.iot.mqtt.protocal.config.ClientConfiguration;
-import com.study.iot.mqtt.protocal.session.ClientSession;
+import com.study.iot.mqtt.protocol.AttributeKeys;
+import com.study.iot.mqtt.protocol.MqttMessageApi;
+import com.study.iot.mqtt.protocol.TransportConnection;
+import com.study.iot.mqtt.protocol.config.ClientConfiguration;
+import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import io.netty.handler.codec.mqtt.MqttMessage;

@@ -1,13 +1,13 @@
 package com.study.iot.mqtt.transport.server.connection;
 
-import com.study.iot.mqtt.protocal.AttributeKeys;
-import com.study.iot.mqtt.protocal.ChannelManager;
-import com.study.iot.mqtt.protocal.TopicManager;
-import com.study.iot.mqtt.protocal.TransportConnection;
-import com.study.iot.mqtt.protocal.config.ServerConfiguration;
-import com.study.iot.mqtt.protocal.handler.MemoryChannelManager;
-import com.study.iot.mqtt.protocal.handler.MemoryTopicManager;
-import com.study.iot.mqtt.protocal.session.ServerSession;
+import com.study.iot.mqtt.protocol.AttributeKeys;
+import com.study.iot.mqtt.protocol.ChannelManager;
+import com.study.iot.mqtt.protocol.TopicManager;
+import com.study.iot.mqtt.protocol.TransportConnection;
+import com.study.iot.mqtt.protocol.config.ServerConfiguration;
+import com.study.iot.mqtt.protocol.handler.MemoryChannelManager;
+import com.study.iot.mqtt.protocol.handler.MemoryTopicManager;
+import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import io.netty.handler.codec.mqtt.MqttMessage;
