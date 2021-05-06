@@ -7,6 +7,7 @@ import org.apache.ignite.IgniteCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +19,7 @@ public class DupPublishMessageStoreService implements IDupPublishMessageStoreSer
 	@Autowired
 	private IMessageIdService messageIdService;
 
-	@Autowired
+	@Resource
 	private IgniteCache<String, ConcurrentHashMap<Integer, DupPublishMessageStore>> dupPublishMessageCache;
 
 	@Override

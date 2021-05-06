@@ -1,13 +1,13 @@
 package com.study.iot.mqtt.cache.subscribe;
 
-import cn.hutool.core.util.StrUtil;
 import com.study.iot.mqtt.common.service.ISubscribeStoreService;
 import com.study.iot.mqtt.common.subscribe.SubscribeStore;
 import org.apache.ignite.IgniteCache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,15 +18,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SubscribeStoreService implements ISubscribeStoreService {
 
-    @Autowired
+    @Resource
     private IgniteCache<String, ConcurrentHashMap<String, SubscribeStore>> subscribeNotWildcardCache;
 
-    @Autowired
+    @Resource
     private IgniteCache<String, ConcurrentHashMap<String, SubscribeStore>> subscribeWildcardCache;
 
     @Override
     public void put(String topicFilter, SubscribeStore subscribeStore) {
-        if (StrUtil.contains(topicFilter, '#') || StrUtil.contains(topicFilter, '+')) {
+        if (topicFilter.contains("#") || topicFilter.contains("+")) {
             ConcurrentHashMap<String, SubscribeStore> map =
                     subscribeWildcardCache.containsKey(topicFilter) ? subscribeWildcardCache.get(topicFilter) : new ConcurrentHashMap<String, SubscribeStore>();
             map.put(subscribeStore.getClientId(), subscribeStore);
@@ -41,7 +41,7 @@ public class SubscribeStoreService implements ISubscribeStoreService {
 
     @Override
     public void remove(String topicFilter, String clientId) {
-        if (StrUtil.contains(topicFilter, '#') || StrUtil.contains(topicFilter, '+')) {
+        if (topicFilter.contains("#") || topicFilter.contains("+")) {
             if (subscribeWildcardCache.containsKey(topicFilter)) {
                 ConcurrentHashMap<String, SubscribeStore> map = subscribeWildcardCache.get(topicFilter);
                 if (map.containsKey(clientId)) {
@@ -105,9 +105,9 @@ public class SubscribeStoreService implements ISubscribeStoreService {
         }
         subscribeWildcardCache.forEach(entry -> {
             String topicFilter = entry.getKey();
-            if (StrUtil.split(topic, '/').size() >= StrUtil.split(topicFilter, '/').size()) {
-                List<String> splitTopics = StrUtil.split(topic, '/');
-                List<String> spliteTopicFilters = StrUtil.split(topicFilter, '/');
+            if (topic.split("/").length >= topicFilter.split("/").length) {
+                List<String> splitTopics = Arrays.asList(topic.split("/"));
+                List<String> spliteTopicFilters = Arrays.asList(topicFilter.split("/"));
                 String newTopicFilter = "";
                 for (int i = 0; i < spliteTopicFilters.size(); i++) {
                     String value = spliteTopicFilters.get(i);
@@ -120,7 +120,8 @@ public class SubscribeStoreService implements ISubscribeStoreService {
                         newTopicFilter = newTopicFilter + splitTopics.get(i) + "/";
                     }
                 }
-                newTopicFilter = StrUtil.removeSuffix(newTopicFilter, "/");
+                // 去掉指定后缀
+                newTopicFilter = newTopicFilter.substring(0, newTopicFilter.lastIndexOf("/"));
                 if (topicFilter.equals(newTopicFilter)) {
                     ConcurrentHashMap<String, SubscribeStore> map = entry.getValue();
                     Collection<SubscribeStore> collection = map.values();

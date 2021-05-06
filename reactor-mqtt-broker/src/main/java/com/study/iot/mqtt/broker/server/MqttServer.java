@@ -28,12 +28,11 @@ public class MqttServer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        TransportServer.create()
-                .auth((s, p) -> true)
+        TransportServer.create("localhost", 1884)
                 .heart(100000)
                 .protocol(ProtocolType.MQTT)
                 .ssl(false)
-                .auth((username, password) -> true)
+                .auth((key, secret) -> true)
                 .log(true)
                 .messageHandler(new MemoryMessageHandler())
                 .exception(e -> log.error("启动mqtt server 发生异常：{}", e.getMessage()))

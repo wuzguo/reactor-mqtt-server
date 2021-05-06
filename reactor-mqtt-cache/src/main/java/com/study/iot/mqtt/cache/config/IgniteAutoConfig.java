@@ -132,5 +132,4 @@ public class IgniteAutoConfig {
     public IgniteMessaging igniteMessaging() throws Exception {
         return ignite().message(ignite().cluster().forRemotes());
     }
-
 }
