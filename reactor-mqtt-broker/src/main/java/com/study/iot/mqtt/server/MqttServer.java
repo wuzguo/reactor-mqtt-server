@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.broker.server;
+package com.study.iot.mqtt.server;
 
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.handler.MemoryMessageHandler;

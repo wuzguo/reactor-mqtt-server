@@ -1,6 +1,6 @@
-package com.study.iot.mqtt.broker.config;
+package com.study.iot.mqtt.config;
 
-import com.study.iot.mqtt.broker.server.MqttServer;
+import com.study.iot.mqtt.server.MqttServer;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
