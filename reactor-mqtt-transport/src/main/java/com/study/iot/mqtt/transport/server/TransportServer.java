@@ -3,7 +3,7 @@ package com.study.iot.mqtt.transport.server;
 
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocal.MessageHandler;
-import com.study.iot.mqtt.protocal.config.ServerConfig;
+import com.study.iot.mqtt.protocal.config.ServerConfiguration;
 import com.study.iot.mqtt.protocal.session.ServerSession;
 import reactor.core.publisher.Mono;
 
@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 public class TransportServer {
 
-    private static ServerConfig config;
+    private static ServerConfiguration config;
 
     private static TransportServerFactory transportFactory;
 
@@ -24,7 +24,7 @@ public class TransportServer {
     public static class TransportBuilder {
 
         public TransportBuilder() {
-            config = new ServerConfig();
+            config = new ServerConfiguration();
             transportFactory = new TransportServerFactory();
         }
 

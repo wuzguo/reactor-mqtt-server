@@ -1,11 +1,12 @@
 package com.study.iot.mqtt.transport.server.connection;
 
 import com.study.iot.mqtt.protocal.*;
-import com.study.iot.mqtt.protocal.config.ServerConfig;
+import com.study.iot.mqtt.protocal.config.ServerConfiguration;
 import com.study.iot.mqtt.protocal.handler.MemoryChannelManager;
 import com.study.iot.mqtt.protocal.handler.MemoryTopicManager;
 import com.study.iot.mqtt.protocal.session.ServerSession;
-import com.study.iot.mqtt.transport.server.handler.ServerMessageRouter;
+import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
+import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.Attribute;
@@ -39,22 +40,23 @@ public class ServerConnection implements ServerSession {
 
     private MessageHandler rsocketMessageHandler;
 
-    private ServerConfig config;
+    private ServerConfiguration config;
 
     private ServerMessageRouter messageRouter;
 
     private DisposableServer wsDisposableServer;
 
-    public ServerConnection(UnicastProcessor<TransportConnection> connections, DisposableServer server, DisposableServer wsDisposableServer, ServerConfig config) {
+    private StrategyContainer container;
+
+    public ServerConnection(UnicastProcessor<TransportConnection> connections, DisposableServer server, DisposableServer wsDisposableServer, ServerConfiguration config) {
         this.disposableServer = server;
         this.config = config;
         this.rsocketMessageHandler = config.getMessageHandler();
         this.topicManager = Optional.ofNullable(config.getTopicManager()).orElse(new MemoryTopicManager());
         this.channelManager = Optional.ofNullable(config.getChannelManager()).orElse(new MemoryChannelManager());
-        this.messageRouter = new ServerMessageRouter(config);
+        this.messageRouter = new ServerMessageRouter(config, container);
         this.wsDisposableServer = wsDisposableServer;
         connections.subscribe(this::subscribe);
-
     }
 
     private void subscribe(TransportConnection connection) {

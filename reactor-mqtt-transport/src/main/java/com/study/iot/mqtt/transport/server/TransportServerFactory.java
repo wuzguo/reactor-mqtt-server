@@ -4,7 +4,7 @@ package com.study.iot.mqtt.transport.server;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocal.ProtocolFactory;
 import com.study.iot.mqtt.protocal.TransportConnection;
-import com.study.iot.mqtt.protocal.config.ServerConfig;
+import com.study.iot.mqtt.protocal.config.ServerConfiguration;
 import com.study.iot.mqtt.protocal.session.ServerSession;
 import com.study.iot.mqtt.protocal.ws.WsProtocol;
 import com.study.iot.mqtt.protocal.ws.WsTransport;
@@ -20,7 +20,7 @@ public class TransportServerFactory {
 
     private UnicastProcessor<TransportConnection> unicastProcessor = UnicastProcessor.create();
 
-    private ServerConfig config;
+    private ServerConfiguration config;
 
     private DisposableServer wsServer;
 
@@ -29,12 +29,12 @@ public class TransportServerFactory {
     }
 
 
-    public Mono<ServerSession> start(ServerConfig config) {
+    public Mono<ServerSession> start(ServerConfiguration config) {
         this.config = config;
         // 开启
         if (config.getProtocol().equals(ProtocolType.MQTT.name())) {
             WsTransport wsTransport = new WsTransport(new WsProtocol());
-            ServerConfig wsConfig = copy(config);
+            ServerConfiguration wsConfig = copy(config);
             wsServer = wsTransport.start(wsConfig, unicastProcessor).block();
         }
         return Mono.from(
@@ -45,24 +45,24 @@ public class TransportServerFactory {
                 .doOnError(config.getThrowableConsumer());
     }
 
-    private ServerConfig copy(ServerConfig config) {
-        ServerConfig serverConfig = new ServerConfig();
-        serverConfig.setThrowableConsumer(config.getThrowableConsumer());
-        serverConfig.setLog(config.isLog());
-        serverConfig.setMessageHandler(config.getMessageHandler());
-        serverConfig.setAuth(config.getAuth());
-        serverConfig.setChannelManager(config.getChannelManager());
-        serverConfig.setIp(config.getIp());
-        serverConfig.setPort(8443);
-        serverConfig.setSsl(config.isSsl());
-        serverConfig.setProtocol(ProtocolType.WEB_SOCKET.name());
-        serverConfig.setHeart(config.getHeart());
-        serverConfig.setTopicManager(config.getTopicManager());
-        serverConfig.setRevBufSize(config.getRevBufSize());
-        serverConfig.setSendBufSize(config.getSendBufSize());
-        serverConfig.setNoDelay(config.isNoDelay());
-        serverConfig.setKeepAlive(config.isKeepAlive());
-        return serverConfig;
+    private ServerConfiguration copy(ServerConfiguration config) {
+        ServerConfiguration serverConfiguration = new ServerConfiguration();
+        serverConfiguration.setThrowableConsumer(config.getThrowableConsumer());
+        serverConfiguration.setLog(config.isLog());
+        serverConfiguration.setMessageHandler(config.getMessageHandler());
+        serverConfiguration.setAuth(config.getAuth());
+        serverConfiguration.setChannelManager(config.getChannelManager());
+        serverConfiguration.setIp(config.getIp());
+        serverConfiguration.setPort(8443);
+        serverConfiguration.setSsl(config.isSsl());
+        serverConfiguration.setProtocol(ProtocolType.WEB_SOCKET.name());
+        serverConfiguration.setHeart(config.getHeart());
+        serverConfiguration.setTopicManager(config.getTopicManager());
+        serverConfiguration.setRevBufSize(config.getRevBufSize());
+        serverConfiguration.setSendBufSize(config.getSendBufSize());
+        serverConfiguration.setNoDelay(config.isNoDelay());
+        serverConfiguration.setKeepAlive(config.isKeepAlive());
+        return serverConfiguration;
     }
 
     private ServerSession wrapper(DisposableServer server) {

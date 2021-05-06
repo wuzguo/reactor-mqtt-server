@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler;
+package com.study.iot.mqtt.transport.client.handler;
 
 
 import com.study.iot.mqtt.protocal.ConnectConfiguration;
@@ -19,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = Group.SERVER, type = MqttMessageType.CONNECT)
-public class ConnectHandler implements StrategyCapable {
+@StrategyService(group = Group.CLIENT, type = MqttMessageType.CONNACK)
+public class ConnAcKHandler implements StrategyCapable {
 
 
     @Override

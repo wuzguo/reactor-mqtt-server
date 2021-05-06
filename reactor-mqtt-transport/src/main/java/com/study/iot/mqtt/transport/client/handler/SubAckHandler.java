@@ -1,5 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler;
-
+package com.study.iot.mqtt.transport.client.handler;
 
 import com.study.iot.mqtt.protocal.ConnectConfiguration;
 import com.study.iot.mqtt.protocal.TransportConnection;
@@ -15,14 +14,12 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/22 9:17
+ * @date 2021/5/6 11:25
  */
 
 @Slf4j
-@StrategyService(group = Group.SERVER, type = MqttMessageType.CONNECT)
-public class ConnectHandler implements StrategyCapable {
-
-
+@StrategyService(group = Group.CLIENT,  type = MqttMessageType.SUBACK)
+public class SubAckHandler implements StrategyCapable {
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {
 

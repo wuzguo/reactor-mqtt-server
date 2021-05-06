@@ -22,5 +22,5 @@ public interface StrategyCapable {
      * @param connection    {@link TransportConnection}
      * @param configuration {@link ConnectConfiguration}
      */
-    void process(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration);
+    void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration);
 }

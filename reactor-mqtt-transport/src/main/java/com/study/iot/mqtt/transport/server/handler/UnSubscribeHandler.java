@@ -15,13 +15,12 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/22 9:17
+ * @date 2021/4/22 9:21
  */
 
 @Slf4j
-@StrategyService(group = Group.SERVER, type = MqttMessageType.CONNECT)
-public class ConnectHandler implements StrategyCapable {
-
+@StrategyService(group = Group.SERVER, type = MqttMessageType.UNSUBSCRIBE)
+public class UnSubscribeHandler implements StrategyCapable {
 
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {

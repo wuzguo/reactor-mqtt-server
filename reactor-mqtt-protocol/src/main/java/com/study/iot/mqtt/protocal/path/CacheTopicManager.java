@@ -38,19 +38,15 @@ public class CacheTopicManager {
         }
     }
 
-
     public void addTopicConnection(String topic, TransportConnection connection) {
         String[] methodArray = topic.split("/");
         pathMap.putData(methodArray, connection);
         cache.invalidate(topic);
     }
 
-
     public void deleteTopicConnection(String topic, TransportConnection connection) {
         String[] methodArray = topic.split("/");
         pathMap.delete(methodArray, connection);
         cache.invalidate(topic);
     }
-
-
 }

@@ -15,7 +15,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 @Data
-public class ServerConfig implements ConnectConfiguration {
+public class ServerConfiguration implements ConnectConfiguration {
 
     private String ip;
 

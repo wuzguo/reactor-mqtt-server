@@ -2,7 +2,7 @@ package com.study.iot.mqtt.transport.client;
 
 
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.protocal.config.ClientConfig;
+import com.study.iot.mqtt.protocal.config.ClientConfiguration;
 import com.study.iot.mqtt.protocal.session.ClientSession;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import reactor.core.publisher.Mono;
@@ -13,11 +13,11 @@ import java.util.function.Consumer;
 
 public class TransportClient {
 
-    private static ClientConfig config;
+    private static ClientConfiguration config;
 
     private static TransportClientFactory transportFactory;
 
-    private static ClientConfig.Options options;
+    private static ClientConfiguration.Options options;
 
     private TransportClient() {
 
@@ -26,14 +26,14 @@ public class TransportClient {
     public static class TransportBuilder {
 
         public TransportBuilder() {
-            config = new ClientConfig();
+            config = new ClientConfiguration();
             transportFactory = new TransportClientFactory();
             options = config.new Options();
         }
 
         public TransportBuilder(String ip, int port) {
             this();
-            config = new ClientConfig();
+            config = new ClientConfiguration();
             config.setIp(ip);
             config.setPort(port);
         }
@@ -128,6 +128,4 @@ public class TransportClient {
     public TransportBuilder create() {
         return new TransportBuilder();
     }
-
-
 }

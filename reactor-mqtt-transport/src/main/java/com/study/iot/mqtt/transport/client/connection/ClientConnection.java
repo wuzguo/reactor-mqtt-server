@@ -4,9 +4,10 @@ import com.google.common.collect.Lists;
 import com.study.iot.mqtt.protocal.AttributeKeys;
 import com.study.iot.mqtt.protocal.MqttMessageApi;
 import com.study.iot.mqtt.protocal.TransportConnection;
-import com.study.iot.mqtt.protocal.config.ClientConfig;
+import com.study.iot.mqtt.protocal.config.ClientConfiguration;
 import com.study.iot.mqtt.protocal.session.ClientSession;
-import com.study.iot.mqtt.transport.client.handler.ClientMessageRouter;
+import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
+import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.handler.codec.mqtt.MqttTopicSubscription;
@@ -33,22 +34,24 @@ public class ClientConnection implements ClientSession {
 
     private final TransportConnection connection;
 
-    private final ClientConfig clientConfig;
+    private final ClientConfiguration clientConfiguration;
 
     private ClientMessageRouter clientMessageRouter;
 
     private List<String> topics = Lists.newArrayList();
 
-    public ClientConnection(TransportConnection connection, ClientConfig clientConfig) {
-        this.clientConfig = clientConfig;
-        this.connection = connection;
-        this.clientMessageRouter = new ClientMessageRouter(clientConfig);
+    private StrategyContainer container;
 
+    public ClientConnection(TransportConnection connection, ClientConfiguration clientConfiguration) {
+        this.clientConfiguration = clientConfiguration;
+        this.connection = connection;
+        this.clientMessageRouter = new ClientMessageRouter(clientConfiguration, container);
         initHandler();
     }
 
+    @Override
     public void initHandler() {
-        ClientConfig.Options options = clientConfig.getOptions();
+        ClientConfiguration.Options options = clientConfiguration.getOptions();
         NettyInbound inbound = connection.getInbound();
         Disposable disposable = Mono.fromRunnable(() -> connection.write(MqttMessageApi.buildConnect(
                 options.getClientIdentifier(),
@@ -60,7 +63,7 @@ public class ClientConnection implements ClientSession {
                 options.isHasPassword(),
                 options.isHasWillFlag(),
                 options.getWillQos(),
-                clientConfig.getHeart()
+                clientConfiguration.getHeart()
         )).subscribe()).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe();
         connection.write(MqttMessageApi.buildConnect(
                 options.getClientIdentifier(),
@@ -72,12 +75,12 @@ public class ClientConnection implements ClientSession {
                 options.isHasPassword(),
                 options.isHasWillFlag(),
                 options.getWillQos(),
-                clientConfig.getHeart()
+                clientConfiguration.getHeart()
         )).doOnError(throwable -> log.error(throwable.getMessage())).subscribe();
         connection.getConnection().channel().attr(AttributeKeys.closeConnection).set(disposable);
-        connection.getConnection().onWriteIdle(clientConfig.getHeart(), () -> connection.sendPingReq().subscribe()); // 发送心跳
-        connection.getConnection().onReadIdle(clientConfig.getHeart() * 2, () -> connection.sendPingReq().subscribe()); // 发送心跳
-        connection.getConnection().onDispose(() -> clientConfig.getOnClose().run());
+        connection.getConnection().onWriteIdle(clientConfiguration.getHeart(), () -> connection.sendPingReq().subscribe()); // 发送心跳
+        connection.getConnection().onReadIdle(clientConfiguration.getHeart() * 2, () -> connection.sendPingReq().subscribe()); // 发送心跳
+        connection.getConnection().onDispose(() -> clientConfiguration.getOnClose().run());
         inbound.receiveObject().cast(MqttMessage.class)
                 .subscribe(message -> clientMessageRouter.handler(message, connection));
         connection.getConnection().channel().attr(AttributeKeys.clientConnectionAttributeKey).set(this);
