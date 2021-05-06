@@ -1,23 +1,19 @@
-/**
- * Copyright (c) 2018, Mr.Wang (recallcode@aliyun.com) All rights reserved.
- */
-
 package com.study.iot.mqtt.cache.message;
 
 import cn.hutool.core.util.StrUtil;
-import cn.recallcode.iot.mqtt.server.common.message.IRetainMessageStoreService;
-import cn.recallcode.iot.mqtt.server.common.message.RetainMessageStore;
+import com.study.iot.mqtt.common.message.RetainMessageStore;
+import com.study.iot.mqtt.common.service.IRetainMessageStoreService;
 import org.apache.ignite.IgniteCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class RetainMessageStoreService implements IRetainMessageStoreService {
 
-	@Resource
+	@Autowired
 	private IgniteCache<String, RetainMessageStore> retainMessageCache;
 
 	@Override

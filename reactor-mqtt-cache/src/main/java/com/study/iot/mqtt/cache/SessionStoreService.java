@@ -1,11 +1,8 @@
-/**
- * Copyright (c) 2018, Mr.Wang (recallcode@aliyun.com) All rights reserved.
- */
-
 package com.study.iot.mqtt.cache;
 
-import cn.recallcode.iot.mqtt.server.common.session.ISessionStoreService;
-import cn.recallcode.iot.mqtt.server.common.session.SessionStore;
+
+import com.study.iot.mqtt.common.service.ISessionStoreService;
+import com.study.iot.mqtt.common.session.SessionStore;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

@@ -32,6 +32,7 @@
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
         <ignite.version>2.6.0</ignite.version>
+        <hutool.version>4.1.6</hutool.version>
     </properties>
 
     <dependencies>

@@ -1,14 +1,10 @@
-/**
- * Copyright (c) 2018, Mr.Wang (recallcode@aliyun.com) All rights reserved.
- */
-
 package com.study.iot.mqtt.cache;
 
-import cn.recallcode.iot.mqtt.server.common.message.IMessageIdService;
+import com.study.iot.mqtt.common.service.IMessageIdService;
 import org.apache.ignite.IgniteCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.concurrent.locks.Lock;
 
 @Service
@@ -20,7 +16,7 @@ public class MessageIdService implements IMessageIdService {
 
 	private final int lock = 0;
 
-	@Resource
+	@Autowired
 	private IgniteCache<Integer, Integer> messageIdCache;
 
 	private int nextMsgId = MIN_MSG_ID - 1;

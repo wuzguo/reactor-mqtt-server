@@ -1,7 +1,3 @@
-/**
- * Copyright (c) 2018, Mr.Wang (recallcode@aliyun.com) All rights reserved.
- */
-
 package com.study.iot.mqtt.cache.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;

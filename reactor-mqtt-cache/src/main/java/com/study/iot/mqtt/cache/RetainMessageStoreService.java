@@ -1,23 +1,21 @@
-/**
- * Copyright (c) 2018, Mr.Wang (recallcode@aliyun.com) All rights reserved.
- */
-
 package com.study.iot.mqtt.cache;
 
+
 import cn.hutool.core.util.StrUtil;
-import cn.recallcode.iot.mqtt.server.common.message.IRetainMessageStoreService;
-import cn.recallcode.iot.mqtt.server.common.message.RetainMessageStore;
+import com.google.common.collect.Lists;
+import com.study.iot.mqtt.common.message.RetainMessageStore;
+import com.study.iot.mqtt.common.service.IRetainMessageStoreService;
 import org.apache.ignite.IgniteCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class RetainMessageStoreService implements IRetainMessageStoreService {
 
-	@Resource
+	@Autowired
 	private IgniteCache<String, RetainMessageStore> retainMessageCache;
 
 	@Override
@@ -42,7 +40,7 @@ public class RetainMessageStoreService implements IRetainMessageStoreService {
 
 	@Override
 	public List<RetainMessageStore> search(String topicFilter) {
-		List<RetainMessageStore> retainMessageStores = new ArrayList<RetainMessageStore>();
+		List<RetainMessageStore> retainMessageStores = Lists.newArrayList();
 		if (!StrUtil.contains(topicFilter, '#') && !StrUtil.contains(topicFilter, '+')) {
 			if (retainMessageCache.containsKey(topicFilter)) {
 				retainMessageStores.add(retainMessageCache.get(topicFilter));

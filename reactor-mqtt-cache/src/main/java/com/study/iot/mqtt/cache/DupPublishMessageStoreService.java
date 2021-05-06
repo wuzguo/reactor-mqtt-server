@@ -1,17 +1,13 @@
-/**
- * Copyright (c) 2018, Mr.Wang (recallcode@aliyun.com) All rights reserved.
- */
-
 package com.study.iot.mqtt.cache;
 
-import cn.recallcode.iot.mqtt.server.common.message.DupPublishMessageStore;
-import cn.recallcode.iot.mqtt.server.common.message.IDupPublishMessageStoreService;
-import cn.recallcode.iot.mqtt.server.common.message.IMessageIdService;
+
+import com.study.iot.mqtt.common.message.DupPublishMessageStore;
+import com.study.iot.mqtt.common.service.IDupPublishMessageStoreService;
+import com.study.iot.mqtt.common.service.IMessageIdService;
 import org.apache.ignite.IgniteCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +19,7 @@ public class DupPublishMessageStoreService implements IDupPublishMessageStoreSer
 	@Autowired
 	private IMessageIdService messageIdService;
 
-	@Resource
+	@Autowired
 	private IgniteCache<String, ConcurrentHashMap<Integer, DupPublishMessageStore>> dupPublishMessageCache;
 
 	@Override
