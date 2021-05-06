@@ -9,6 +9,7 @@ import com.study.iot.mqtt.protocal.session.ServerSession;
 import com.study.iot.mqtt.protocal.ws.WsProtocol;
 import com.study.iot.mqtt.protocal.ws.WsTransport;
 import com.study.iot.mqtt.transport.server.connection.ServerConnection;
+import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.UnicastProcessor;
 import reactor.netty.DisposableServer;
@@ -24,23 +25,26 @@ public class TransportServerFactory {
 
     private DisposableServer wsServer;
 
+    private StrategyContainer container;
+
     public TransportServerFactory() {
         protocolFactory = new ProtocolFactory();
     }
 
 
-    public Mono<ServerSession> start(ServerConfiguration config) {
+    public Mono<ServerSession> start(ServerConfiguration config, StrategyContainer container) {
         this.config = config;
+        this.container = container;
         // 开启
         if (config.getProtocol().equals(ProtocolType.MQTT.name())) {
             WsTransport wsTransport = new WsTransport(new WsProtocol());
             ServerConfiguration wsConfig = copy(config);
             wsServer = wsTransport.start(wsConfig, unicastProcessor).block();
         }
-        return Mono.from(
-                protocolFactory.getProtocol(ProtocolType.valueOf(config.getProtocol()))
-                        .get().getTransport()
-                        .start(config, unicastProcessor))
+        return Mono.from(protocolFactory.getProtocol(ProtocolType.valueOf(config.getProtocol()))
+                .get()
+                .getTransport()
+                .start(config, unicastProcessor))
                 .map(this::wrapper)
                 .doOnError(config.getThrowableConsumer());
     }
@@ -66,6 +70,6 @@ public class TransportServerFactory {
     }
 
     private ServerSession wrapper(DisposableServer server) {
-        return new ServerConnection(unicastProcessor, server, wsServer, config);
+        return new ServerConnection(unicastProcessor, server, wsServer, config, container);
     }
 }

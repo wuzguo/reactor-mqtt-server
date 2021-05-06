@@ -5,6 +5,7 @@ import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocal.MessageHandler;
 import com.study.iot.mqtt.protocal.config.ServerConfiguration;
 import com.study.iot.mqtt.protocal.session.ServerSession;
+import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -17,8 +18,16 @@ public class TransportServer {
 
     private static TransportServerFactory transportFactory;
 
-
     private TransportServer() {
+
+    }
+
+    public static TransportBuilder create(String ip, int port) {
+        return new TransportBuilder(ip, port);
+    }
+
+    public static TransportBuilder create() {
+        return new TransportBuilder();
     }
 
     public static class TransportBuilder {
@@ -96,17 +105,9 @@ public class TransportServer {
             return this;
         }
 
-        public Mono<ServerSession> start() {
+        public Mono<ServerSession> start(StrategyContainer container) {
             config.checkConfig();
-            return transportFactory.start(config);
+            return transportFactory.start(config, container);
         }
-    }
-
-    public static TransportBuilder create(String ip, int port) {
-        return new TransportBuilder(ip, port);
-    }
-
-    public static TransportBuilder create() {
-        return new TransportBuilder();
     }
 }

@@ -1,6 +1,9 @@
 package com.study.iot.mqtt.broker.config;
 
 import com.study.iot.mqtt.broker.server.MqttServer;
+import com.study.iot.mqtt.transport.strategy.StrategyContainer;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,7 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class MqttServerConfiguration {
 
     @Bean
-    public MqttServer mqttServer() {
-        return new MqttServer();
+    @ConditionalOnMissingBean
+    public MqttServer mqttServer(@Qualifier("strategyContainer") StrategyContainer container) {
+        return new MqttServer(container);
     }
 }

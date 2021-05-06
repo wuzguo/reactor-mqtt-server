@@ -1,0 +1,6 @@
+org.springframework.context.annotation.Configuration=\
+com.study.iot.mqtt.cache.config.IgniteAutoConfig
+
+
+org.springframework.stereotype.Service=\
+com.study.iot.mqtt.transport.strategy.StrategyService

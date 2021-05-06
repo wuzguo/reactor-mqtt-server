@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 @StrategyService(group = Group.SERVER, type = MqttMessageType.CONNECT)
 public class ConnectHandler implements StrategyCapable {
 
-
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {
 

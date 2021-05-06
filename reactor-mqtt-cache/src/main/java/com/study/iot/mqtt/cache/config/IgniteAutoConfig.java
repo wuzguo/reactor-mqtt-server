@@ -27,7 +27,6 @@ import java.util.Arrays;
  * 自动配置apache ignite
  */
 @Configuration
-@SuppressWarnings("unchecked")
 public class IgniteAutoConfig {
 
     @Value("${spring.mqtt.broker.id}")

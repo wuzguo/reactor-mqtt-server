@@ -1,6 +1,9 @@
 package com.study.iot.mqtt.transport.server.connection;
 
-import com.study.iot.mqtt.protocal.*;
+import com.study.iot.mqtt.protocal.AttributeKeys;
+import com.study.iot.mqtt.protocal.ChannelManager;
+import com.study.iot.mqtt.protocal.TopicManager;
+import com.study.iot.mqtt.protocal.TransportConnection;
 import com.study.iot.mqtt.protocal.config.ServerConfiguration;
 import com.study.iot.mqtt.protocal.handler.MemoryChannelManager;
 import com.study.iot.mqtt.protocal.handler.MemoryTopicManager;
@@ -14,6 +17,7 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.UnicastProcessor;
 import reactor.netty.Connection;
+import reactor.netty.DisposableChannel;
 import reactor.netty.DisposableServer;
 import reactor.netty.NettyInbound;
 
@@ -31,27 +35,19 @@ import java.util.Optional;
 
 public class ServerConnection implements ServerSession {
 
-
     private DisposableServer disposableServer;
 
     private ChannelManager channelManager;
 
     private TopicManager topicManager;
 
-    private MessageHandler rsocketMessageHandler;
-
-    private ServerConfiguration config;
-
     private ServerMessageRouter messageRouter;
 
     private DisposableServer wsDisposableServer;
 
-    private StrategyContainer container;
-
-    public ServerConnection(UnicastProcessor<TransportConnection> connections, DisposableServer server, DisposableServer wsDisposableServer, ServerConfiguration config) {
+    public ServerConnection(UnicastProcessor<TransportConnection> connections, DisposableServer server,
+                            DisposableServer wsDisposableServer, ServerConfiguration config, StrategyContainer container) {
         this.disposableServer = server;
-        this.config = config;
-        this.rsocketMessageHandler = config.getMessageHandler();
         this.topicManager = Optional.ofNullable(config.getTopicManager()).orElse(new MemoryTopicManager());
         this.channelManager = Optional.ofNullable(config.getChannelManager()).orElse(new MemoryChannelManager());
         this.messageRouter = new ServerMessageRouter(config, container);
@@ -59,55 +55,64 @@ public class ServerConnection implements ServerSession {
         connections.subscribe(this::subscribe);
     }
 
-    private void subscribe(TransportConnection connection) {
-        NettyInbound inbound = connection.getInbound();
-        Connection c = connection.getConnection();
-        Disposable disposable = Mono.fromRunnable(c::dispose)// 定时关闭
+    private void subscribe(TransportConnection transport) {
+        NettyInbound inbound = transport.getInbound();
+        Connection connection = transport.getConnection();
+        // 定时关闭
+        Disposable disposable = Mono.fromRunnable(connection::dispose)
                 .delaySubscription(Duration.ofSeconds(10))
                 .subscribe();
-        c.channel().attr(AttributeKeys.connectionAttributeKey).set(connection); // 设置connection
-        c.channel().attr(AttributeKeys.closeConnection).set(disposable);   // 设置close
-        connection.getConnection().onDispose(() -> { // 关闭  发送will消息
-            Optional.ofNullable(connection.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE)).map(Attribute::get)
+        // 设置 connection
+        connection.channel().attr(AttributeKeys.connectionAttributeKey).set(transport);
+        // 设置 close
+        connection.channel().attr(AttributeKeys.closeConnection).set(disposable);
+        // 关闭发送will消息
+        transport.getConnection().onDispose(() -> {
+            Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE)).map(Attribute::get)
                     .ifPresent(willMessage -> Optional.ofNullable(topicManager.getConnectionsByTopic(willMessage.getTopicName()))
-                            .ifPresent(connections -> connections.forEach(co -> {
+                            .ifPresent(connections -> connections.forEach(connect -> {
                                 MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                                 switch (qoS) {
                                     case AT_LEAST_ONCE:
-                                        co.sendMessage(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf()).subscribe();
+                                        connect.sendMessage(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf()).subscribe();
                                         break;
                                     case EXACTLY_ONCE:
                                     case AT_MOST_ONCE:
-                                        co.sendMessageRetry(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf()).subscribe();
+                                        connect.sendMessageRetry(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf()).subscribe();
                                         break;
                                     default:
-                                        co.sendMessage(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf()).subscribe();
+                                        connect.sendMessage(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf()).subscribe();
                                         break;
                                 }
                             })));
-            channelManager.removeConnections(connection); // 删除链接
-            connection.getTopics().forEach(topic -> topicManager.deleteTopicConnection(topic, connection)); // 删除topic订阅
-            Optional.ofNullable(connection.getConnection().channel().attr(AttributeKeys.device_id))
+            // 删除链接
+            channelManager.removeConnections(transport);
+            // 删除topic订阅
+            transport.getTopics().forEach(topic -> topicManager.deleteTopicConnection(topic, transport));
+            Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.device_id))
                     .map(Attribute::get)
-                    .ifPresent(channelManager::removeDeviceId); // 设置device Id
-            connection.destory();
+                    .ifPresent(channelManager::removeDeviceId); // 设置device
+            transport.destory();
         });
         inbound.receiveObject().cast(MqttMessage.class)
-                .subscribe(message -> messageRouter.handler(message, connection));
+                .subscribe(message -> messageRouter.handler(message, transport));
     }
 
     @Override
     public Mono<List<TransportConnection>> getConnections() {
-        return null;
+        return Mono.just(channelManager.getConnections());
     }
 
     @Override
     public Mono<Void> closeConnect(String clientId) {
-        return null;
+        return Mono.fromRunnable(() -> Optional.ofNullable(channelManager.getRemoveDeviceId(clientId))
+                .ifPresent(TransportConnection::dispose));
     }
 
     @Override
     public void dispose() {
-
+        disposableServer.dispose();
+        Optional.ofNullable(wsDisposableServer)
+                .ifPresent(DisposableChannel::dispose);
     }
 }

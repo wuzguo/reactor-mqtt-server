@@ -32,5 +32,4 @@ public class ClientMessageRouter {
 
         container.getStrategy(Group.CLIENT, message.fixedHeader().messageType()).handler(message, connection, config);
     }
-
 }

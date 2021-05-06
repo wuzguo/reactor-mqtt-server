@@ -1,8 +1,10 @@
 package com.study.iot.mqtt.broker.server;
 
 import com.study.iot.mqtt.common.annocation.ProtocolType;
+import com.study.iot.mqtt.protocal.config.ServerConfiguration;
 import com.study.iot.mqtt.protocal.handler.MemoryMessageHandler;
 import com.study.iot.mqtt.transport.server.TransportServer;
+import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -19,9 +21,15 @@ import org.springframework.boot.ApplicationRunner;
 @Slf4j
 public class MqttServer implements ApplicationRunner {
 
+    public MqttServer(StrategyContainer container) {
+        this.container = container;
+    }
+
+    private StrategyContainer container;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        TransportServer.create("localhost", 1884)
+        TransportServer.create()
                 .auth((s, p) -> true)
                 .heart(100000)
                 .protocol(ProtocolType.MQTT)
@@ -29,8 +37,8 @@ public class MqttServer implements ApplicationRunner {
                 .auth((username, password) -> true)
                 .log(true)
                 .messageHandler(new MemoryMessageHandler())
-                .exception(throwable -> System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&" + throwable))
-                .start()
+                .exception(e -> log.error("启动mqtt server 发生异常：{}", e.getMessage()))
+                .start(container)
                 .block();
     }
 }
