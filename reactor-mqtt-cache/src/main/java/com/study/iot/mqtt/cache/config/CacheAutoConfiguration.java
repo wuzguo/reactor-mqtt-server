@@ -20,7 +20,7 @@ public class CacheAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public CacheStrategyContainer strategyContainer(ApplicationContext applicationContext) {
+    public CacheStrategyContainer cacheStrategyContainer(ApplicationContext applicationContext) {
         return new CacheStrategyContainer(applicationContext);
     }
 
