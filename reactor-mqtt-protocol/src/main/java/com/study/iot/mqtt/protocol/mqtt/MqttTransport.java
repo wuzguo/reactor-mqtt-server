@@ -66,14 +66,14 @@ public class MqttTransport extends ProtocolTransport {
 
     @Override
     public Mono<TransportConnection> connect(ConnectConfiguration config) {
-        return buildClient(config).connect()
-                .map(connection -> {
-                    protocol.getHandlers().forEach(connection::addHandler);
-                    TransportConnection transportConnection = new TransportConnection(connection);
-                    connection.onDispose(() -> retryConnect(config, transportConnection));
-                    log.info("connected successed !");
-                    return transportConnection;
-                });
+        return buildClient(config).connect().map(connection -> {
+            Connection connect = connection;
+            protocol.getHandlers().forEach(connect::addHandler);
+            TransportConnection transportConnection = new TransportConnection(connection);
+            connection.onDispose(() -> retryConnect(config, transportConnection));
+            log.info("connected successed !");
+            return transportConnection;
+        });
     }
 
     private void retryConnect(ConnectConfiguration config, TransportConnection transportConnection) {
