@@ -6,6 +6,7 @@ import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.transport.constant.Group;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
+import com.study.iot.mqtt.transport.strategy.WillCapable;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.Attribute;
@@ -62,12 +63,12 @@ public class ServerConnection implements ServerSession {
         // 关闭发送will消息
         transport.getConnection().onDispose(() -> {
             Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE)).map(Attribute::get)
-                    .ifPresent(willMessage -> Optional.ofNullable(cacheManager.topic().getConnectionsByTopic(willMessage.getTopicName()))
+                    .ifPresent(willMessage -> Optional.ofNullable(
+                            cacheManager.topic().getConnectionsByTopic(willMessage.getTopicName()))
                             .ifPresent(connections -> connections.forEach(connect -> {
                                 MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                                Optional.ofNullable(messageRouter.getWillContainer())
-                                        .map(willContainer -> willContainer.getStrategy(Group.WILL, qoS))
-                                        .ifPresent(willCapable -> willCapable.handler(qoS, connect, willMessage));
+                                Optional.ofNullable(messageRouter.getWillContainer().getStrategy(Group.WILL, qoS))
+                                        .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
                             })));
             // 删除链接
             cacheManager.channel().removeConnections(transport);
@@ -97,7 +98,6 @@ public class ServerConnection implements ServerSession {
     @Override
     public void dispose() {
         disposableServer.dispose();
-        Optional.ofNullable(wsDisposableServer)
-                .ifPresent(DisposableChannel::dispose);
+        Optional.ofNullable(wsDisposableServer).ifPresent(DisposableChannel::dispose);
     }
 }

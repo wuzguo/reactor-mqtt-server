@@ -3,10 +3,13 @@ package com.study.iot.mqtt.transport.client.router;
 
 import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.transport.constant.Group;
+import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Optional;
 
 @Getter
 @Slf4j
@@ -26,6 +29,7 @@ public class ClientMessageRouter {
             return;
         }
 
-        container.getStrategy(Group.CLIENT, message.fixedHeader().messageType()).handler(message, connection);
+        Optional.ofNullable(container.getStrategy(Group.CLIENT, message.fixedHeader().messageType()))
+                .ifPresent(capable -> ((StrategyCapable) capable).handler(message, connection));
     }
 }
