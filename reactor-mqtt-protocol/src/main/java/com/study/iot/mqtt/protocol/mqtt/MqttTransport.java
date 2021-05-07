@@ -33,12 +33,10 @@ public class MqttTransport extends ProtocolTransport {
 
     @Override
     public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<TransportConnection> processor) {
-        return buildServer(config)
-                .doOnConnection(connection -> {
-                    protocol.getHandlers().forEach(connection::addHandlerLast);
-                    processor.onNext(new TransportConnection(connection));
-                })
-                .bind().doOnError(config.getThrowableConsumer());
+        return buildServer(config).doOnConnection(connection -> {
+            protocol.getHandlers().forEach(connection::addHandlerLast);
+            processor.onNext(new TransportConnection(connection));
+        }).bind().doOnError(config.getThrowableConsumer());
     }
 
     private TcpServer buildServer(ConnectConfiguration config) {
@@ -61,27 +59,25 @@ public class MqttTransport extends ProtocolTransport {
             SelfSignedCertificate ssc = new SelfSignedCertificate();
             return SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
         } catch (Exception e) {
-            log.error("*******************************************************************ssl error: {}", e.getMessage());
+            log.error("ssl error: {}", e.getMessage());
         }
         return null;
     }
 
     @Override
     public Mono<TransportConnection> connect(ConnectConfiguration config) {
-        return buildClient(config)
-                .connect()
+        return buildClient(config).connect()
                 .map(connection -> {
-                    Connection connection1 = connection;
-                    log.info("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&链接成功了");
-                    protocol.getHandlers().forEach(connection1::addHandler);
+                    protocol.getHandlers().forEach(connection::addHandler);
                     TransportConnection transportConnection = new TransportConnection(connection);
                     connection.onDispose(() -> retryConnect(config, transportConnection));
+                    log.info("connected successed !");
                     return transportConnection;
                 });
     }
 
     private void retryConnect(ConnectConfiguration config, TransportConnection transportConnection) {
-        log.info("短线重连中..............................................................");
+        log.info("Short-term reconnection");
         buildClient(config)
                 .connect()
                 .doOnError(config.getThrowableConsumer())
@@ -90,22 +86,18 @@ public class MqttTransport extends ProtocolTransport {
                 .subscribe(connection -> {
                     protocol.getHandlers().forEach(connection::addHandler);
                     Optional.ofNullable(transportConnection.getConnection().channel().attr(AttributeKeys.clientConnectionAttributeKey))
-                            .map(Attribute::get)
-                            .ifPresent(rsocketClientSession -> {
-                                transportConnection.setConnection(connection);
-                                transportConnection.setInbound(connection.inbound());
-                                transportConnection.setOutbound(connection.outbound());
-                                rsocketClientSession.init();
-                            });
+                            .map(Attribute::get).ifPresent(clientSession -> {
+                        transportConnection.setConnection(connection);
+                        transportConnection.setInbound(connection.inbound());
+                        transportConnection.setOutbound(connection.outbound());
+                        clientSession.init();
+                    });
 
                 });
     }
 
     private TcpClient buildClient(ConnectConfiguration config) {
-        TcpClient client = TcpClient.create()
-                .port(config.getPort())
-                .host(config.getIp())
-                .wiretap(config.isLog());
+        TcpClient client = TcpClient.create().port(config.getPort()).host(config.getIp()).wiretap(config.isLog());
         try {
             SslContext sslClient = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
             return config.isSsl() ? client.secure(sslContextSpec -> sslContextSpec.sslContext(sslClient)) : client;
