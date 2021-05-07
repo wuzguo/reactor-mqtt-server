@@ -16,7 +16,6 @@ import org.springframework.boot.ApplicationRunner;
  * @date 2021/5/6 10:11
  */
 
-
 @Slf4j
 public class MqttServer implements ApplicationRunner {
 

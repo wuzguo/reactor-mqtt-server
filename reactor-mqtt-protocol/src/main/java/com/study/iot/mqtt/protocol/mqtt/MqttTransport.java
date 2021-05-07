@@ -1,10 +1,9 @@
 package com.study.iot.mqtt.protocol.mqtt;
 
 
-
 import com.study.iot.mqtt.protocol.AttributeKeys;
-import com.study.iot.mqtt.protocol.ProtocolTransport;
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
+import com.study.iot.mqtt.protocol.ProtocolTransport;
 import com.study.iot.mqtt.protocol.TransportConnection;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelOption;
@@ -52,8 +51,7 @@ public class MqttTransport extends ProtocolTransport {
                 .option(ChannelOption.TCP_NODELAY, config.isNoDelay())
                 .option(ChannelOption.SO_BACKLOG, config.getBacklog())
                 .option(ChannelOption.SO_RCVBUF, config.getRevBufSize())
-                .option(ChannelOption.SO_SNDBUF, config.getSendBufSize())
-                ;
+                .option(ChannelOption.SO_SNDBUF, config.getSendBufSize());
         return config.isSsl() ? server.secure(sslContextSpec -> sslContextSpec.sslContext(Objects.requireNonNull(buildContext()))) : server;
 
     }
@@ -73,11 +71,11 @@ public class MqttTransport extends ProtocolTransport {
         return buildClient(config)
                 .connect()
                 .map(connection -> {
-                    Connection connection1= connection;
+                    Connection connection1 = connection;
                     log.info("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&链接成功了");
                     protocol.getHandlers().forEach(connection1::addHandler);
                     TransportConnection transportConnection = new TransportConnection(connection);
-                    connection.onDispose(() -> retryConnect(config,transportConnection));
+                    connection.onDispose(() -> retryConnect(config, transportConnection));
                     return transportConnection;
                 });
     }
@@ -93,7 +91,7 @@ public class MqttTransport extends ProtocolTransport {
                     protocol.getHandlers().forEach(connection::addHandler);
                     Optional.ofNullable(transportConnection.getConnection().channel().attr(AttributeKeys.clientConnectionAttributeKey))
                             .map(Attribute::get)
-                            .ifPresent(rsocketClientSession ->{
+                            .ifPresent(rsocketClientSession -> {
                                 transportConnection.setConnection(connection);
                                 transportConnection.setInbound(connection.inbound());
                                 transportConnection.setOutbound(connection.outbound());

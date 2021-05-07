@@ -20,7 +20,6 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
