@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.cache.config;
 
+import lombok.Setter;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteMessaging;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 
 @Configuration
 @ConfigurationProperties(prefix = "spring.mqtt.broker", ignoreInvalidFields = true)
+@Setter
 public class IgniteAutoConfig {
 
     /**

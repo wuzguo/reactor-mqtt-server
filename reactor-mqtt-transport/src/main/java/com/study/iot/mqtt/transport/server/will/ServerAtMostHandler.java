@@ -2,7 +2,7 @@ package com.study.iot.mqtt.transport.server.will;
 
 import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.common.message.WillMessage;
-import com.study.iot.mqtt.transport.constant.Group;
+import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
 import com.study.iot.mqtt.transport.strategy.WillStrategyService;
 import io.netty.handler.codec.mqtt.MqttQoS;
@@ -15,7 +15,7 @@ import io.netty.handler.codec.mqtt.MqttQoS;
  * @date 2021/5/7 13:54
  */
 
-@WillStrategyService(group = Group.WILL_SERVER, type = MqttQoS.AT_MOST_ONCE)
+@WillStrategyService(group = StrategyGroup.WILL_SERVER, type = MqttQoS.AT_MOST_ONCE)
 public class ServerAtMostHandler implements WillCapable {
 
     @Override

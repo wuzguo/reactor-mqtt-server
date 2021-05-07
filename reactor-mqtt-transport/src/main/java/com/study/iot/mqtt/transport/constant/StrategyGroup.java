@@ -8,7 +8,7 @@ package com.study.iot.mqtt.transport.constant;
  * @date 2021/4/30 11:50
  */
 
-public interface Group {
+public interface StrategyGroup {
 
     String SERVER = "mqtt.server";
 

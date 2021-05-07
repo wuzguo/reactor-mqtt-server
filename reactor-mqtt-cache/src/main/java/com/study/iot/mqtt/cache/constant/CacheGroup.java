@@ -10,9 +10,9 @@ package com.study.iot.mqtt.cache.constant;
 
 public interface CacheGroup {
 
-    String CHANNEL = "mqtt.channel";
+    String CHANNEL = "cache.channel";
 
-    String MESSAGE = "mqtt.message";
+    String MESSAGE = "cache.message";
 
-    String TOPIC = "mqtt.topic";
+    String TOPIC = "cache.topic";
 }

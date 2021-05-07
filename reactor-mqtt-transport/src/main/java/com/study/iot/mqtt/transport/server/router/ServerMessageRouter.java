@@ -2,7 +2,7 @@ package com.study.iot.mqtt.transport.server.router;
 
 
 import com.study.iot.mqtt.common.connection.TransportConnection;
-import com.study.iot.mqtt.transport.constant.Group;
+import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import com.study.iot.mqtt.transport.strategy.WillStrategyContainer;
@@ -33,7 +33,7 @@ public class ServerMessageRouter {
             return;
         }
 
-        Optional.ofNullable(container.getStrategy(Group.SERVER, message.fixedHeader().messageType()))
+        Optional.ofNullable(container.getStrategy(StrategyGroup.SERVER, message.fixedHeader().messageType()))
                 .ifPresent(capable -> ((StrategyCapable) capable).handler(message, connection));
     }
 }

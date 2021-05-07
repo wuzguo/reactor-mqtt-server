@@ -4,7 +4,7 @@ import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.session.ServerSession;
-import com.study.iot.mqtt.transport.constant.Group;
+import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -67,7 +67,7 @@ public class ServerConnection implements ServerSession {
                             cacheManager.topic().getConnectionsByTopic(willMessage.getTopicName()))
                             .ifPresent(connections -> connections.forEach(connect -> {
                                 MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                                Optional.ofNullable(messageRouter.getWillContainer().getStrategy(Group.WILL_SERVER, qoS))
+                                Optional.ofNullable(messageRouter.getWillContainer().getStrategy(StrategyGroup.WILL_SERVER, qoS))
                                         .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
                             })));
             // 删除链接
