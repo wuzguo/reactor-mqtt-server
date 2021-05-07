@@ -100,8 +100,7 @@ public class TransportServer {
         }
 
         public TransportBuilder exception(Consumer<Throwable> exceptionConsumer) {
-            Optional.ofNullable(exceptionConsumer)
-                    .ifPresent(config::setThrowableConsumer);
+            Optional.ofNullable(exceptionConsumer).ifPresent(config::setThrowableConsumer);
             return this;
         }
 

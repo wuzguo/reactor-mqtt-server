@@ -18,7 +18,7 @@ public class ProtocolFactory {
         protocols.add(new WsProtocol());
     }
 
-    public void registryProtocl(Protocol protocol) {
+    public void registry(Protocol protocol) {
         protocols.add(protocol);
     }
 

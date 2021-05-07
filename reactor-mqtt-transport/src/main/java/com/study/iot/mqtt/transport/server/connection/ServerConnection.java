@@ -34,19 +34,19 @@ public class ServerConnection implements ServerSession {
 
     private final DisposableServer disposableServer;
 
+    private final DisposableServer wsDisposableServer;
+
     private final CacheManager cacheManager;
 
     private final ServerMessageRouter messageRouter;
 
-    private final DisposableServer wsDisposableServer;
-
-    public ServerConnection(UnicastProcessor<TransportConnection> connections, DisposableServer disposableServer,
+    public ServerConnection(UnicastProcessor<TransportConnection> processor, DisposableServer disposableServer,
                             DisposableServer wsDisposableServer, CacheManager cacheManager, ServerMessageRouter messageRouter) {
         this.disposableServer = disposableServer;
         this.wsDisposableServer = wsDisposableServer;
         this.messageRouter = messageRouter;
         this.cacheManager = cacheManager;
-        connections.subscribe(this::subscribe);
+        processor.subscribe(this::subscribe);
     }
 
     private void subscribe(TransportConnection transport) {

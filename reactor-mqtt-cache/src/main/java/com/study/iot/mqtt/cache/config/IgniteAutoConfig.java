@@ -17,6 +17,7 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -28,19 +29,28 @@ import java.util.Arrays;
  */
 
 @Configuration
+@ConfigurationProperties(prefix = "spring.mqtt.broker", ignoreInvalidFields = true)
 public class IgniteAutoConfig {
 
-    @Value("${spring.mqtt.broker.id}")
-    private String instanceName;
+    /**
+     * 实例ID
+     */
+    private String id;
 
-    @Value("${spring.mqtt.broker.enable-multicast-group: true}")
-    private boolean enableMulticastGroup;
+    /**
+     * 是否启动多播组
+     */
+    private boolean enableMulticastGroup = true;
 
-    @Value("${spring.mqtt.broker.multicast-group: 239.255.255.255}")
-    private String multicastGroup;
+    /**
+     * 多播组
+     */
+    private String multicastGroup = "239.255.255.255";
 
-    @Value("${spring.mqtt.broker.static-ip-addresses: []}")
-    private String[] staticIpAddresses;
+    /**
+     * 静态IP地址
+     */
+    private String[] staticIpAddresses = new String[0];
 
     @Bean
     public IgniteProperties igniteProperties() {
@@ -51,7 +61,7 @@ public class IgniteAutoConfig {
     public Ignite ignite() throws Exception {
         IgniteConfiguration configuration = new IgniteConfiguration();
         // Ignite实例名称
-        configuration.setIgniteInstanceName(instanceName);
+        configuration.setIgniteInstanceName(id);
 
         // The node will be started as a client node.
         configuration.setClientMode(true);
@@ -64,12 +74,12 @@ public class IgniteAutoConfig {
         configuration.setGridLogger(new Slf4jLogger(logger));
         // 非持久化数据区域
         DataRegionConfiguration notPersistence = new DataRegionConfiguration().setPersistenceEnabled(false)
-                .setInitialSize(igniteProperties().getNotPersistenceInitialSize() * 1024 * 1024)
-                .setMaxSize(igniteProperties().getNotPersistenceMaxSize() * 1024 * 1024).setName("not-persistence-data-region");
+                .setInitialSize(igniteProperties().getNotPersistenceInitialSize() * 1024 * 1024L)
+                .setMaxSize(igniteProperties().getNotPersistenceMaxSize() * 1024 * 1024L).setName("not-persistence-data-region");
         // 持久化数据区域
         DataRegionConfiguration persistence = new DataRegionConfiguration().setPersistenceEnabled(true)
-                .setInitialSize(igniteProperties().getPersistenceInitialSize() * 1024 * 1024)
-                .setMaxSize(igniteProperties().getPersistenceMaxSize() * 1024 * 1024).setName("persistence-data-region");
+                .setInitialSize(igniteProperties().getPersistenceInitialSize() * 1024 * 1024L)
+                .setMaxSize(igniteProperties().getPersistenceMaxSize() * 1024 * 1024L).setName("persistence-data-region");
         DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration().setDefaultDataRegionConfiguration(notPersistence)
                 .setDataRegionConfigurations(persistence)
                 .setWalArchivePath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties().getPersistenceStorePath() : null)
@@ -94,43 +104,43 @@ public class IgniteAutoConfig {
     }
 
     @Bean
-    public IgniteCache messageIdCache() throws Exception {
-        CacheConfiguration cacheConfiguration = new CacheConfiguration().setDataRegionName("not-persistence-data-region")
+    public IgniteCache<Object, Object> messageIdCache() throws Exception {
+        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("not-persistence-data-region")
                 .setCacheMode(CacheMode.PARTITIONED).setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL).setName("messageIdCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
-    public IgniteCache retainMessageCache() throws Exception {
-        CacheConfiguration cacheConfiguration = new CacheConfiguration().setDataRegionName("persistence-data-region")
+    public IgniteCache<Object, Object> retainMessageCache() throws Exception {
+        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
                 .setCacheMode(CacheMode.PARTITIONED).setName("retainMessageCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
-    public IgniteCache subscribeNotWildcardCache() throws Exception {
-        CacheConfiguration cacheConfiguration = new CacheConfiguration().setDataRegionName("persistence-data-region")
+    public IgniteCache<Object, Object> subscribeNotWildcardCache() throws Exception {
+        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
                 .setCacheMode(CacheMode.PARTITIONED).setName("subscribeNotWildcardCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
-    public IgniteCache subscribeWildcardCache() throws Exception {
-        CacheConfiguration cacheConfiguration = new CacheConfiguration().setDataRegionName("persistence-data-region")
+    public IgniteCache<Object, Object> subscribeWildcardCache() throws Exception {
+        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
                 .setCacheMode(CacheMode.PARTITIONED).setName("subscribeWildcardCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
-    public IgniteCache dupPublishMessageCache() throws Exception {
-        CacheConfiguration cacheConfiguration = new CacheConfiguration().setDataRegionName("persistence-data-region")
+    public IgniteCache<Object, Object> dupPublishMessageCache() throws Exception {
+        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
                 .setCacheMode(CacheMode.PARTITIONED).setName("dupPublishMessageCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
-    public IgniteCache dupPubRelMessageCache() throws Exception {
-        CacheConfiguration cacheConfiguration = new CacheConfiguration().setDataRegionName("persistence-data-region")
+    public IgniteCache<Object, Object> dupPubRelMessageCache() throws Exception {
+        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
                 .setCacheMode(CacheMode.PARTITIONED).setName("dupPubRelMessageCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
