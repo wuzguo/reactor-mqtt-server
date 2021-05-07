@@ -4,6 +4,7 @@ import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.session.ServerSession;
+import com.study.iot.mqtt.transport.constant.Group;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
@@ -30,13 +31,13 @@ import java.util.Optional;
 
 public class ServerConnection implements ServerSession {
 
-    private DisposableServer disposableServer;
+    private final DisposableServer disposableServer;
 
-    private CacheManager cacheManager;
+    private final CacheManager cacheManager;
 
-    private ServerMessageRouter messageRouter;
+    private final ServerMessageRouter messageRouter;
 
-    private DisposableServer wsDisposableServer;
+    private final DisposableServer wsDisposableServer;
 
     public ServerConnection(UnicastProcessor<TransportConnection> connections, DisposableServer disposableServer,
                             DisposableServer wsDisposableServer, CacheManager cacheManager, ServerMessageRouter messageRouter) {
@@ -64,18 +65,9 @@ public class ServerConnection implements ServerSession {
                     .ifPresent(willMessage -> Optional.ofNullable(cacheManager.topic().getConnectionsByTopic(willMessage.getTopicName()))
                             .ifPresent(connections -> connections.forEach(connect -> {
                                 MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                                switch (qoS) {
-                                    case AT_LEAST_ONCE:
-                                        connect.sendMessage(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf()).subscribe();
-                                        break;
-                                    case EXACTLY_ONCE:
-                                    case AT_MOST_ONCE:
-                                        connect.sendMessageRetry(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf()).subscribe();
-                                        break;
-                                    default:
-                                        connect.sendMessage(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf()).subscribe();
-                                        break;
-                                }
+                                Optional.ofNullable(messageRouter.getWillContainer())
+                                        .map(willContainer -> willContainer.getStrategy(Group.WILL, qoS))
+                                        .ifPresent(willCapable -> willCapable.handler(qoS, connect, willMessage));
                             })));
             // 删除链接
             cacheManager.channel().removeConnections(transport);

@@ -13,4 +13,6 @@ public interface Group {
     String SERVER = "mqtt.server";
 
     String CLIENT = "mqtt.client";
+
+    String WILL = "mqtt.will";
 }
