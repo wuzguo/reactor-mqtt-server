@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @StrategyService(group = Group.SERVER, type = MqttMessageType.UNSUBSCRIBE)
-public class UnSubscribeHandler implements StrategyCapable {
+public class UnSubscribeServerHandler implements StrategyCapable {
 
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {

@@ -18,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = Group.SERVER, type = MqttMessageType.PINGRESP)
-public class PingRespHandler implements StrategyCapable {
+@StrategyService(group = Group.SERVER, type = MqttMessageType.PUBACK)
+public class PubAckServerHandler implements StrategyCapable {
 
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {

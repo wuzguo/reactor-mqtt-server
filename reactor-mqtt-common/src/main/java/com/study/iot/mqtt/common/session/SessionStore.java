@@ -10,56 +10,56 @@ import java.io.Serializable;
  */
 public class SessionStore implements Serializable {
 
-	private static final long serialVersionUID = 5209539791996944490L;
+    private static final long serialVersionUID = 5209539791996944490L;
 
-	private String clientId;
+    private String clientId;
 
-	private Channel channel;
+    private Channel channel;
 
-	private boolean cleanSession;
+    private boolean cleanSession;
 
-	private MqttPublishMessage willMessage;
+    private MqttPublishMessage willMessage;
 
-	public SessionStore(String clientId, Channel channel, boolean cleanSession, MqttPublishMessage willMessage) {
-		this.clientId = clientId;
-		this.channel = channel;
-		this.cleanSession = cleanSession;
-		this.willMessage = willMessage;
-	}
+    public SessionStore(String clientId, Channel channel, boolean cleanSession, MqttPublishMessage willMessage) {
+        this.clientId = clientId;
+        this.channel = channel;
+        this.cleanSession = cleanSession;
+        this.willMessage = willMessage;
+    }
 
-	public String getClientId() {
-		return clientId;
-	}
+    public String getClientId() {
+        return clientId;
+    }
 
-	public SessionStore setClientId(String clientId) {
-		this.clientId = clientId;
-		return this;
-	}
+    public SessionStore setClientId(String clientId) {
+        this.clientId = clientId;
+        return this;
+    }
 
-	public Channel getChannel() {
-		return channel;
-	}
+    public Channel getChannel() {
+        return channel;
+    }
 
-	public SessionStore setChannel(Channel channel) {
-		this.channel = channel;
-		return this;
-	}
+    public SessionStore setChannel(Channel channel) {
+        this.channel = channel;
+        return this;
+    }
 
-	public boolean isCleanSession() {
-		return cleanSession;
-	}
+    public boolean isCleanSession() {
+        return cleanSession;
+    }
 
-	public SessionStore setCleanSession(boolean cleanSession) {
-		this.cleanSession = cleanSession;
-		return this;
-	}
+    public SessionStore setCleanSession(boolean cleanSession) {
+        this.cleanSession = cleanSession;
+        return this;
+    }
 
-	public MqttPublishMessage getWillMessage() {
-		return willMessage;
-	}
+    public MqttPublishMessage getWillMessage() {
+        return willMessage;
+    }
 
-	public SessionStore setWillMessage(MqttPublishMessage willMessage) {
-		this.willMessage = willMessage;
-		return this;
-	}
+    public SessionStore setWillMessage(MqttPublishMessage willMessage) {
+        this.willMessage = willMessage;
+        return this;
+    }
 }

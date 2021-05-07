@@ -23,6 +23,14 @@ public class TransportClient {
 
     }
 
+    public static TransportBuilder create(String ip, int port) {
+        return new TransportBuilder(ip, port);
+    }
+
+    public TransportBuilder create() {
+        return new TransportBuilder();
+    }
+
     public static class TransportBuilder {
 
         public TransportBuilder() {
@@ -119,13 +127,5 @@ public class TransportClient {
             return transportFactory.connect(config);
         }
 
-    }
-
-    public static TransportBuilder create(String ip, int port) {
-        return new TransportBuilder(ip, port);
-    }
-
-    public TransportBuilder create() {
-        return new TransportBuilder();
     }
 }

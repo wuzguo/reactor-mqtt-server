@@ -5,13 +5,13 @@ package com.study.iot.mqtt.common.service;
  */
 public interface IMessageIdService {
 
-	/**
-	 * 获取报文标识符
-	 */
-	int getNextMessageId();
+    /**
+     * 获取报文标识符
+     */
+    int getNextMessageId();
 
-	/**
-	 * 释放报文标识符
-	 */
-	void releaseMessageId(int messageId);
+    /**
+     * 释放报文标识符
+     */
+    void releaseMessageId(int messageId);
 }

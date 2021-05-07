@@ -43,16 +43,15 @@ public class TransportConnection implements Disposable {
     private List<String> topics = new CopyOnWriteArrayList<>();
 
 
-    public <T> Flux<T> receive(Class<T> tClass) {
-        return inbound.receive().cast(tClass);
-    }
-
     public TransportConnection(Connection connection) {
         this.connection = connection;
         this.inbound = connection.inbound();
         this.outbound = connection.outbound();
     }
 
+    public <T> Flux<T> receive(Class<T> tClass) {
+        return inbound.receive().cast(tClass);
+    }
 
     public void destory() {
         concurrentHashMap.values().forEach(Disposable::dispose);

@@ -6,16 +6,16 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public interface ClientSession extends  Disposable{
+public interface ClientSession extends Disposable {
 
 
-    Mono<Void> pub(String topic, byte[] message, boolean retained, int qos) ;
+    Mono<Void> pub(String topic, byte[] message, boolean retained, int qos);
 
-    Mono<Void> pub(String topic, byte[]  message);
+    Mono<Void> pub(String topic, byte[] message);
 
-    Mono<Void> pub(String topic, byte[]  message,int qos);
+    Mono<Void> pub(String topic, byte[] message, int qos);
 
-    Mono<Void> pub(String topic, byte[]  message,boolean retained);
+    Mono<Void> pub(String topic, byte[] message, boolean retained);
 
     Mono<Void> sub(String... subMessages);
 
@@ -23,10 +23,9 @@ public interface ClientSession extends  Disposable{
 
     Mono<Void> unsub();
 
-    Mono<Void> messageAcceptor(BiConsumer<String,byte[]> messageAcceptor);
+    Mono<Void> messageAcceptor(BiConsumer<String, byte[]> messageAcceptor);
 
-    void  initHandler();
-
+    void initHandler();
 
 
 }

@@ -9,8 +9,8 @@ import java.util.List;
 public interface ServerSession extends Disposable {
 
 
-  Mono<List<TransportConnection>> getConnections();
+    Mono<List<TransportConnection>> getConnections();
 
 
-  Mono<Void> closeConnect(String clientId);
+    Mono<Void> closeConnect(String clientId);
 }

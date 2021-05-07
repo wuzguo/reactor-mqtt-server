@@ -1,7 +1,6 @@
 package com.study.iot.mqtt.protocol.handler;
 
 
-
 import com.study.iot.mqtt.protocol.ChannelManager;
 import com.study.iot.mqtt.protocol.TransportConnection;
 
@@ -14,7 +13,7 @@ public class MemoryChannelManager implements ChannelManager {
 
     private CopyOnWriteArrayList<TransportConnection> connections = new CopyOnWriteArrayList<>();
 
-    private ConcurrentHashMap<String,TransportConnection> connectionMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, TransportConnection> connectionMap = new ConcurrentHashMap<>();
 
     @Override
     public List<TransportConnection> getConnections() {
@@ -33,7 +32,7 @@ public class MemoryChannelManager implements ChannelManager {
 
     @Override
     public void addDeviceId(String deviceId, TransportConnection connection) {
-        connectionMap.put(deviceId,connection);
+        connectionMap.put(deviceId, connection);
     }
 
     @Override

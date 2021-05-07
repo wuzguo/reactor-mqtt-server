@@ -20,12 +20,12 @@ public class MemoryTopicManager implements TopicManager {
 
     @Override
     public void addTopicConnection(String topic, TransportConnection connection) {
-        topicManager.addTopicConnection(topic,connection);
+        topicManager.addTopicConnection(topic, connection);
     }
 
     @Override
     public void deleteTopicConnection(String topic, TransportConnection connection) {
-        topicManager.deleteTopicConnection(topic,connection);
+        topicManager.deleteTopicConnection(topic, connection);
     }
 
 }

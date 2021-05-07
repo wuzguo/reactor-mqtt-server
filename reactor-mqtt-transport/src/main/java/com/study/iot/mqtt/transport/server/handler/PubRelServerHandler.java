@@ -19,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = Group.SERVER,  type = MqttMessageType.PUBREL)
-public class PubRelHandler implements StrategyCapable {
+@StrategyService(group = Group.SERVER, type = MqttMessageType.PUBREL)
+public class PubRelServerHandler implements StrategyCapable {
 
 
     @Override

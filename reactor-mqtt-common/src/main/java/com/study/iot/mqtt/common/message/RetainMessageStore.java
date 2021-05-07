@@ -7,38 +7,38 @@ import java.io.Serializable;
  */
 public class RetainMessageStore implements Serializable {
 
-	private static final long serialVersionUID = -7548204047370972779L;
+    private static final long serialVersionUID = -7548204047370972779L;
 
-	private String topic;
+    private String topic;
 
-	private byte[] messageBytes;
+    private byte[] messageBytes;
 
-	private int mqttQoS;
+    private int mqttQoS;
 
-	public String getTopic() {
-		return topic;
-	}
+    public String getTopic() {
+        return topic;
+    }
 
-	public RetainMessageStore setTopic(String topic) {
-		this.topic = topic;
-		return this;
-	}
+    public RetainMessageStore setTopic(String topic) {
+        this.topic = topic;
+        return this;
+    }
 
-	public byte[] getMessageBytes() {
-		return messageBytes;
-	}
+    public byte[] getMessageBytes() {
+        return messageBytes;
+    }
 
-	public RetainMessageStore setMessageBytes(byte[] messageBytes) {
-		this.messageBytes = messageBytes;
-		return this;
-	}
+    public RetainMessageStore setMessageBytes(byte[] messageBytes) {
+        this.messageBytes = messageBytes;
+        return this;
+    }
 
-	public int getMqttQoS() {
-		return mqttQoS;
-	}
+    public int getMqttQoS() {
+        return mqttQoS;
+    }
 
-	public RetainMessageStore setMqttQoS(int mqttQoS) {
-		this.mqttQoS = mqttQoS;
-		return this;
-	}
+    public RetainMessageStore setMqttQoS(int mqttQoS) {
+        this.mqttQoS = mqttQoS;
+        return this;
+    }
 }

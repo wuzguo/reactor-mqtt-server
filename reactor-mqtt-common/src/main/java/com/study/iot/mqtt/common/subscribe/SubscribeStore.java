@@ -7,44 +7,44 @@ import java.io.Serializable;
  */
 public class SubscribeStore implements Serializable {
 
-	private static final long serialVersionUID = 1276156087085594264L;
+    private static final long serialVersionUID = 1276156087085594264L;
 
-	private String clientId;
+    private String clientId;
 
-	private String topicFilter;
+    private String topicFilter;
 
-	private int mqttQoS;
+    private int mqttQoS;
 
-	public SubscribeStore(String clientId, String topicFilter, int mqttQoS) {
-		this.clientId = clientId;
-		this.topicFilter = topicFilter;
-		this.mqttQoS = mqttQoS;
-	}
+    public SubscribeStore(String clientId, String topicFilter, int mqttQoS) {
+        this.clientId = clientId;
+        this.topicFilter = topicFilter;
+        this.mqttQoS = mqttQoS;
+    }
 
-	public String getClientId() {
-		return clientId;
-	}
+    public String getClientId() {
+        return clientId;
+    }
 
-	public SubscribeStore setClientId(String clientId) {
-		this.clientId = clientId;
-		return this;
-	}
+    public SubscribeStore setClientId(String clientId) {
+        this.clientId = clientId;
+        return this;
+    }
 
-	public String getTopicFilter() {
-		return topicFilter;
-	}
+    public String getTopicFilter() {
+        return topicFilter;
+    }
 
-	public SubscribeStore setTopicFilter(String topicFilter) {
-		this.topicFilter = topicFilter;
-		return this;
-	}
+    public SubscribeStore setTopicFilter(String topicFilter) {
+        this.topicFilter = topicFilter;
+        return this;
+    }
 
-	public int getMqttQoS() {
-		return mqttQoS;
-	}
+    public int getMqttQoS() {
+        return mqttQoS;
+    }
 
-	public SubscribeStore setMqttQoS(int mqttQoS) {
-		this.mqttQoS = mqttQoS;
-		return this;
-	}
+    public SubscribeStore setMqttQoS(int mqttQoS) {
+        this.mqttQoS = mqttQoS;
+        return this;
+    }
 }

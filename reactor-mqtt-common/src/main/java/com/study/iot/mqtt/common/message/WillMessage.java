@@ -1,6 +1,9 @@
 package com.study.iot.mqtt.common.message;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 /**

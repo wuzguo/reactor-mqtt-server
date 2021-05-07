@@ -2,7 +2,6 @@ package com.study.iot.mqtt.transport.strategy;
 
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.*;
@@ -34,6 +33,7 @@ public @interface StrategyService {
 
     /**
      * 策略组
+     *
      * @return {@link MqttMessageType}
      */
     String group();

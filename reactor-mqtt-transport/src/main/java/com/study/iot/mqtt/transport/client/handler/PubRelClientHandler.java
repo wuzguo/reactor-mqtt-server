@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.transport.client.handler;
 
+
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.TransportConnection;
 import com.study.iot.mqtt.transport.constant.Group;
@@ -14,12 +15,13 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/22 9:20
+ * @date 2021/4/22 9:21
  */
 
 @Slf4j
-// @StrategyService(group = Group.CLIENT, type = MqttMessageType.PUBACK)
-public class PubAckHandler implements StrategyCapable {
+@StrategyService(group = Group.CLIENT,  type = MqttMessageType.PUBREL)
+public class PubRelClientHandler implements StrategyCapable {
+
 
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {

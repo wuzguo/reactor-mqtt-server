@@ -9,24 +9,24 @@ import java.util.List;
  */
 public interface IDupPublishMessageStoreService {
 
-	/**
-	 * 存储消息
-	 */
-	void put(String clientId, DupPublishMessageStore dupPublishMessageStore);
+    /**
+     * 存储消息
+     */
+    void put(String clientId, DupPublishMessageStore dupPublishMessageStore);
 
-	/**
-	 * 获取消息集合
-	 */
-	List<DupPublishMessageStore> get(String clientId);
+    /**
+     * 获取消息集合
+     */
+    List<DupPublishMessageStore> get(String clientId);
 
-	/**
-	 * 删除消息
-	 */
-	void remove(String clientId, int messageId);
+    /**
+     * 删除消息
+     */
+    void remove(String clientId, int messageId);
 
-	/**
-	 * 删除消息
-	 */
-	void removeByClient(String clientId);
+    /**
+     * 删除消息
+     */
+    void removeByClient(String clientId);
 
 }

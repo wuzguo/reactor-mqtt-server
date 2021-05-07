@@ -5,13 +5,13 @@ import java.util.function.Consumer;
 
 public interface ConnectConfiguration {
 
-    void setIp(String ip);
-
-    void setPort(int port);
-
     String getIp();
 
+    void setIp(String ip);
+
     int getPort();
+
+    void setPort(int port);
 
     String getProtocol();
 
@@ -19,19 +19,19 @@ public interface ConnectConfiguration {
 
     boolean isLog();
 
-    int  getHeart();
+    int getHeart();
 
     Consumer<Throwable> getThrowableConsumer();
 
     void checkConfig();
 
     boolean isKeepAlive();
-    
+
     boolean isNoDelay();
-    
+
     int getSendBufSize();
-    
+
     int getRevBufSize();
-    
+
     int getBacklog();
 }

@@ -19,11 +19,11 @@ import org.springframework.boot.ApplicationRunner;
 @Slf4j
 public class MqttServer implements ApplicationRunner {
 
+    private StrategyContainer container;
+
     public MqttServer(StrategyContainer container) {
         this.container = container;
     }
-
-    private StrategyContainer container;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

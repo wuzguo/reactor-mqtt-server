@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler;
+package com.study.iot.mqtt.transport.client.handler;
 
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.TransportConnection;
@@ -18,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = Group.SERVER, type = MqttMessageType.DISCONNECT)
-public class DisConnectHandler implements StrategyCapable {
+@StrategyService(group = Group.CLIENT, type = MqttMessageType.PUBACK)
+public class PubAckClientHandler implements StrategyCapable {
 
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {

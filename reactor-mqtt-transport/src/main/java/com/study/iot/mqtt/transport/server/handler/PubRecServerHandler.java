@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @StrategyService(group = Group.SERVER, type = MqttMessageType.PUBREC)
-public class PubRecHandler implements StrategyCapable {
+public class PubRecServerHandler implements StrategyCapable {
 
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {

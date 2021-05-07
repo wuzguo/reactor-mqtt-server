@@ -19,13 +19,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TransportMessage {
 
-   private String topic;
+    private String topic;
 
-   private byte[] message;
+    private byte[] message;
 
-   private int   qos;
+    private int qos;
 
-   private boolean isRetain;
+    private boolean isRetain;
 
-   private boolean isDup;
+    private boolean isDup;
 }

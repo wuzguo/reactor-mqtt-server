@@ -69,7 +69,7 @@ public class ServerConfiguration implements ConnectConfiguration {
 
     private MessageHandler messageHandler = new MemoryMessageHandler();
 
-    private ChannelManager channelManager= new MemoryChannelManager();
+    private ChannelManager channelManager = new MemoryChannelManager();
 
     private TopicManager topicManager = new MemoryTopicManager();
 

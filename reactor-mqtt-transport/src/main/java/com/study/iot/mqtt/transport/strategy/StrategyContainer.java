@@ -21,9 +21,8 @@ import java.util.Map;
 @AllArgsConstructor
 public class StrategyContainer implements ApplicationContextAware {
 
-    private final ApplicationContext applicationContext;
-
     private static final Map<String, Map<MqttMessageType, Class<? extends StrategyCapable>>> container = Maps.newConcurrentMap();
+    private final ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
