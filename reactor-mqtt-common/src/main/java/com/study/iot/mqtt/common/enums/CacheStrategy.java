@@ -17,13 +17,11 @@ import java.util.Objects;
 @AllArgsConstructor
 public enum CacheStrategy {
 
-    MEMORY(0, "内存"),
-    IGNITE(1, "ignite"),
-    REDIS(2, "redis");
+    MEMORY(0),
+    IGNITE(1),
+    REDIS(2);
 
     private Integer code;
-
-    private String desc;
 
     public static CacheStrategy valueOf(Integer code) {
         for (CacheStrategy strategyEnum : CacheStrategy.values()) {
