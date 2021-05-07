@@ -15,12 +15,12 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/22 9:21
+ * @date 2021/4/22 9:17
  */
 
 @Slf4j
-@StrategyService(group = Group.CLIENT,  type = MqttMessageType.PUBREL)
-public class PubRelClientHandler implements StrategyCapable {
+@StrategyService(group = Group.CLIENT, type = MqttMessageType.CONNACK)
+public class ClientConnAckHandler implements StrategyCapable {
 
 
     @Override

@@ -26,7 +26,7 @@ public class ClientMessageRouter {
         log.info("accept message channel {} info {}", connection.getConnection(), message);
 
         if (!message.decoderResult().isSuccess()) {
-            log.error("accept message  error{}", message.decoderResult().toString());
+            log.error("accept message  error {}", message.decoderResult().toString());
             return;
         }
 

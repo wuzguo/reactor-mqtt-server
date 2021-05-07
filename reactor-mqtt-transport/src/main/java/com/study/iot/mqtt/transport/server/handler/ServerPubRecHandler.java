@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.transport.server.handler;
 
-
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.TransportConnection;
 import com.study.iot.mqtt.transport.constant.Group;
@@ -19,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = Group.SERVER, type = MqttMessageType.UNSUBSCRIBE)
-public class UnSubscribeServerHandler implements StrategyCapable {
+@StrategyService(group = Group.SERVER, type = MqttMessageType.PUBREC)
+public class ServerPubRecHandler implements StrategyCapable {
 
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {

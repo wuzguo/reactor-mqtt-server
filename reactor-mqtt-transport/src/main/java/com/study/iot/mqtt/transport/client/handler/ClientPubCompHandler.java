@@ -14,12 +14,12 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/22 9:20
+ * @date 2021/4/22 9:21
  */
 
 @Slf4j
-@StrategyService(group = Group.CLIENT, type = MqttMessageType.PUBACK)
-public class PubAckClientHandler implements StrategyCapable {
+@StrategyService(group = Group.CLIENT, type = MqttMessageType.PUBCOMP)
+public class ClientPubCompHandler implements StrategyCapable {
 
     @Override
     public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {
