@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.cache.manager;
 
 import com.study.iot.mqtt.cache.strategy.CacheCapable;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 
 import java.util.List;
 
@@ -10,52 +10,52 @@ public interface ChannelManager extends CacheCapable {
     /**
      * 获取连接
      *
-     * @return {@link TransportConnection}
+     * @return {@link DisposableConnection}
      */
-    List<TransportConnection> getConnections();
+    List<DisposableConnection> getConnections();
 
     /**
      * 添加连接
      *
-     * @param connection {@link TransportConnection}
+     * @param connection {@link DisposableConnection}
      */
-    void addConnections(TransportConnection connection);
+    void addConnections(DisposableConnection connection);
 
     /**
      * 移除连接
      *
      * @param connection 连接
      */
-    void removeConnection(TransportConnection connection);
+    void removeConnection(DisposableConnection connection);
 
     /**
      * 添加连接
      *
-     * @param deviceId   设备标识
+     * @param identity   设备标识
      * @param connection 连接
      */
-    void add(String deviceId, TransportConnection connection);
+    void add(String identity, DisposableConnection connection);
 
     /**
      * 移除通道
      *
-     * @param deviceId 设备标识
+     * @param identity 设备标识
      */
-    void removeChannel(String deviceId);
+    void removeChannel(String identity);
 
     /**
      * 获取并移除
      *
-     * @param deviceId 设备ID
-     * @return {@link TransportConnection}
+     * @param identity 设备ID
+     * @return {@link DisposableConnection}
      */
-    TransportConnection getAndRemove(String deviceId);
+    DisposableConnection getAndRemove(String identity);
 
     /**
      * 检查
      *
-     * @param deviceId 设备ID
+     * @param identity 设备ID
      * @return {@link Boolean}
      */
-    Boolean check(String deviceId);
+    Boolean check(String identity);
 }

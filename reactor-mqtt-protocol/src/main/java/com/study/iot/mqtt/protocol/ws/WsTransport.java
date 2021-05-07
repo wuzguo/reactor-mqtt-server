@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.protocol.ws;
 
 
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -28,10 +28,10 @@ public class WsTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<TransportConnection> processor) {
+    public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<DisposableConnection> processor) {
         return buildServer(config).doOnConnection(connection -> {
             protocol.getHandlers().forEach(connection::addHandlerLast);
-            processor.onNext(new TransportConnection(connection));
+            processor.onNext(new DisposableConnection(connection));
         }).bind().doOnError(config.getThrowableConsumer());
     }
 
@@ -62,12 +62,12 @@ public class WsTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<TransportConnection> connect(ConnectConfiguration config) {
+    public Mono<DisposableConnection> connect(ConnectConfiguration config) {
         return Mono.just(buildClient(config)
                 .connectNow())
                 .map(connection -> {
                     protocol.getHandlers().forEach(connection::addHandler);
-                    return new TransportConnection(connection);
+                    return new DisposableConnection(connection);
                 });
     }
 

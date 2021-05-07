@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.client.router;
 
 
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
@@ -21,7 +21,7 @@ public class ClientMessageRouter {
         this.container = container;
     }
 
-    public void handler(MqttMessage message, TransportConnection connection) {
+    public void handler(MqttMessage message, DisposableConnection connection) {
         log.info("accept message channel {} info {}", connection.getConnection(), message);
 
         if (!message.decoderResult().isSuccess()) {

@@ -3,7 +3,7 @@ package com.study.iot.mqtt.transport.server;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.ProtocolFactory;
 import com.study.iot.mqtt.protocol.config.ServerConfiguration;
 import com.study.iot.mqtt.protocol.session.ServerSession;
@@ -20,7 +20,7 @@ public class TransportServerFactory {
 
     private final ProtocolFactory protocolFactory;
 
-    private final UnicastProcessor<TransportConnection> unicastProcessor = UnicastProcessor.create();
+    private final UnicastProcessor<DisposableConnection> unicastProcessor = UnicastProcessor.create();
 
     private DisposableServer disposableServer;
 

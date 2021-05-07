@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.client.connection;
 
 import com.google.common.collect.Lists;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MqttMessageApi;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ClientConnection implements ClientSession {
 
-    private final TransportConnection connection;
+    private final DisposableConnection connection;
 
     private final ClientMessageRouter clientMessageRouter;
 
@@ -41,7 +41,7 @@ public class ClientConnection implements ClientSession {
 
     private final ClientConfiguration configuration;
 
-    public ClientConnection(TransportConnection connection, ClientConfiguration configuration, ClientMessageRouter messageRouter) {
+    public ClientConnection(DisposableConnection connection, ClientConfiguration configuration, ClientMessageRouter messageRouter) {
         this.connection = connection;
         this.configuration = configuration;
         this.clientMessageRouter = messageRouter;

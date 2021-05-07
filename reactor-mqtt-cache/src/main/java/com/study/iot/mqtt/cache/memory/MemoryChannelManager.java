@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.manager.ChannelManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 
 import java.util.List;
@@ -24,43 +24,43 @@ import java.util.Map;
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.MEMORY)
 public class MemoryChannelManager implements ChannelManager {
 
-    private final List<TransportConnection> connections = Lists.newCopyOnWriteArrayList();
+    private final List<DisposableConnection> connections = Lists.newCopyOnWriteArrayList();
 
 
-    private final Map<String, TransportConnection> mapConnection = Maps.newConcurrentMap();
+    private final Map<String, DisposableConnection> mapConnection = Maps.newConcurrentMap();
 
     @Override
-    public List<TransportConnection> getConnections() {
+    public List<DisposableConnection> getConnections() {
         return connections;
     }
 
     @Override
-    public void addConnections(TransportConnection connection) {
+    public void addConnections(DisposableConnection connection) {
         connections.add(connection);
     }
 
     @Override
-    public void removeConnection(TransportConnection connection) {
+    public void removeConnection(DisposableConnection connection) {
         connections.remove(connection);
     }
 
     @Override
-    public void add(String deviceId, TransportConnection connection) {
-        mapConnection.put(deviceId, connection);
+    public void add(String identity, DisposableConnection connection) {
+        mapConnection.put(identity, connection);
     }
 
     @Override
-    public void removeChannel(String deviceId) {
-        mapConnection.remove(deviceId);
+    public void removeChannel(String identity) {
+        mapConnection.remove(identity);
     }
 
     @Override
-    public TransportConnection getAndRemove(String deviceId) {
-        return mapConnection.remove(deviceId);
+    public DisposableConnection getAndRemove(String identity) {
+        return mapConnection.remove(identity);
     }
 
     @Override
-    public Boolean check(String deviceId) {
-        return mapConnection.containsKey(deviceId);
+    public Boolean check(String identity) {
+        return mapConnection.containsKey(identity);
     }
 }

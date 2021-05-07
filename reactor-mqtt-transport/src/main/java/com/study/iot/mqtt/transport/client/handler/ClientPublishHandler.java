@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.client.handler;
 
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientPublishHandler implements StrategyCapable {
 
     @Override
-    public void handler(MqttMessage message, TransportConnection connection) {
+    public void handler(MqttMessage message, DisposableConnection connection) {
 
     }
 }

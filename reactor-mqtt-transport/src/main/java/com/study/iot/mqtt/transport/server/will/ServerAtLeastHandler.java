@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.server.will;
 
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
@@ -19,7 +19,7 @@ import io.netty.handler.codec.mqtt.MqttQoS;
 public class ServerAtLeastHandler implements WillCapable {
 
     @Override
-    public void handler(MqttQoS qoS, TransportConnection connection, WillMessage willMessage) {
+    public void handler(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
         connection.sendMessage(false, qoS, willMessage.isRetain(), willMessage.getTopicName(), willMessage.getCopyByteBuf())
                 .subscribe();
     }

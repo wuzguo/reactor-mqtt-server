@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.protocol;
 
 
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.protocol.session.ServerSession;
@@ -18,7 +18,7 @@ public class AttributeKeys {
 
     public AttributeKey<Disposable> closeConnection = AttributeKey.valueOf("close_connection");
 
-    public AttributeKey<TransportConnection> connectionAttributeKey = AttributeKey.valueOf("transport_connection");
+    public AttributeKey<DisposableConnection> connectionAttributeKey = AttributeKey.valueOf("transport_connection");
 
     public AttributeKey<String> device_id = AttributeKey.valueOf("device_id");
 

@@ -3,7 +3,7 @@ package com.study.iot.mqtt.cache.ignite;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.manager.ChannelManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import org.apache.ignite.IgniteCache;
 
@@ -22,40 +22,40 @@ import java.util.List;
 public class IgniteChannelManager implements ChannelManager {
 
     @Resource
-    private IgniteCache<String, TransportConnection> connectionCache;
+    private IgniteCache<String, DisposableConnection> connectionCache;
 
     @Override
-    public List<TransportConnection> getConnections() {
+    public List<DisposableConnection> getConnections() {
         return null;
     }
 
     @Override
-    public void addConnections(TransportConnection connection) {
+    public void addConnections(DisposableConnection connection) {
 
     }
 
     @Override
-    public void removeConnection(TransportConnection connection) {
+    public void removeConnection(DisposableConnection connection) {
 
     }
 
     @Override
-    public void add(String deviceId, TransportConnection connection) {
-        connectionCache.put(deviceId, connection);
+    public void add(String identity, DisposableConnection connection) {
+        connectionCache.put(identity, connection);
     }
 
     @Override
-    public void removeChannel(String deviceId) {
-        connectionCache.remove(deviceId);
+    public void removeChannel(String identity) {
+        connectionCache.remove(identity);
     }
 
     @Override
-    public TransportConnection getAndRemove(String deviceId) {
-        return connectionCache.getAndRemove(deviceId);
+    public DisposableConnection getAndRemove(String identity) {
+        return connectionCache.getAndRemove(identity);
     }
 
     @Override
-    public Boolean check(String deviceId) {
-        return connectionCache.containsKey(deviceId);
+    public Boolean check(String identity) {
+        return connectionCache.containsKey(identity);
     }
 }

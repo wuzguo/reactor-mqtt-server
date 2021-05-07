@@ -3,7 +3,7 @@ package com.study.iot.mqtt.cache.path;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,9 +20,9 @@ import java.util.concurrent.TimeUnit;
 
 public class CacheTopicManager {
 
-    private final TopicMap<String, TransportConnection> mapPath = new TopicMap<>();
+    private final TopicMap<String, DisposableConnection> mapPath = new TopicMap<>();
 
-    private final LoadingCache<String, Optional<List<TransportConnection>>> cache =
+    private final LoadingCache<String, Optional<List<DisposableConnection>>> cache =
             // 设置并发级别为8，并发级别是指可以同时写缓存的线程数
             CacheBuilder.newBuilder()
                     // 设置缓存容器的初始容量为10
@@ -35,16 +35,16 @@ public class CacheTopicManager {
                     .recordStats()
                     // 设置读写缓存后n秒钟过期,实际很少用到,类似于expireAfterWrite
                     .expireAfterWrite(20, TimeUnit.MINUTES)
-                    .build(new CacheLoader<String, Optional<List<TransportConnection>>>() {
+                    .build(new CacheLoader<String, Optional<List<DisposableConnection>>>() {
                         @Override
-                        public Optional<List<TransportConnection>> load(@NotNull String key) throws Exception {
+                        public Optional<List<DisposableConnection>> load(@NotNull String key) throws Exception {
                             String[] methodArray = key.split("/");
                             return Optional.ofNullable(mapPath.getData(methodArray));
                         }
                     });
 
 
-    public Optional<List<TransportConnection>> getConnections(String topic) {
+    public Optional<List<DisposableConnection>> getConnections(String topic) {
         try {
             return cache.getUnchecked(topic);
         } catch (Exception e) {
@@ -52,13 +52,13 @@ public class CacheTopicManager {
         }
     }
 
-    public void addConnection(String topic, TransportConnection connection) {
+    public void addConnection(String topic, DisposableConnection connection) {
         String[] methodArray = topic.split("/");
         mapPath.putData(methodArray, connection);
         cache.invalidate(topic);
     }
 
-    public void deleteConnection(String topic, TransportConnection connection) {
+    public void deleteConnection(String topic, DisposableConnection connection) {
         String[] methodArray = topic.split("/");
         mapPath.delete(methodArray, connection);
         cache.invalidate(topic);

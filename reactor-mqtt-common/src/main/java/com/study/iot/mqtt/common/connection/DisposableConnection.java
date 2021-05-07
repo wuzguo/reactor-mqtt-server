@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.common.connection;
 
+import com.google.common.collect.Maps;
 import com.study.iot.mqtt.common.message.TransportMessage;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -17,8 +18,8 @@ import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -26,7 +27,7 @@ import java.util.concurrent.atomic.LongAdder;
 @Setter
 @ToString
 @Slf4j
-public class TransportConnection implements Disposable {
+public class DisposableConnection implements Disposable {
 
     private NettyInbound inbound;
 
@@ -36,14 +37,14 @@ public class TransportConnection implements Disposable {
 
     private LongAdder longAdder = new LongAdder();
 
-    private ConcurrentHashMap<Integer, Disposable> concurrentHashMap = new ConcurrentHashMap<>(); //
+    private Map<Integer, Disposable> mapDisposable = Maps.newHashMap();
 
-    private ConcurrentHashMap<Integer, TransportMessage> qos2Message = new ConcurrentHashMap<>();
+    private Map<Integer, TransportMessage> mapQosMessage = Maps.newHashMap();
 
     private List<String> topics = new CopyOnWriteArrayList<>();
 
 
-    public TransportConnection(Connection connection) {
+    public DisposableConnection(Connection connection) {
         this.connection = connection;
         this.inbound = connection.inbound();
         this.outbound = connection.outbound();
@@ -54,9 +55,9 @@ public class TransportConnection implements Disposable {
     }
 
     public void destory() {
-        concurrentHashMap.values().forEach(Disposable::dispose);
-        concurrentHashMap.clear();
-        qos2Message.clear();
+        mapDisposable.values().forEach(Disposable::dispose);
+        mapDisposable.clear();
+        mapQosMessage.clear();
         topics.clear();
     }
 
@@ -98,29 +99,29 @@ public class TransportConnection implements Disposable {
 
 
     public void saveQos2Message(Integer messageId, TransportMessage message) {
-        qos2Message.put(messageId, message);
+        mapQosMessage.put(messageId, message);
     }
 
 
     public Optional<TransportMessage> getAndRemoveQos2Message(Integer messageId) {
-        TransportMessage message = qos2Message.get(messageId);
-        qos2Message.remove(messageId);
+        TransportMessage message = mapQosMessage.get(messageId);
+        mapQosMessage.remove(messageId);
         return Optional.ofNullable(message);
     }
 
     public boolean containQos2Message(Integer messageId, byte[] bytes) {
-        return qos2Message.containsKey(messageId);
+        return mapQosMessage.containsKey(messageId);
     }
 
 
     public void addDisposable(Integer messageId, Disposable disposable) {
-        concurrentHashMap.put(messageId, disposable);
+        mapDisposable.put(messageId, disposable);
     }
 
 
     public void cancelDisposable(Integer messageId) {
-        Optional.ofNullable(concurrentHashMap.get(messageId)).ifPresent(Disposable::dispose);
-        concurrentHashMap.remove(messageId);
+        Optional.ofNullable(mapDisposable.get(messageId)).ifPresent(Disposable::dispose);
+        mapDisposable.remove(messageId);
     }
 
 

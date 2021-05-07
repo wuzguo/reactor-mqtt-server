@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.manager.TopicManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import org.apache.ignite.IgniteCache;
 
@@ -24,22 +24,22 @@ import java.util.Optional;
 public class IgniteTopicManager implements TopicManager {
 
     @Resource
-    private IgniteCache<String, List<TransportConnection>> messages;
+    private IgniteCache<String, List<DisposableConnection>> messages;
 
     @Override
-    public List<TransportConnection> getConnections(String topic) {
+    public List<DisposableConnection> getConnections(String topic) {
         return messages.get(topic);
     }
 
     @Override
-    public void addConnection(String topic, TransportConnection connection) {
-        List<TransportConnection> connections = Optional.ofNullable(messages.get(topic)).orElse(Lists.newArrayList());
+    public void addConnection(String topic, DisposableConnection connection) {
+        List<DisposableConnection> connections = Optional.ofNullable(messages.get(topic)).orElse(Lists.newArrayList());
         connections.add(connection);
         messages.put(topic, connections);
     }
 
     @Override
-    public void deleteConnection(String topic, TransportConnection connection) {
+    public void deleteConnection(String topic, DisposableConnection connection) {
         Optional.ofNullable(messages.get(topic)).ifPresent(connections -> connections.remove(connection));
     }
 }

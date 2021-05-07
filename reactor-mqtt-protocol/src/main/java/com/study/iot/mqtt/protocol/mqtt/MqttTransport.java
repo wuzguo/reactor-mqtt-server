@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.protocol.mqtt;
 
 
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
@@ -32,10 +32,10 @@ public class MqttTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<TransportConnection> processor) {
+    public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<DisposableConnection> processor) {
         return buildServer(config).doOnConnection(connection -> {
             protocol.getHandlers().forEach(connection::addHandlerLast);
-            processor.onNext(new TransportConnection(connection));
+            processor.onNext(new DisposableConnection(connection));
         }).bind().doOnError(config.getThrowableConsumer());
     }
 
@@ -65,18 +65,18 @@ public class MqttTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<TransportConnection> connect(ConnectConfiguration config) {
+    public Mono<DisposableConnection> connect(ConnectConfiguration config) {
         return buildClient(config).connect().map(connection -> {
             Connection connect = connection;
             protocol.getHandlers().forEach(connect::addHandler);
-            TransportConnection transportConnection = new TransportConnection(connection);
-            connection.onDispose(() -> retryConnect(config, transportConnection));
+            DisposableConnection disposableConnection = new DisposableConnection(connection);
+            connection.onDispose(() -> retryConnect(config, disposableConnection));
             log.info("connected successed !");
-            return transportConnection;
+            return disposableConnection;
         });
     }
 
-    private void retryConnect(ConnectConfiguration config, TransportConnection transportConnection) {
+    private void retryConnect(ConnectConfiguration config, DisposableConnection disposableConnection) {
         log.info("Short-term reconnection");
         buildClient(config)
                 .connect()
@@ -85,11 +85,11 @@ public class MqttTransport extends ProtocolTransport {
                 .cast(Connection.class)
                 .subscribe(connection -> {
                     protocol.getHandlers().forEach(connection::addHandler);
-                    Optional.ofNullable(transportConnection.getConnection().channel().attr(AttributeKeys.clientConnectionAttributeKey))
+                    Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.clientConnectionAttributeKey))
                             .map(Attribute::get).ifPresent(clientSession -> {
-                        transportConnection.setConnection(connection);
-                        transportConnection.setInbound(connection.inbound());
-                        transportConnection.setOutbound(connection.outbound());
+                        disposableConnection.setConnection(connection);
+                        disposableConnection.setInbound(connection.inbound());
+                        disposableConnection.setOutbound(connection.outbound());
                         clientSession.init();
                     });
 

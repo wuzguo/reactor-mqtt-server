@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.server.connection;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -40,7 +40,7 @@ public class ServerConnection implements ServerSession {
 
     private final ServerMessageRouter messageRouter;
 
-    public ServerConnection(UnicastProcessor<TransportConnection> processor, DisposableServer disposableServer,
+    public ServerConnection(UnicastProcessor<DisposableConnection> processor, DisposableServer disposableServer,
                             DisposableServer wsDisposableServer, CacheManager cacheManager, ServerMessageRouter messageRouter) {
         this.disposableServer = disposableServer;
         this.wsDisposableServer = wsDisposableServer;
@@ -49,7 +49,7 @@ public class ServerConnection implements ServerSession {
         processor.subscribe(this::subscribe);
     }
 
-    private void subscribe(TransportConnection transport) {
+    private void subscribe(DisposableConnection transport) {
         NettyInbound inbound = transport.getInbound();
         Connection connection = transport.getConnection();
         // 定时关闭
@@ -85,14 +85,14 @@ public class ServerConnection implements ServerSession {
     }
 
     @Override
-    public Mono<List<TransportConnection>> getConnections() {
+    public Mono<List<DisposableConnection>> getConnections() {
         return Mono.just(cacheManager.channel().getConnections());
     }
 
     @Override
     public Mono<Void> closeConnect(String clientId) {
         return Mono.fromRunnable(() -> Optional.ofNullable(cacheManager.channel().getAndRemove(clientId))
-                .ifPresent(TransportConnection::dispose));
+                .ifPresent(DisposableConnection::dispose));
     }
 
     @Override

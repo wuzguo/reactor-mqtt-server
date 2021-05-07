@@ -6,7 +6,7 @@ import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.manager.TopicManager;
 import com.study.iot.mqtt.cache.path.CacheTopicManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 
 import java.util.List;
@@ -25,17 +25,17 @@ public class MemoryTopicManager implements TopicManager {
     private final CacheTopicManager topicManager = new CacheTopicManager();
 
     @Override
-    public List<TransportConnection> getConnections(String topic) {
+    public List<DisposableConnection> getConnections(String topic) {
         return topicManager.getConnections(topic).orElse(Lists.newArrayList());
     }
 
     @Override
-    public void addConnection(String topic, TransportConnection connection) {
+    public void addConnection(String topic, DisposableConnection connection) {
         topicManager.addConnection(topic, connection);
     }
 
     @Override
-    public void deleteConnection(String topic, TransportConnection connection) {
+    public void deleteConnection(String topic, DisposableConnection connection) {
         topicManager.deleteConnection(topic, connection);
     }
 }

@@ -2,7 +2,7 @@ package com.study.iot.mqtt.transport.client;
 
 
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.ProtocolFactory;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.session.ClientSession;
@@ -26,7 +26,7 @@ public class TransportClientFactory {
                 .doOnError(config.getThrowableConsumer());
     }
 
-    private ClientSession wrapper(TransportConnection connection, ClientConfiguration config, ClientMessageRouter messageRouter) {
+    private ClientSession wrapper(DisposableConnection connection, ClientConfiguration config, ClientMessageRouter messageRouter) {
         return new ClientConnection(connection, config, messageRouter);
     }
 
