@@ -15,37 +15,31 @@ import com.study.iot.mqtt.common.enums.CacheStrategy;
 
 public class DefaultCacheManager implements CacheManager {
 
-    private CacheStrategyContainer container;
+    private final CacheStrategyContainer container;
+
+    private CacheStrategy strategy;
 
     public DefaultCacheManager(CacheStrategyContainer container) {
         this.container = container;
     }
 
     @Override
-    public void init(CacheStrategy strategy) {
-        this.channelManager = container.getStrategy(CacheGroup.CHANNEL, strategy);
-        this.topicManager = container.getStrategy(CacheGroup.TOPIC, strategy);
-        this.messageHandler = container.getStrategy(CacheGroup.MESSAGE, strategy);
+    public void strategy(CacheStrategy strategy) {
+        this.strategy = strategy;
     }
-
-    private ChannelManager channelManager;
-
-    private MessageHandler messageHandler;
-
-    private TopicManager topicManager;
 
     @Override
     public ChannelManager channel() {
-        return channelManager;
+        return container.getStrategy(CacheGroup.CHANNEL, strategy);
     }
 
     @Override
     public MessageHandler message() {
-        return messageHandler;
+        return container.getStrategy(CacheGroup.MESSAGE, strategy);
     }
 
     @Override
     public TopicManager topic() {
-        return topicManager;
+        return container.getStrategy(CacheGroup.TOPIC, strategy);
     }
 }

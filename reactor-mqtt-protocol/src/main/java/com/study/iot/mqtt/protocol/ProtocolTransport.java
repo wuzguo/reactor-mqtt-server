@@ -14,7 +14,7 @@ public abstract class ProtocolTransport {
         this.protocol = protocol;
     }
 
-    public abstract Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<TransportConnection> connections);
+    public abstract Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<TransportConnection> processor);
 
 
     public abstract Mono<TransportConnection> connect(ConnectConfiguration config);

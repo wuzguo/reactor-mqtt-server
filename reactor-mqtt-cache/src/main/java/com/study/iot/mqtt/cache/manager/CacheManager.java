@@ -39,5 +39,5 @@ public interface CacheManager {
      *
      * @param strategy {@link CacheStrategy}
      */
-    void init(CacheStrategy strategy);
+    void strategy(CacheStrategy strategy);
 }

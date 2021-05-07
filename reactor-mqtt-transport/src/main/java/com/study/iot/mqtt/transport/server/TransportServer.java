@@ -107,8 +107,7 @@ public class TransportServer {
 
         public Mono<ServerSession> start(CacheManager cacheManager, ServerMessageRouter messageRouter) {
             config.checkConfig();
-            // 初始化
-            cacheManager.init(config.getCacheStrategy());
+            cacheManager.strategy(config.getCacheStrategy());
             return transportFactory.start(config, cacheManager, messageRouter);
         }
     }

@@ -28,10 +28,10 @@ public class WsTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<TransportConnection> connections) {
+    public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<TransportConnection> processor) {
         return buildServer(config).doOnConnection(connection -> {
             protocol.getHandlers().forEach(connection::addHandlerLast);
-            connections.onNext(new TransportConnection(connection));
+            processor.onNext(new TransportConnection(connection));
         }).bind().doOnError(config.getThrowableConsumer());
     }
 
@@ -56,7 +56,7 @@ public class WsTransport extends ProtocolTransport {
             SelfSignedCertificate ssc = new SelfSignedCertificate();
             return SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
         } catch (Exception e) {
-            log.error("*******************************************************************ssl error: {}", e.getMessage());
+            log.error("ssl error: {}", e.getMessage());
         }
         return null;
     }
@@ -80,7 +80,7 @@ public class WsTransport extends ProtocolTransport {
             SslContext sslClient = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
             return config.isSsl() ? client.secure(sslContextSpec -> sslContextSpec.sslContext(sslClient)) : client;
         } catch (Exception e) {
-            log.error("*******************************************************************ssl error: {}", e.getMessage());
+            log.error("ssl error: {}", e.getMessage());
             return client;
         }
     }

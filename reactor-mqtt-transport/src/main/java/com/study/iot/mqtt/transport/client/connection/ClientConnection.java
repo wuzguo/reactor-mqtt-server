@@ -45,11 +45,11 @@ public class ClientConnection implements ClientSession {
         this.connection = connection;
         this.configuration = configuration;
         this.clientMessageRouter = messageRouter;
-        this.init(configuration);
+        this.init();
     }
 
     @Override
-    public void init(ClientConfiguration configuration) {
+    public void init() {
         ClientConfiguration.Options options = configuration.getOptions();
         Disposable disposable = Mono.fromRunnable(() -> connection.write(MqttMessageApi.buildConnect(
                 options.getClientIdentifier(),
@@ -137,8 +137,7 @@ public class ClientConnection implements ClientSession {
     public Mono<Void> sub(String... subMessages) {
         topics.addAll(Arrays.asList(subMessages));
         List<MqttTopicSubscription> topicSubscriptions = Arrays.stream(subMessages)
-                .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE))
-                .collect(Collectors.toList());
+                .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());
         int messageId = connection.messageId();
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
                 connection.write(MqttMessageApi.buildSub(messageId, topicSubscriptions)).subscribe())

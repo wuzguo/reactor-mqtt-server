@@ -32,11 +32,11 @@ public class MqttTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<TransportConnection> connections) {
+    public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<TransportConnection> processor) {
         return buildServer(config)
                 .doOnConnection(connection -> {
                     protocol.getHandlers().forEach(connection::addHandlerLast);
-                    connections.onNext(new TransportConnection(connection));
+                    processor.onNext(new TransportConnection(connection));
                 })
                 .bind().doOnError(config.getThrowableConsumer());
     }

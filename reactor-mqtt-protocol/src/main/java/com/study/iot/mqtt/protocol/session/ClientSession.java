@@ -26,11 +26,5 @@ public interface ClientSession extends Disposable {
 
     Mono<Void> messageAcceptor(BiConsumer<String, byte[]> messageAcceptor);
 
-    /**
-     * 初始化
-     * @param configuration {@link ClientConfiguration}
-     */
-    void init(ClientConfiguration configuration);
-
-
+    void init();
 }
