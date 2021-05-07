@@ -11,25 +11,31 @@ import com.study.iot.mqtt.common.enums.CacheStrategy;
 
 import java.util.List;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/5/7 16:18
+ */
+
 @CacheStrategyService(group = CacheGroup.TOPIC, type = CacheStrategy.MEMORY)
 public class MemoryTopicManager implements TopicManager {
 
-
-    private CacheTopicManager topicManager = new CacheTopicManager();
+    private final CacheTopicManager topicManager = new CacheTopicManager();
 
     @Override
-    public List<TransportConnection> getConnectionsByTopic(String topic) {
-        return topicManager.getTopicConnection(topic).orElse(Lists.newArrayList());
+    public List<TransportConnection> getConnections(String topic) {
+        return topicManager.getConnections(topic).orElse(Lists.newArrayList());
     }
 
     @Override
-    public void addTopicConnection(String topic, TransportConnection connection) {
-        topicManager.addTopicConnection(topic, connection);
+    public void addConnection(String topic, TransportConnection connection) {
+        topicManager.addConnection(topic, connection);
     }
 
     @Override
-    public void deleteTopicConnection(String topic, TransportConnection connection) {
-        topicManager.deleteTopicConnection(topic, connection);
+    public void deleteConnection(String topic, TransportConnection connection) {
+        topicManager.deleteConnection(topic, connection);
     }
-
 }

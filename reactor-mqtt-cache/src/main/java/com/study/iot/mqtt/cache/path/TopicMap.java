@@ -1,9 +1,11 @@
 package com.study.iot.mqtt.cache.path;
 
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -16,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Slf4j
 public class TopicMap<K, V> {
 
-    private ConcurrentHashMap<K, Node<K, V>> datas = new ConcurrentHashMap<>();
+    private final Map<K, Node<K, V>> datas = Maps.newConcurrentMap();
 
     public boolean putData(K[] topic, V v) {
         if (topic.length == 1) {
@@ -58,7 +60,7 @@ public class TopicMap<K, V> {
             if (node != null) {
                 List<V> all = new ArrayList<>();
                 all.addAll(node.get());
-                for (int i = 1; i < ks.length && node != null; i++) {
+                for (int i = 1; i < ks.length; i++) {
                     node = node.getNext(ks[i]);
                     if (node == null) {
                         break;
@@ -87,9 +89,10 @@ public class TopicMap<K, V> {
     class Node<K, V> {
 
         private final K topic;
-        List<V> vs = new CopyOnWriteArrayList<>();
-        private volatile ConcurrentHashMap<K, Node<K, V>> map = new ConcurrentHashMap<>();
 
+        List<V> vs = new CopyOnWriteArrayList<>();
+
+        private volatile Map<K, Node<K, V>> map = Maps.newConcurrentMap();
 
         Node(K topic) {
             this.topic = topic;
@@ -104,10 +107,7 @@ public class TopicMap<K, V> {
         }
 
         public Node<K, V> putNextValue(K k, V v) {
-            Node<K, V> kvNode = map.computeIfAbsent(k, key -> {
-                Node<K, V> node = new Node<>(k);
-                return node;
-            });
+            Node<K, V> kvNode = map.computeIfAbsent(k, key -> new Node<>(k));
             if (v != null) {
                 kvNode.put(v);
             }
@@ -129,5 +129,4 @@ public class TopicMap<K, V> {
             return vs;
         }
     }
-
 }

@@ -10,5 +10,5 @@ public interface MessageHandler extends CacheCapable {
 
     void saveRetain(boolean dup, boolean retain, int qos, String topicName, byte[] copyByteBuf);
 
-    Optional<RetainMessage> getRetain(String topicName);
+    RetainMessage getRetain(String topicName);
 }

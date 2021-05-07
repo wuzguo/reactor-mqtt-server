@@ -1,13 +1,17 @@
-package com.study.iot.mqtt.cache.memory;
+package com.study.iot.mqtt.cache.ignite;
 
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
+import com.study.iot.mqtt.cache.manager.ChannelManager;
 import com.study.iot.mqtt.cache.manager.MessageHandler;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.common.message.RetainMessage;
+import org.apache.ignite.IgniteCache;
 
+import javax.annotation.Resource;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * <B>说明：描述</B>
@@ -17,10 +21,11 @@ import java.util.Map;
  * @date 2021/5/7 16:18
  */
 
-@CacheStrategyService(group = CacheGroup.MESSAGE, type = CacheStrategy.MEMORY)
-public class MemoryMessageHandler implements MessageHandler {
+@CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.IGNITE)
+public class IgniteMessageHandler implements MessageHandler {
 
-    private final Map<String, RetainMessage> messages = Maps.newConcurrentMap();
+    @Resource
+    private IgniteCache<String,  RetainMessage> messages;
 
     @Override
     public void saveRetain(boolean dup, boolean retain, int qos, String topicName, byte[] copyByteBuf) {

@@ -8,9 +8,27 @@ import java.util.List;
 
 public interface TopicManager extends CacheCapable {
 
-    List<TransportConnection> getConnectionsByTopic(String topic);
+    /**
+     * 获取连接
+     *
+     * @param topic {@link String}
+     * @return {@link TransportConnection}
+     */
+    List<TransportConnection> getConnections(String topic);
 
-    void addTopicConnection(String topic, TransportConnection connection);
+    /**
+     * 添加连接
+     *
+     * @param topic      {@link String}
+     * @param connection {@link TransportConnection}
+     */
+    void addConnection(String topic, TransportConnection connection);
 
-    void deleteTopicConnection(String topic, TransportConnection connection);
+    /**
+     * 删除连接
+     *
+     * @param topic      {@link String}
+     * @param connection {@link TransportConnection}
+     */
+    void deleteConnection(String topic, TransportConnection connection);
 }

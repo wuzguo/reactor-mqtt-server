@@ -64,20 +64,20 @@ public class ServerConnection implements ServerSession {
         transport.getConnection().onDispose(() -> {
             Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE)).map(Attribute::get)
                     .ifPresent(willMessage -> Optional.ofNullable(
-                            cacheManager.topic().getConnectionsByTopic(willMessage.getTopicName()))
+                            cacheManager.topic().getConnections(willMessage.getTopicName()))
                             .ifPresent(connections -> connections.forEach(connect -> {
                                 MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                                 Optional.ofNullable(messageRouter.getWillContainer().getStrategy(StrategyGroup.WILL_SERVER, qoS))
                                         .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
                             })));
             // 删除链接
-            cacheManager.channel().removeConnections(transport);
+            cacheManager.channel().removeConnection(transport);
             // 删除topic订阅
-            transport.getTopics().forEach(topic -> cacheManager.topic().deleteTopicConnection(topic, transport));
+            transport.getTopics().forEach(topic -> cacheManager.topic().deleteConnection(topic, transport));
             Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.device_id))
                     .map(Attribute::get)
                     // 设置device
-                    .ifPresent(cacheManager.channel()::removeDeviceId);
+                    .ifPresent(cacheManager.channel()::removeChannel);
             transport.destory();
         });
         inbound.receiveObject().cast(MqttMessage.class)
@@ -91,7 +91,7 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public Mono<Void> closeConnect(String clientId) {
-        return Mono.fromRunnable(() -> Optional.ofNullable(cacheManager.channel().getRemoveDeviceId(clientId))
+        return Mono.fromRunnable(() -> Optional.ofNullable(cacheManager.channel().getAndRemove(clientId))
                 .ifPresent(TransportConnection::dispose));
     }
 
