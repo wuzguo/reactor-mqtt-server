@@ -1,13 +1,17 @@
-package com.study.iot.mqtt.protocol.handler;
+package com.study.iot.mqtt.cache.memory;
 
 
 import com.google.common.collect.Lists;
-import com.study.iot.mqtt.protocol.TopicManager;
-import com.study.iot.mqtt.protocol.TransportConnection;
-import com.study.iot.mqtt.protocol.path.CacheTopicManager;
+import com.study.iot.mqtt.cache.constant.CacheGroup;
+import com.study.iot.mqtt.cache.manager.TopicManager;
+import com.study.iot.mqtt.cache.path.CacheTopicManager;
+import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
+import com.study.iot.mqtt.common.connection.TransportConnection;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 
 import java.util.List;
 
+@CacheStrategyService(group = CacheGroup.TOPIC, type = CacheStrategy.MEMORY)
 public class MemoryTopicManager implements TopicManager {
 
 

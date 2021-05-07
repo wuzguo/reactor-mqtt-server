@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.protocol;
+package com.study.iot.mqtt.common.connection;
 
 import com.study.iot.mqtt.common.message.TransportMessage;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;

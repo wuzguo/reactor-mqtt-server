@@ -1,9 +1,9 @@
-package com.study.iot.mqtt.protocol.path;
+package com.study.iot.mqtt.cache.path;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.study.iot.mqtt.protocol.TransportConnection;
+import com.study.iot.mqtt.common.connection.TransportConnection;
 
 import java.util.List;
 import java.util.Optional;

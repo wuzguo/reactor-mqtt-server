@@ -1,6 +1,8 @@
 package com.study.iot.mqtt.protocol;
 
 
+import com.study.iot.mqtt.common.enums.CacheStrategy;
+
 import java.util.function.Consumer;
 
 public interface ConnectConfiguration {
@@ -22,6 +24,8 @@ public interface ConnectConfiguration {
     int getHeart();
 
     Consumer<Throwable> getThrowableConsumer();
+
+    CacheStrategy getCacheStrategy();
 
     void checkConfig();
 

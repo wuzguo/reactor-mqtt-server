@@ -1,13 +1,8 @@
 package com.study.iot.mqtt.protocol.config;
 
 
-import com.study.iot.mqtt.protocol.ChannelManager;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
-import com.study.iot.mqtt.protocol.MessageHandler;
-import com.study.iot.mqtt.protocol.TopicManager;
-import com.study.iot.mqtt.protocol.handler.MemoryChannelManager;
-import com.study.iot.mqtt.protocol.handler.MemoryMessageHandler;
-import com.study.iot.mqtt.protocol.handler.MemoryTopicManager;
 import lombok.Data;
 
 import java.util.Objects;
@@ -61,21 +56,22 @@ public class ServerConfiguration implements ConnectConfiguration {
     private boolean noDelay = true;
 
 
-    private BiFunction<String, String, Boolean> auth = (user, pass) -> true;
+    /**
+     * 缓存策略
+     */
+    private CacheStrategy cacheStrategy;
+
+
+    private BiFunction<String, String, Boolean> auth = (key, secret) -> true;
 
 
     private Consumer<Throwable> throwableConsumer = throwable -> {
     };
 
-    private MessageHandler messageHandler = new MemoryMessageHandler();
-
-    private ChannelManager channelManager = new MemoryChannelManager();
-
-    private TopicManager topicManager = new MemoryTopicManager();
-
     @Override
     public void checkConfig() {
         Objects.requireNonNull(ip, "ip is not null");
         Objects.requireNonNull(protocol, "protocol is not null");
+        Objects.requireNonNull(cacheStrategy, "cache strategy is not null");
     }
 }

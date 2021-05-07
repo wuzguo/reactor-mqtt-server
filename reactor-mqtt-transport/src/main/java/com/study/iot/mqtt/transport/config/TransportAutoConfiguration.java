@@ -1,5 +1,7 @@
 package com.study.iot.mqtt.transport.config;
 
+import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
+import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -21,5 +23,18 @@ public class TransportAutoConfiguration {
     @ConditionalOnMissingBean
     public StrategyContainer strategyContainer(ApplicationContext applicationContext) {
         return new StrategyContainer(applicationContext);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ServerMessageRouter serverMessageRouter(StrategyContainer container) {
+        return new ServerMessageRouter(container);
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ClientMessageRouter clientMessageRouter(StrategyContainer container) {
+        return new ClientMessageRouter(container);
     }
 }

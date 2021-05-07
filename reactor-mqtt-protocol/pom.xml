@@ -30,14 +30,6 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.projectreactor.netty</groupId>
-            <artifactId>reactor-netty</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.study.iot.mqtt</groupId>
             <artifactId>reactor-mqtt-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>

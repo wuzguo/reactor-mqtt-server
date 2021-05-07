@@ -1,13 +1,12 @@
 package com.study.iot.mqtt.transport.client.connection;
 
 import com.google.common.collect.Lists;
+import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MqttMessageApi;
-import com.study.iot.mqtt.protocol.TransportConnection;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
-import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.handler.codec.mqtt.MqttTopicSubscription;
@@ -36,16 +35,14 @@ public class ClientConnection implements ClientSession {
 
     private final ClientConfiguration clientConfiguration;
 
-    private ClientMessageRouter clientMessageRouter;
+    private final ClientMessageRouter clientMessageRouter;
 
     private List<String> topics = Lists.newArrayList();
 
-    private StrategyContainer container;
-
-    public ClientConnection(TransportConnection connection, ClientConfiguration clientConfiguration) {
+    public ClientConnection(TransportConnection connection, ClientConfiguration clientConfiguration, ClientMessageRouter messageRouter) {
         this.clientConfiguration = clientConfiguration;
         this.connection = connection;
-        this.clientMessageRouter = new ClientMessageRouter(clientConfiguration, container);
+        this.clientMessageRouter = messageRouter;
         initHandler();
     }
 

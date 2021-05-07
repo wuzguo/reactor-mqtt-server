@@ -1,9 +1,3 @@
 org.springframework.context.annotation.Configuration=\
-com.study.iot.mqtt.cache.config.IgniteAutoConfig
-org.springframework.stereotype.Service=\
-com.study.iot.mqtt.cache.message.DupPublishMessageStoreService,\
-com.study.iot.mqtt.cache.message.DupPubRelMessageStoreService,\
-com.study.iot.mqtt.cache.message.MessageIdService,\
-com.study.iot.mqtt.cache.message.RetainMessageStoreService,\
-com.study.iot.mqtt.cache.session.SessionStoreService,\
-com.study.iot.mqtt.cache.subscribe.SubscribeStoreService
+com.study.iot.mqtt.cache.config.IgniteAutoConfig,\
+com.study.iot.mqtt.cache.config.CacheAutoConfiguration

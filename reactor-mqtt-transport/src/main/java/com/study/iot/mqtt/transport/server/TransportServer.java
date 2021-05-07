@@ -1,11 +1,12 @@
 package com.study.iot.mqtt.transport.server;
 
 
+import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.protocol.MessageHandler;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.protocol.config.ServerConfiguration;
 import com.study.iot.mqtt.protocol.session.ServerSession;
-import com.study.iot.mqtt.transport.strategy.StrategyContainer;
+import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -93,9 +94,8 @@ public class TransportServer {
             return this;
         }
 
-        public TransportBuilder messageHandler(MessageHandler messageHandler) {
-            Optional.ofNullable(messageHandler)
-                    .ifPresent(config::setMessageHandler);
+        public TransportBuilder cache(CacheStrategy strategyEnum) {
+            config.setCacheStrategy(strategyEnum);
             return this;
         }
 
@@ -105,9 +105,11 @@ public class TransportServer {
             return this;
         }
 
-        public Mono<ServerSession> start(StrategyContainer container) {
+        public Mono<ServerSession> start(CacheManager cacheManager, ServerMessageRouter messageRouter) {
             config.checkConfig();
-            return transportFactory.start(config, container);
+            // 初始化
+            cacheManager.init(config.getCacheStrategy());
+            return transportFactory.start(config, cacheManager, messageRouter);
         }
     }
 }

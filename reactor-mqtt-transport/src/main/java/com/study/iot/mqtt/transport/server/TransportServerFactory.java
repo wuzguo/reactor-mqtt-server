@@ -1,15 +1,16 @@
 package com.study.iot.mqtt.transport.server;
 
 
+import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
+import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.protocol.ProtocolFactory;
-import com.study.iot.mqtt.protocol.TransportConnection;
 import com.study.iot.mqtt.protocol.config.ServerConfiguration;
 import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.protocol.ws.WsProtocol;
 import com.study.iot.mqtt.protocol.ws.WsTransport;
 import com.study.iot.mqtt.transport.server.connection.ServerConnection;
-import com.study.iot.mqtt.transport.strategy.StrategyContainer;
+import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.UnicastProcessor;
 import reactor.netty.DisposableServer;
@@ -21,20 +22,13 @@ public class TransportServerFactory {
 
     private UnicastProcessor<TransportConnection> unicastProcessor = UnicastProcessor.create();
 
-    private ServerConfiguration config;
-
     private DisposableServer wsServer;
-
-    private StrategyContainer container;
 
     public TransportServerFactory() {
         protocolFactory = new ProtocolFactory();
     }
 
-
-    public Mono<ServerSession> start(ServerConfiguration config, StrategyContainer container) {
-        this.config = config;
-        this.container = container;
+    public Mono<ServerSession> start(ServerConfiguration config, CacheManager cacheManager, ServerMessageRouter messageRouter) {
         // 开启
         if (config.getProtocol().equals(ProtocolType.MQTT.name())) {
             WsTransport wsTransport = new WsTransport(new WsProtocol());
@@ -45,7 +39,7 @@ public class TransportServerFactory {
                 .get()
                 .getTransport()
                 .start(config, unicastProcessor))
-                .map(this::wrapper)
+                .map(server -> this.wrapper(server, cacheManager, messageRouter))
                 .doOnError(config.getThrowableConsumer());
     }
 
@@ -53,15 +47,12 @@ public class TransportServerFactory {
         ServerConfiguration serverConfiguration = new ServerConfiguration();
         serverConfiguration.setThrowableConsumer(config.getThrowableConsumer());
         serverConfiguration.setLog(config.isLog());
-        serverConfiguration.setMessageHandler(config.getMessageHandler());
         serverConfiguration.setAuth(config.getAuth());
-        serverConfiguration.setChannelManager(config.getChannelManager());
         serverConfiguration.setIp(config.getIp());
         serverConfiguration.setPort(8443);
         serverConfiguration.setSsl(config.isSsl());
         serverConfiguration.setProtocol(ProtocolType.WEB_SOCKET.name());
         serverConfiguration.setHeart(config.getHeart());
-        serverConfiguration.setTopicManager(config.getTopicManager());
         serverConfiguration.setRevBufSize(config.getRevBufSize());
         serverConfiguration.setSendBufSize(config.getSendBufSize());
         serverConfiguration.setNoDelay(config.isNoDelay());
@@ -69,7 +60,7 @@ public class TransportServerFactory {
         return serverConfiguration;
     }
 
-    private ServerSession wrapper(DisposableServer server) {
-        return new ServerConnection(unicastProcessor, server, wsServer, config, container);
+    private ServerSession wrapper(DisposableServer server, CacheManager cacheManager, ServerMessageRouter messageRouter) {
+        return new ServerConnection(unicastProcessor, server, wsServer, cacheManager, messageRouter);
     }
 }

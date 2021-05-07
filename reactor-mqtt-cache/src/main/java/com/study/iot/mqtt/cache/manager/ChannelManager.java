@@ -1,8 +1,11 @@
-package com.study.iot.mqtt.protocol;
+package com.study.iot.mqtt.cache.manager;
+
+import com.study.iot.mqtt.cache.strategy.CacheCapable;
+import com.study.iot.mqtt.common.connection.TransportConnection;
 
 import java.util.List;
 
-public interface ChannelManager {
+public interface ChannelManager extends CacheCapable {
 
     List<TransportConnection> getConnections();
 

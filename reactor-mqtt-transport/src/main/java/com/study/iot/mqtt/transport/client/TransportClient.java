@@ -4,6 +4,7 @@ package com.study.iot.mqtt.transport.client;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.session.ClientSession;
+import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import reactor.core.publisher.Mono;
 
@@ -120,11 +121,10 @@ public class TransportClient {
             return this;
         }
 
-
-        public Mono<ClientSession> connect() {
+        public Mono<ClientSession> connect(ClientMessageRouter messageRouter) {
             config.setOptions(options);
             config.checkConfig();
-            return transportFactory.connect(config);
+            return transportFactory.connect(config, messageRouter);
         }
 
     }

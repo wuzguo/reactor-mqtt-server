@@ -1,9 +1,9 @@
 package com.study.iot.mqtt.protocol.ws;
 
 
+import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
-import com.study.iot.mqtt.protocol.TransportConnection;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;

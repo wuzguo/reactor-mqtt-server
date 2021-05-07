@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.transport.strategy;
 
 
+import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
-import com.study.iot.mqtt.protocol.TransportConnection;
 import io.netty.handler.codec.mqtt.MqttMessage;
 
 /**
@@ -22,5 +22,5 @@ public interface StrategyCapable {
      * @param connection    {@link TransportConnection}
      * @param configuration {@link ConnectConfiguration}
      */
-    void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration);
+    void handler(MqttMessage message, TransportConnection connection);
 }

@@ -1,15 +1,10 @@
 package com.study.iot.mqtt.transport.server.connection;
 
+import com.study.iot.mqtt.cache.manager.CacheManager;
+import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
-import com.study.iot.mqtt.protocol.ChannelManager;
-import com.study.iot.mqtt.protocol.TopicManager;
-import com.study.iot.mqtt.protocol.TransportConnection;
-import com.study.iot.mqtt.protocol.config.ServerConfiguration;
-import com.study.iot.mqtt.protocol.handler.MemoryChannelManager;
-import com.study.iot.mqtt.protocol.handler.MemoryTopicManager;
 import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
-import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.Attribute;
@@ -37,21 +32,18 @@ public class ServerConnection implements ServerSession {
 
     private DisposableServer disposableServer;
 
-    private ChannelManager channelManager;
-
-    private TopicManager topicManager;
+    private CacheManager cacheManager;
 
     private ServerMessageRouter messageRouter;
 
     private DisposableServer wsDisposableServer;
 
-    public ServerConnection(UnicastProcessor<TransportConnection> connections, DisposableServer server,
-                            DisposableServer wsDisposableServer, ServerConfiguration config, StrategyContainer container) {
-        this.disposableServer = server;
-        this.topicManager = Optional.ofNullable(config.getTopicManager()).orElse(new MemoryTopicManager());
-        this.channelManager = Optional.ofNullable(config.getChannelManager()).orElse(new MemoryChannelManager());
-        this.messageRouter = new ServerMessageRouter(config, container);
+    public ServerConnection(UnicastProcessor<TransportConnection> connections, DisposableServer disposableServer,
+                            DisposableServer wsDisposableServer, CacheManager cacheManager, ServerMessageRouter messageRouter) {
+        this.disposableServer = disposableServer;
         this.wsDisposableServer = wsDisposableServer;
+        this.messageRouter = messageRouter;
+        this.cacheManager = cacheManager;
         connections.subscribe(this::subscribe);
     }
 
@@ -69,7 +61,7 @@ public class ServerConnection implements ServerSession {
         // 关闭发送will消息
         transport.getConnection().onDispose(() -> {
             Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE)).map(Attribute::get)
-                    .ifPresent(willMessage -> Optional.ofNullable(topicManager.getConnectionsByTopic(willMessage.getTopicName()))
+                    .ifPresent(willMessage -> Optional.ofNullable(cacheManager.topic().getConnectionsByTopic(willMessage.getTopicName()))
                             .ifPresent(connections -> connections.forEach(connect -> {
                                 MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                                 switch (qoS) {
@@ -86,12 +78,13 @@ public class ServerConnection implements ServerSession {
                                 }
                             })));
             // 删除链接
-            channelManager.removeConnections(transport);
+            cacheManager.channel().removeConnections(transport);
             // 删除topic订阅
-            transport.getTopics().forEach(topic -> topicManager.deleteTopicConnection(topic, transport));
+            transport.getTopics().forEach(topic -> cacheManager.topic().deleteTopicConnection(topic, transport));
             Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.device_id))
                     .map(Attribute::get)
-                    .ifPresent(channelManager::removeDeviceId); // 设置device
+                    // 设置device
+                    .ifPresent(cacheManager.channel()::removeDeviceId);
             transport.destory();
         });
         inbound.receiveObject().cast(MqttMessage.class)
@@ -100,12 +93,12 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public Mono<List<TransportConnection>> getConnections() {
-        return Mono.just(channelManager.getConnections());
+        return Mono.just(cacheManager.channel().getConnections());
     }
 
     @Override
     public Mono<Void> closeConnect(String clientId) {
-        return Mono.fromRunnable(() -> Optional.ofNullable(channelManager.getRemoveDeviceId(clientId))
+        return Mono.fromRunnable(() -> Optional.ofNullable(cacheManager.channel().getRemoveDeviceId(clientId))
                 .ifPresent(TransportConnection::dispose));
     }
 

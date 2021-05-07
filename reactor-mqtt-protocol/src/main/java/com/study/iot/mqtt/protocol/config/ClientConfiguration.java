@@ -1,6 +1,7 @@
 package com.study.iot.mqtt.protocol.config;
 
 
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
 import lombok.Data;
 import lombok.Getter;
@@ -67,6 +68,12 @@ public class ClientConfiguration implements ConnectConfiguration {
     };
 
 
+    @Override
+    public CacheStrategy getCacheStrategy() {
+        return null;
+    }
+
+    @Override
     public void checkConfig() {
         Objects.requireNonNull(ip, "ip is not null");
         Objects.requireNonNull(port, "port is not null");

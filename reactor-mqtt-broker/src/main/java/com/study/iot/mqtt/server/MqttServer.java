@@ -1,9 +1,10 @@
 package com.study.iot.mqtt.server;
 
+import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.protocol.handler.MemoryMessageHandler;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.transport.server.TransportServer;
-import com.study.iot.mqtt.transport.strategy.StrategyContainer;
+import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -19,10 +20,13 @@ import org.springframework.boot.ApplicationRunner;
 @Slf4j
 public class MqttServer implements ApplicationRunner {
 
-    private StrategyContainer container;
+    private CacheManager cacheManager;
 
-    public MqttServer(StrategyContainer container) {
-        this.container = container;
+    private ServerMessageRouter messageRouter;
+
+    public MqttServer(CacheManager cacheManager, ServerMessageRouter messageRouter) {
+        this.cacheManager = cacheManager;
+        this.messageRouter = messageRouter;
     }
 
     @Override
@@ -32,10 +36,10 @@ public class MqttServer implements ApplicationRunner {
                 .protocol(ProtocolType.MQTT)
                 .ssl(false)
                 .auth((key, secret) -> true)
+                .cache(CacheStrategy.MEMORY)
                 .log(true)
-                .messageHandler(new MemoryMessageHandler())
-                .exception(e -> log.error("启动mqtt server 发生异常：{}", e.getMessage()))
-                .start(container)
+                .exception(e -> log.error("exception occurred when starting mqtt server：{}", e.getMessage()))
+                .start(cacheManager, messageRouter)
                 .block();
     }
 }

@@ -1,7 +1,6 @@
 package com.study.iot.mqtt.transport.server.handler;
 
-import com.study.iot.mqtt.protocol.ConnectConfiguration;
-import com.study.iot.mqtt.protocol.TransportConnection;
+import com.study.iot.mqtt.common.connection.TransportConnection;
 import com.study.iot.mqtt.transport.constant.Group;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
@@ -22,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerPubAckHandler implements StrategyCapable {
 
     @Override
-    public void handler(MqttMessage message, TransportConnection connection, ConnectConfiguration configuration) {
+    public void handler(MqttMessage message, TransportConnection connection) {
 
     }
 }
