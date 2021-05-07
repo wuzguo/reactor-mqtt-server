@@ -95,7 +95,7 @@ public class MqttTransport extends ProtocolTransport {
                                 transportConnection.setConnection(connection);
                                 transportConnection.setInbound(connection.inbound());
                                 transportConnection.setOutbound(connection.outbound());
-                                rsocketClientSession.initHandler();
+                                rsocketClientSession.init();
                             });
 
                 });

@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.protocol.session;
 
+import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
@@ -25,7 +26,11 @@ public interface ClientSession extends Disposable {
 
     Mono<Void> messageAcceptor(BiConsumer<String, byte[]> messageAcceptor);
 
-    void initHandler();
+    /**
+     * 初始化
+     * @param configuration {@link ClientConfiguration}
+     */
+    void init(ClientConfiguration configuration);
 
 
 }

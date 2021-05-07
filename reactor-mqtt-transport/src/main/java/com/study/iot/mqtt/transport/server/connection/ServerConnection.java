@@ -67,7 +67,7 @@ public class ServerConnection implements ServerSession {
                             cacheManager.topic().getConnectionsByTopic(willMessage.getTopicName()))
                             .ifPresent(connections -> connections.forEach(connect -> {
                                 MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                                Optional.ofNullable(messageRouter.getWillContainer().getStrategy(Group.WILL, qoS))
+                                Optional.ofNullable(messageRouter.getWillContainer().getStrategy(Group.WILL_SERVER, qoS))
                                         .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
                             })));
             // 删除链接

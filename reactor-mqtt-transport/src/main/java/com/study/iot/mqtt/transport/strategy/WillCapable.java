@@ -18,7 +18,7 @@ public interface WillCapable {
      * 处理消息
      *
      * @param qoS         {@link MqttQoS}
-     * @param connection {@link TransportConnection}
+     * @param connection  {@link TransportConnection}
      * @param willMessage {@link WillMessage}
      */
     void handler(MqttQoS qoS, TransportConnection connection, WillMessage willMessage);

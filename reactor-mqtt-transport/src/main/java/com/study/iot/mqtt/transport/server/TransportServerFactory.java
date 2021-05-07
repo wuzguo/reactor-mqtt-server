@@ -18,11 +18,11 @@ import reactor.netty.DisposableServer;
 
 public class TransportServerFactory {
 
-    private ProtocolFactory protocolFactory;
+    private final ProtocolFactory protocolFactory;
 
-    private UnicastProcessor<TransportConnection> unicastProcessor = UnicastProcessor.create();
+    private final UnicastProcessor<TransportConnection> unicastProcessor = UnicastProcessor.create();
 
-    private DisposableServer wsServer;
+    private DisposableServer disposableServer;
 
     public TransportServerFactory() {
         protocolFactory = new ProtocolFactory();
@@ -32,14 +32,15 @@ public class TransportServerFactory {
         // 开启
         if (config.getProtocol().equals(ProtocolType.MQTT.name())) {
             WsTransport wsTransport = new WsTransport(new WsProtocol());
-            ServerConfiguration wsConfig = copy(config);
-            wsServer = wsTransport.start(wsConfig, unicastProcessor).block();
+            ServerConfiguration wsConfig = this.copy(config);
+            disposableServer = wsTransport.start(wsConfig, unicastProcessor).block();
         }
+
         return Mono.from(protocolFactory.getProtocol(ProtocolType.valueOf(config.getProtocol()))
                 .get()
                 .getTransport()
                 .start(config, unicastProcessor))
-                .map(server -> this.wrapper(server, cacheManager, messageRouter))
+                .map(disposable -> this.wrapper(disposable, cacheManager, messageRouter))
                 .doOnError(config.getThrowableConsumer());
     }
 
@@ -60,7 +61,7 @@ public class TransportServerFactory {
         return serverConfiguration;
     }
 
-    private ServerSession wrapper(DisposableServer server, CacheManager cacheManager, ServerMessageRouter messageRouter) {
-        return new ServerConnection(unicastProcessor, server, wsServer, cacheManager, messageRouter);
+    private ServerSession wrapper(DisposableServer disposable, CacheManager cacheManager, ServerMessageRouter messageRouter) {
+        return new ServerConnection(unicastProcessor, disposable, disposableServer, cacheManager, messageRouter);
     }
 }

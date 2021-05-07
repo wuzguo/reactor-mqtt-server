@@ -13,27 +13,21 @@ import reactor.core.publisher.Mono;
 
 public class TransportClientFactory {
 
-    private ProtocolFactory protocolFactory;
-
-    private ClientConfiguration clientConfiguration;
-
+    private final ProtocolFactory protocolFactory;
 
     public TransportClientFactory() {
         protocolFactory = new ProtocolFactory();
     }
 
-
     public Mono<ClientSession> connect(ClientConfiguration config, ClientMessageRouter messageRouter) {
-        this.clientConfiguration = config;
         return Mono.from(protocolFactory.getProtocol(ProtocolType.valueOf(config.getProtocol()))
                 .get().getTransport().connect(config))
-                .map(connection -> this.wrapper(connection, messageRouter))
+                .map(connection -> this.wrapper(connection, config, messageRouter))
                 .doOnError(config.getThrowableConsumer());
     }
 
-
-    private ClientSession wrapper(TransportConnection connection, ClientMessageRouter messageRouter) {
-        return new ClientConnection(connection, clientConfiguration, messageRouter);
+    private ClientSession wrapper(TransportConnection connection, ClientConfiguration config, ClientMessageRouter messageRouter) {
+        return new ClientConnection(connection, config, messageRouter);
     }
 
 }
