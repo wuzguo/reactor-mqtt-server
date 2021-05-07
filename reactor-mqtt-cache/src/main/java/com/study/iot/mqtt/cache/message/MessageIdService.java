@@ -1,12 +1,14 @@
 package com.study.iot.mqtt.cache.message;
 
 import com.study.iot.mqtt.common.service.IMessageIdService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ignite.IgniteCache;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.concurrent.locks.Lock;
 
+@Slf4j
 @Service
 public class MessageIdService implements IMessageIdService {
 
@@ -22,7 +24,7 @@ public class MessageIdService implements IMessageIdService {
     private int nextMsgId = MIN_MSG_ID - 1;
 
     @Override
-    public int getNextMessageId() {
+    public Integer next() {
         Lock lock = messageIdCache.lock(this.lock);
         lock.lock();
         try {
@@ -34,7 +36,7 @@ public class MessageIdService implements IMessageIdService {
             } while (messageIdCache.containsKey(nextMsgId));
             messageIdCache.put(nextMsgId, nextMsgId);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("get message id exception: {}", e.getMessage());
         } finally {
             lock.unlock();
         }
@@ -42,13 +44,13 @@ public class MessageIdService implements IMessageIdService {
     }
 
     @Override
-    public void releaseMessageId(int messageId) {
+    public void release(Integer messageId) {
         Lock lock = messageIdCache.lock(this.lock);
         lock.lock();
         try {
             messageIdCache.remove(messageId);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("release message id exception: {}", e.getMessage());
         } finally {
             lock.unlock();
         }

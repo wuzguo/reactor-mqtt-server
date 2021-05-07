@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * <B>说明：描述</B>
  *
@@ -17,15 +19,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransportMessage {
+public class TransportMessage implements Serializable {
 
-    private String topic;
+    private String topicName;
 
     private byte[] message;
 
-    private int qos;
+    private Integer qos;
 
-    private boolean isRetain;
+    private Boolean retain;
 
-    private boolean isDup;
+    private Boolean dup;
 }

@@ -9,4 +9,5 @@ package com.study.iot.mqtt.cache.strategy;
  */
 
 public interface CacheCapable {
+
 }

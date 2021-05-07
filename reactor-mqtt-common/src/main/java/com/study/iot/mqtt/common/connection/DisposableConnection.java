@@ -17,6 +17,7 @@ import reactor.netty.Connection;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.LongAdder;
 @Setter
 @ToString
 @Slf4j
-public class DisposableConnection implements Disposable {
+public class DisposableConnection implements Disposable, Serializable {
 
     private NettyInbound inbound;
 
@@ -50,8 +51,8 @@ public class DisposableConnection implements Disposable {
         this.outbound = connection.outbound();
     }
 
-    public <T> Flux<T> receive(Class<T> tClass) {
-        return inbound.receive().cast(tClass);
+    public <T> Flux<T> receive(Class<T> cls) {
+        return inbound.receive().cast(cls);
     }
 
     public void destory() {
