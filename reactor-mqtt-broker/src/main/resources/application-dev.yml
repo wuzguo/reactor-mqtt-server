@@ -17,9 +17,11 @@ spring:
       # 开启Epoll模式, linux下建议开启
       use-epoll: false
       # 开启组播方式集群
-      enable-multicast-group: true
+      enable-multicast-group: false
       # 组播地址
       multicast-group: 239.255.255.255
+      #IP地址
+      static-ip-addresses: 127.0.0.1:47500..47509
       cache:
         # 持久化缓存内存初始化大小(MB)
         persistence-initial-size: 64

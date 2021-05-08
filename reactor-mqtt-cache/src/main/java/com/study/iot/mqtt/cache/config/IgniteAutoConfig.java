@@ -67,11 +67,11 @@ public class IgniteAutoConfig {
         // Ignite实例名称
         configuration.setIgniteInstanceName(id);
 
-        // The node will be started as a client node.
-        configuration.setClientMode(true);
-
-        // Classes of custom Java logic will be transferred over the wire from this app.
-        configuration.setPeerClassLoadingEnabled(true);
+//        // The node will be started as a client node.
+//        configuration.setClientMode(true);
+//
+//        // Classes of custom Java logic will be transferred over the wire from this app.
+//        configuration.setPeerClassLoadingEnabled(true);
 
         // Ignite日志
         Logger logger = LoggerFactory.getLogger("org.apache.ignite");

@@ -32,6 +32,7 @@ public class WsTransport extends ProtocolTransport {
         return buildServer(config).doOnConnection(connection -> {
             protocol.getHandlers().forEach(connection::addHandlerLast);
             processor.onNext(new DisposableConnection(connection));
+            log.info("server successfully started，websocket protocol listening port: {}", config.getPort());
         }).bind().doOnError(config.getThrowableConsumer());
     }
 
