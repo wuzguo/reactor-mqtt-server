@@ -1,14 +1,10 @@
 package com.study.iot.mqtt.common.connection;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.common.message.TransportMessage;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageType;
-import io.netty.handler.codec.mqtt.MqttQoS;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
@@ -18,16 +14,15 @@ import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.LongAdder;
 
-@Getter
-@Setter
-@ToString
+
 @Slf4j
+@Data
 public class DisposableConnection implements Disposable, Serializable {
 
     private NettyInbound inbound;
@@ -36,14 +31,13 @@ public class DisposableConnection implements Disposable, Serializable {
 
     private Connection connection;
 
-    private LongAdder longAdder = new LongAdder();
-
     private Map<Integer, Disposable> mapDisposable = Maps.newHashMap();
 
     private Map<Integer, TransportMessage> mapQosMessage = Maps.newHashMap();
 
-    private List<String> topics = new CopyOnWriteArrayList<>();
+    private List<String> topics = Lists.newCopyOnWriteArrayList();
 
+    private LongAdder longAdder = new LongAdder();
 
     public DisposableConnection(Connection connection) {
         this.connection = connection;
@@ -55,13 +49,21 @@ public class DisposableConnection implements Disposable, Serializable {
         return inbound.receive().cast(cls);
     }
 
-    public void destory() {
-        mapDisposable.values().forEach(Disposable::dispose);
-        mapDisposable.clear();
-        mapQosMessage.clear();
-        topics.clear();
+    /**
+     * 生成消息 ID
+     *
+     * @return {@link Integer}
+     */
+    public int idGen() {
+        longAdder.increment();
+        int value = longAdder.intValue();
+        if (value == Integer.MAX_VALUE) {
+            longAdder.reset();
+            longAdder.increment();
+            return longAdder.intValue();
+        }
+        return value;
     }
-
 
     public void addTopic(String topic) {
         topics.add(topic);
@@ -71,31 +73,16 @@ public class DisposableConnection implements Disposable, Serializable {
         topics.remove(topic);
     }
 
-
-    public Mono<Void> write(Object object) {
-        return outbound.sendObject(object).then().doOnError(Throwable::printStackTrace);
+    public Mono<Void> sendMessage(MqttMessage message) {
+        return outbound.sendObject(message).then().doOnError(Throwable::printStackTrace);
     }
 
-
-    public Mono<Void> sendPingReq() {
-        return outbound.sendObject(new MqttMessage(new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0))).then();
-    }
-
-
-    public Mono<Void> sendPingRes() {
-        return outbound.sendObject(new MqttMessage(new MqttFixedHeader(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE, false, 0))).then();
-    }
-
-
-    public int messageId() {
-        longAdder.increment();
-        int value = longAdder.intValue();
-        if (value == Integer.MAX_VALUE) {
-            longAdder.reset();
-            longAdder.increment();
-            return longAdder.intValue();
-        }
-        return value;
+    public Mono<Void> sendMessageRetry(Integer messageId, MqttMessage message) {
+        // retry
+        this.addDisposable(messageId, Mono.fromRunnable(() -> this.sendMessage(message).subscribe())
+                .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
+        // pub
+        return this.sendMessage(message);
     }
 
 
@@ -135,11 +122,10 @@ public class DisposableConnection implements Disposable, Serializable {
         return connection.isDisposed();
     }
 
-    public Mono<Void> sendMessage(boolean isDup, MqttQoS qoS, boolean isRetain, String topic, byte[] message) {
-        return Mono.empty();
-    }
-
-    public Mono<Void> sendMessageRetry(boolean isDup, MqttQoS qoS, boolean isRetain, String topic, byte[] message) {
-        return sendMessage(isDup, qoS, isRetain, topic, message);
+    public void destory() {
+        mapDisposable.values().forEach(Disposable::dispose);
+        mapDisposable.clear();
+        mapQosMessage.clear();
+        topics.clear();
     }
 }

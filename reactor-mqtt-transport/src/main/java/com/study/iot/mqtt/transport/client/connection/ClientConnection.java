@@ -3,14 +3,11 @@ package com.study.iot.mqtt.transport.client.connection;
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
-import com.study.iot.mqtt.common.connection.MessageBuilder;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttQoS;
-import io.netty.handler.codec.mqtt.MqttTopicSubscription;
+import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
@@ -51,7 +48,7 @@ public class ClientConnection implements ClientSession {
     @Override
     public void init() {
         ClientConfiguration.Options options = configuration.getOptions();
-        Disposable disposable = Mono.fromRunnable(() -> connection.write(MessageBuilder.buildConnect(
+        Disposable disposable = Mono.fromRunnable(() -> connection.sendMessage(MessageBuilder.buildConnect(
                 options.getClientIdentifier(),
                 options.getWillTopic(),
                 options.getWillMessage(),
@@ -63,7 +60,7 @@ public class ClientConnection implements ClientSession {
                 options.getWillQos(),
                 configuration.getHeart()
         )).subscribe()).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe();
-        connection.write(MessageBuilder.buildConnect(
+        connection.sendMessage(MessageBuilder.buildConnect(
                 options.getClientIdentifier(),
                 options.getWillTopic(),
                 options.getWillMessage(),
@@ -77,9 +74,15 @@ public class ClientConnection implements ClientSession {
         )).doOnError(throwable -> log.error(throwable.getMessage())).subscribe();
         connection.getConnection().channel().attr(AttributeKeys.closeConnection).set(disposable);
         // 发送心跳
-        connection.getConnection().onWriteIdle(configuration.getHeart(), () -> connection.sendPingReq().subscribe());
+        connection.getConnection().onWriteIdle(configuration.getHeart(), () -> {
+            MqttMessage message = new MqttMessage(new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0));
+            connection.sendMessage(message).subscribe();
+        } );
         // 发送心跳
-        connection.getConnection().onReadIdle(configuration.getHeart() * 2L, () -> connection.sendPingReq().subscribe());
+        connection.getConnection().onReadIdle(configuration.getHeart() * 2L, () -> {
+            MqttMessage message = new MqttMessage(new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0));
+            connection.sendMessage(message).subscribe();
+        });
         connection.getConnection().onDispose(() -> configuration.getOnClose().run());
 
         NettyInbound inbound = connection.getInbound();
@@ -90,27 +93,27 @@ public class ClientConnection implements ClientSession {
                 .map(s -> new MqttTopicSubscription(s, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());
 
         if (mqttTopicSubscriptions.size() > 0) {
-            int messageId = connection.messageId();
+            int messageId = connection.idGen();
             connection.addDisposable(messageId, Mono.fromRunnable(() ->
-                    connection.write(MessageBuilder.buildSub(messageId, mqttTopicSubscriptions)).subscribe())
+                    connection.sendMessage(MessageBuilder.buildSub(messageId, mqttTopicSubscriptions)).subscribe())
                     .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-            connection.write(MessageBuilder.buildSub(messageId, mqttTopicSubscriptions)).subscribe();
+            connection.sendMessage(MessageBuilder.buildSub(messageId, mqttTopicSubscriptions)).subscribe();
         }
     }
 
     @Override
     public Mono<Void> pub(String topic, byte[] message, boolean retained, int qos) {
-        int messageId = qos == 0 ? 1 : connection.messageId();
+        int messageId = qos == 0 ? 1 : connection.idGen();
         MqttQoS mqttQoS = MqttQoS.valueOf(qos);
         switch (mqttQoS) {
             case AT_MOST_ONCE:
-                return connection.write(MessageBuilder.buildPub(false, MqttQoS.AT_MOST_ONCE, retained, messageId, topic, Unpooled.wrappedBuffer(message)));
+                return connection.sendMessage(MessageBuilder.buildPub(false, MqttQoS.AT_MOST_ONCE, retained, messageId, topic, message));
             case EXACTLY_ONCE:
             case AT_LEAST_ONCE:
                 return Mono.fromRunnable(() -> {
-                    connection.write(MessageBuilder.buildPub(false, mqttQoS, retained, messageId, topic, Unpooled.wrappedBuffer(message))).subscribe();
+                    connection.sendMessage(MessageBuilder.buildPub(false, mqttQoS, retained, messageId, topic, message)).subscribe();
                     connection.addDisposable(messageId, Mono.fromRunnable(() ->
-                            connection.write(MessageBuilder.buildPub(true, mqttQoS, retained, messageId, topic, Unpooled.wrappedBuffer(message))).subscribe())
+                            connection.sendMessage(MessageBuilder.buildPub(true, mqttQoS, retained, messageId, topic, message)).subscribe())
                             .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe()); // retry
                 });
             default:
@@ -138,23 +141,23 @@ public class ClientConnection implements ClientSession {
         topics.addAll(Arrays.asList(subMessages));
         List<MqttTopicSubscription> topicSubscriptions = Arrays.stream(subMessages)
                 .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());
-        int messageId = connection.messageId();
+        int messageId = connection.idGen();
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
-                connection.write(MessageBuilder.buildSub(messageId, topicSubscriptions)).subscribe())
+                connection.sendMessage(MessageBuilder.buildSub(messageId, topicSubscriptions)).subscribe())
                 // retry
                 .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-        return connection.write(MessageBuilder.buildSub(messageId, topicSubscriptions));
+        return connection.sendMessage(MessageBuilder.buildSub(messageId, topicSubscriptions));
     }
 
     @Override
     public Mono<Void> unsub(List<String> topics) {
         this.topics.removeAll(topics);
-        int messageId = connection.messageId();
+        int messageId = connection.idGen();
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
-                connection.write(MessageBuilder.buildUnSub(messageId, topics)).subscribe())
+                connection.sendMessage(MessageBuilder.buildUnSub(messageId, topics)).subscribe())
                 // retry
                 .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-        return connection.write(MessageBuilder.buildUnSub(messageId, topics));
+        return connection.sendMessage(MessageBuilder.buildUnSub(messageId, topics));
     }
 
     @Override

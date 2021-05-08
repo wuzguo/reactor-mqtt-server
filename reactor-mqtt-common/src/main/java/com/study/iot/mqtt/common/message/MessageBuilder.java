@@ -1,6 +1,7 @@
-package com.study.iot.mqtt.common.connection;
+package com.study.iot.mqtt.common.message;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.mqtt.*;
 import lombok.experimental.UtilityClass;
 
@@ -10,10 +11,10 @@ import java.util.List;
 @UtilityClass
 public class MessageBuilder {
 
-    public static MqttPublishMessage buildPub(boolean isDup, MqttQoS qoS, boolean isRetain, int messageId, String topic, ByteBuf message) {
+    public static MqttPublishMessage buildPub(boolean isDup, MqttQoS qoS, boolean isRetain, int messageId, String topic, byte[] message) {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH, isDup, qoS, isRetain, 0);
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(topic, messageId);
-        return new MqttPublishMessage(mqttFixedHeader, mqttPublishVariableHeader, message);
+        return new MqttPublishMessage(mqttFixedHeader, mqttPublishVariableHeader, Unpooled.wrappedBuffer(message));
     }
 
 

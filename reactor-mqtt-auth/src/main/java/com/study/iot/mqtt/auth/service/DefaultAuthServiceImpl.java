@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.auth.service;
 
+import com.study.iot.mqtt.common.utils.DigestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.codec.digest.Md5Crypt;
@@ -21,7 +22,7 @@ public class DefaultAuthServiceImpl implements IAuthService {
     @Override
     public Mono<Boolean> check(String key, String secret) {
         log.info("mqtt server auth, key: {}, secret: {}", key, secret);
-        String md5Key = Md5Crypt.md5Crypt(key.getBytes(StandardCharsets.UTF_8), secret);
+        String md5Key = DigestUtil.md5Hex(key);
         return Mono.just(StringUtils.equals(md5Key, secret));
     }
 }

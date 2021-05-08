@@ -1,9 +1,9 @@
-package com.study.iot.mqtt.cache.connection;
+package com.study.iot.mqtt.transport.sender;
 
+import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.message.IMessageIdService;
-import com.study.iot.mqtt.common.connection.MessageBuilder;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.common.message.TransportMessage;
-import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.mqtt.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,8 +13,8 @@ import reactor.netty.NettyOutbound;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static io.netty.handler.codec.mqtt.MqttQoS.AT_MOST_ONCE;
 
@@ -29,9 +29,9 @@ import static io.netty.handler.codec.mqtt.MqttQoS.AT_MOST_ONCE;
 @Component
 public class MessageSender {
 
-    private final ConcurrentHashMap<Integer, Disposable> disposableMessageHashMap = new ConcurrentHashMap<>();
+    private final Map<Integer, Disposable> mapDisposable = Maps.newHashMap();
 
-    private final ConcurrentHashMap<Integer, TransportMessage> qos2Message = new ConcurrentHashMap<>();
+    private final Map<Integer, TransportMessage> mapQosMessage = Maps.newHashMap();
 
     @Autowired
     private IMessageIdService idService;
@@ -44,13 +44,13 @@ public class MessageSender {
     }
 
     public void addDisposable(Integer messageId, Disposable disposable) {
-        disposableMessageHashMap.put(messageId, disposable);
+        mapDisposable.put(messageId, disposable);
     }
 
     public void cancelDisposable(Integer messageId) {
-        Optional.ofNullable(disposableMessageHashMap.get(messageId))
+        Optional.ofNullable(mapDisposable.get(messageId))
                 .ifPresent(Disposable::dispose);
-        disposableMessageHashMap.remove(messageId);
+        mapDisposable.remove(messageId);
     }
 
 
@@ -64,7 +64,7 @@ public class MessageSender {
 
     public Mono<Void> sendPublishMessage(NettyOutbound outbound, MqttQoS qos, boolean isRetain, String topic, byte[] message) {
         MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(false, qos, isRetain, idService.next(),
-                topic, Unpooled.wrappedBuffer(message));
+                topic, message);
         return sendMessage(outbound, mqttPublishMessage);
     }
 
@@ -73,23 +73,23 @@ public class MessageSender {
         if (messageId == null) {
             messageId = idService.next();
         }
-        MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(isDup, qos, isRetain, messageId, topic, Unpooled.wrappedBuffer(message));
+        MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(isDup, qos, isRetain, messageId, topic, message);
         return sendMessage(outbound, mqttPublishMessage);
     }
 
 
     public Mono<Void> sendPublishMessageRetry(NettyOutbound outbound, MqttMessageType mqttMessageType, MqttQoS qos, boolean isRetain,
                                               String topic, Integer messageId, byte[] message) {
-        MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(false, qos, false, messageId, topic, Unpooled.wrappedBuffer(message));
-        MqttPublishMessage retryMqttPublishMessage = MessageBuilder.buildPub(false, qos, true, messageId, topic, Unpooled.wrappedBuffer(message));
+        MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(false, qos, false, messageId, topic, message);
+        MqttPublishMessage retryMqttPublishMessage = MessageBuilder.buildPub(false, qos, true, messageId, topic, message);
         addRetrySubscriber(outbound, messageId, retryMqttPublishMessage);
         return sendMessage(outbound, mqttPublishMessage);
     }
 
     public Mono<Void> sendPublishMessageRetry(NettyOutbound outbound, MqttQoS qos, boolean isRetain, String topic, byte[] message) {
         int messageId = idService.next();
-        MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(false, qos, isRetain, messageId, topic, Unpooled.wrappedBuffer(message));
-        MqttPublishMessage retryMqttPublishMessage = MessageBuilder.buildPub(false, qos, true, messageId, topic, Unpooled.wrappedBuffer(message));
+        MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(false, qos, isRetain, messageId, topic, message);
+        MqttPublishMessage retryMqttPublishMessage = MessageBuilder.buildPub(false, qos, true, messageId, topic, message);
         addRetrySubscriber(outbound, messageId, retryMqttPublishMessage);
         return sendMessage(outbound, mqttPublishMessage);
     }
@@ -102,7 +102,7 @@ public class MessageSender {
 
     public Mono<Void> sendPubAckMessage(NettyOutbound outbound, MqttMessageType mqttMessageType, MqttQoS qos, boolean isRetain, boolean isDup,
                                         int messageId) {
-        MqttPubAckMessage pubAckMessage = MessageBuilder.buildPubAck(isDup, qos,  isRetain, messageId);
+        MqttPubAckMessage pubAckMessage = MessageBuilder.buildPubAck(isDup, qos, isRetain, messageId);
         return sendMessage(outbound, pubAckMessage);
     }
 
@@ -147,16 +147,16 @@ public class MessageSender {
     }
 
     public void saveQos2Message(Integer messageId, TransportMessage message) {
-        qos2Message.put(messageId, message);
+        mapQosMessage.put(messageId, message);
     }
 
     public void removeQos2Message(Integer messageId) {
-        qos2Message.remove(messageId);
+        mapQosMessage.remove(messageId);
     }
 
     public Optional<TransportMessage> getAndRemoveQos2Message(Integer messageId) {
-        TransportMessage message = qos2Message.get(messageId);
-        qos2Message.remove(messageId);
+        TransportMessage message = mapQosMessage.get(messageId);
+        mapQosMessage.remove(messageId);
         return Optional.ofNullable(message);
     }
 }

@@ -2,11 +2,10 @@ package com.study.iot.mqtt.transport.server.handler;
 
 
 import com.study.iot.mqtt.auth.service.IAuthService;
-import com.study.iot.mqtt.cache.connection.MessageSender;
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
-import com.study.iot.mqtt.common.connection.MessageBuilder;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.common.utils.StringUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;
@@ -40,9 +39,6 @@ public class ServerConnectHandler implements StrategyCapable {
     @Autowired
     private IAuthService authService;
 
-    @Autowired
-    private MessageSender messageSender;
-
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server connect message: {}, connection: {}", message, connection);
@@ -53,18 +49,17 @@ public class ServerConnectHandler implements StrategyCapable {
             Throwable cause = connectMessage.decoderResult().cause();
             if (cause instanceof MqttUnacceptableProtocolVersionException) {
                 // 不支持的协议版本
-                messageSender.sendConnAckMessage(connection.getOutbound(),
-                        MqttConnectReturnCode.CONNECTION_REFUSED_UNACCEPTABLE_PROTOCOL_VERSION, false)
-                        .subscribe();
+                MqttConnAckMessage connAckMessage = MessageBuilder.buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_UNACCEPTABLE_PROTOCOL_VERSION, false);
+                connection.sendMessage(connAckMessage).subscribe();
+                connection.dispose();
                 return;
             } else if (cause instanceof MqttIdentifierRejectedException) {
                 // 不合格的设备ID
-                messageSender.sendConnAckMessage(connection.getOutbound(),
-                        MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false)
-                        .subscribe();
+                MqttConnAckMessage connAckMessage = MessageBuilder.buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false);
+                connection.sendMessage(connAckMessage).subscribe();
+                connection.dispose();
                 return;
             }
-            connection.dispose();
         }
 
         MqttConnectVariableHeader variableHeader = connectMessage.variableHeader();
@@ -72,10 +67,8 @@ public class ServerConnectHandler implements StrategyCapable {
         ChannelManager channelManager = cacheManager.channel();
         String identity = mqttPayload.clientIdentifier();
         if (channelManager.check(identity)) {
-            messageSender.sendConnAckMessage(connection.getOutbound(),
-                    MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false)
-                    .subscribe();
-
+            MqttConnAckMessage connAckMessage = MessageBuilder.buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false);
+            connection.sendMessage(connAckMessage).subscribe();
             connection.dispose();
             return;
         }
@@ -84,9 +77,8 @@ public class ServerConnectHandler implements StrategyCapable {
         String key = mqttPayload.userName();
         String secret = mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtil.isAnyBlank(key, secret)) {
-            messageSender.sendConnAckMessage(connection.getOutbound(),
-                    MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false)
-                    .subscribe();
+            MqttConnAckMessage connAckMessage = MessageBuilder.buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
+            connection.sendMessage(connAckMessage).subscribe();
             connection.dispose();
             return;
         }
@@ -94,15 +86,13 @@ public class ServerConnectHandler implements StrategyCapable {
         // 验证账号密码
         authService.check(key, secret).doOnError((throwable) -> {
             log.error("auth server check error: {}", throwable.getMessage());
-            messageSender.sendConnAckMessage(connection.getOutbound(),
-                    MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED, false)
-                    .subscribe();
+            MqttConnAckMessage connAckMessage = MessageBuilder.buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED, false);
+            connection.sendMessage(connAckMessage).subscribe();
             connection.dispose();
         }).subscribe((success) -> {
             if (!success) {
-                messageSender.sendConnAckMessage(connection.getOutbound(),
-                        MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false)
-                        .subscribe();
+                MqttConnAckMessage connAckMessage = MessageBuilder.buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
+                connection.sendMessage(connAckMessage).subscribe();
                 connection.dispose();
                 return;
             }
@@ -150,8 +140,6 @@ public class ServerConnectHandler implements StrategyCapable {
                 .ifPresent(Disposable::dispose);
         cacheManager.channel().addConnections(connection);
         // 连接成功
-        messageSender.sendMessage(connection.getOutbound(),
-                MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED))
-                .subscribe();
+        connection.sendMessage(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED)).subscribe();
     }
 }
