@@ -8,12 +8,14 @@ import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.connection.MessageBuilder;
 import com.study.iot.mqtt.common.message.WillMessage;
+import com.study.iot.mqtt.common.utils.StringUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.util.Attribute;
+import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.Disposable;
@@ -70,31 +72,44 @@ public class ServerConnectHandler implements StrategyCapable {
         ChannelManager channelManager = cacheManager.channel();
         String identity = mqttPayload.clientIdentifier();
         if (channelManager.check(identity)) {
-            connection.write(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED))
+            messageSender.sendConnAckMessage(connection.getOutbound(),
+                    MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false)
+                    .subscribe();
+
+            connection.dispose();
+            return;
+        }
+
+        // 没有用户密码
+        String key = mqttPayload.userName();
+        String secret = mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
+        if (StringUtil.isAnyBlank(key, secret)) {
+            messageSender.sendConnAckMessage(connection.getOutbound(),
+                    MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false)
                     .subscribe();
             connection.dispose();
             return;
         }
 
-        if (!variableHeader.hasPassword() || !variableHeader.hasUserName()) {
-            connectSuccess(connection, mqttPayload.clientIdentifier(), variableHeader.keepAliveTimeSeconds());
-            if (variableHeader.isWillFlag()) {
-                saveWill(connection, mqttPayload.willTopic(), variableHeader.isWillRetain(),
-                        mqttPayload.willMessageInBytes(), variableHeader.willQos());
-            }
-        }
-
         // 验证账号密码
-        authService.check(mqttPayload.userName(), mqttPayload.passwordInBytes()).subscribe((success) -> {
-            if (success) {
-                connectSuccess(connection, identity, variableHeader.keepAliveTimeSeconds());
-            } else {
-                connection.write(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD))
+        authService.check(key, secret).doOnError((throwable) -> {
+            log.error("auth server check error: {}", throwable.getMessage());
+            messageSender.sendConnAckMessage(connection.getOutbound(),
+                    MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED, false)
+                    .subscribe();
+            connection.dispose();
+        }).subscribe((success) -> {
+            if (!success) {
+                messageSender.sendConnAckMessage(connection.getOutbound(),
+                        MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false)
                         .subscribe();
+                connection.dispose();
+                return;
             }
-
+            // 连接成功
+            acceptConnect(connection, identity, variableHeader.keepAliveTimeSeconds());
             if (variableHeader.isWillFlag()) {
-                saveWill(connection, mqttPayload.willTopic(), variableHeader.isWillRetain(),
+                setWillMessage(connection, mqttPayload.willTopic(), variableHeader.isWillRetain(),
                         mqttPayload.willMessageInBytes(), variableHeader.willQos());
             }
         });
@@ -110,7 +125,7 @@ public class ServerConnectHandler implements StrategyCapable {
      * @param message    消息
      * @param qoS        QOS
      */
-    private void saveWill(DisposableConnection connection, String topicName, boolean retain, byte[] message, int qoS) {
+    private void setWillMessage(DisposableConnection connection, String topicName, boolean retain, byte[] message, int qoS) {
         WillMessage willMessage = WillMessage.builder().message(message).qos(qoS).retain(retain).topicName(topicName).build();
         // 设置遗嘱消息
         connection.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE).set(willMessage);
@@ -123,7 +138,7 @@ public class ServerConnectHandler implements StrategyCapable {
      * @param identity   设备标识
      * @param keepalive  超时时间
      */
-    private void connectSuccess(DisposableConnection connection, String identity, int keepalive) {
+    private void acceptConnect(DisposableConnection connection, String identity, int keepalive) {
         // 心跳超时关闭
         connection.getConnection().onReadIdle(keepalive * 2000L, () -> connection.getConnection().dispose());
         // 设置设备标识
@@ -134,6 +149,9 @@ public class ServerConnectHandler implements StrategyCapable {
                 .map(Attribute::get)
                 .ifPresent(Disposable::dispose);
         cacheManager.channel().addConnections(connection);
-        connection.write(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED)).subscribe();
+        // 连接成功
+        messageSender.sendMessage(connection.getOutbound(),
+                MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED))
+                .subscribe();
     }
 }

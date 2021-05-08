@@ -1,41 +1,44 @@
-package com.study.iot.mqtt.transport;
+package com.study.iot.mqtt.protocol.mqtt;
 
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
-import com.study.iot.mqtt.protocol.WsProtocol;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import io.netty.util.Attribute;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.UnicastProcessor;
+import reactor.netty.Connection;
 import reactor.netty.DisposableServer;
 import reactor.netty.tcp.TcpClient;
 import reactor.netty.tcp.TcpServer;
 
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Slf4j
-public class WsTransport extends ProtocolTransport {
+public class MqttTransport extends ProtocolTransport {
 
-    public WsTransport(WsProtocol wsProtocol) {
-        super(wsProtocol);
+    public MqttTransport(MqttProtocol mqttProtocol) {
+        super(mqttProtocol);
     }
 
     @Override
     public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<DisposableConnection> processor) {
         return buildServer(config).doOnConnection(connection -> {
-            log.info("websocket protocol connection: {}, ", connection.channel());
+            log.info("mqtt protocol connection: {}, ", connection.channel());
             protocol.getHandlers().forEach(connection::addHandlerLast);
             processor.onNext(new DisposableConnection(connection));
         }).bind().doOnSuccess(disposableServer -> {
-            log.info("server successfully started，websocket protocol listening ip: {} port: {}", config.getIp(), config.getPort());
+            log.info("server successfully started，mqtt protocol listening ip: {} port: {}", config.getIp(), config.getPort());
         }).doOnError(config.getThrowableConsumer());
     }
 
@@ -51,13 +54,13 @@ public class WsTransport extends ProtocolTransport {
                 .option(ChannelOption.SO_RCVBUF, config.getRevBufSize())
                 .option(ChannelOption.SO_SNDBUF, config.getSendBufSize());
         return config.isSsl() ? server.secure(sslContextSpec -> sslContextSpec.sslContext(Objects.requireNonNull(buildContext()))) : server;
-    }
 
+    }
 
     private SslContext buildContext() {
         try {
-            SelfSignedCertificate ssc = new SelfSignedCertificate();
-            return SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
+            SelfSignedCertificate certificate = new SelfSignedCertificate();
+            return SslContextBuilder.forServer(certificate.certificate(), certificate.privateKey()).build();
         } catch (Exception e) {
             log.error("ssl error: {}", e.getMessage());
         }
@@ -66,11 +69,32 @@ public class WsTransport extends ProtocolTransport {
 
     @Override
     public Mono<DisposableConnection> connect(ConnectConfiguration config) {
-        return Mono.just(buildClient(config)
-                .connectNow())
-                .map(connection -> {
+        return buildClient(config).connect().map(connection -> {
+            Connection connect = connection;
+            protocol.getHandlers().forEach(connect::addHandler);
+            DisposableConnection disposableConnection = new DisposableConnection(connection);
+            connection.onDispose(() -> retryConnect(config, disposableConnection));
+            log.info("connected successes !");
+            return disposableConnection;
+        });
+    }
+
+    private void retryConnect(ConnectConfiguration config, DisposableConnection disposableConnection) {
+        log.info("short-term reconnection");
+        buildClient(config)
+                .connect()
+                .doOnError(config.getThrowableConsumer())
+                .retry()
+                .cast(Connection.class)
+                .subscribe(connection -> {
                     protocol.getHandlers().forEach(connection::addHandler);
-                    return new DisposableConnection(connection);
+                    Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.clientConnectionAttributeKey))
+                            .map(Attribute::get).ifPresent(clientSession -> {
+                        disposableConnection.setConnection(connection);
+                        disposableConnection.setInbound(connection.inbound());
+                        disposableConnection.setOutbound(connection.outbound());
+                        clientSession.init();
+                    });
                 });
     }
 
@@ -83,7 +107,7 @@ public class WsTransport extends ProtocolTransport {
             SslContext sslClient = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
             return config.isSsl() ? client.secure(sslContextSpec -> sslContextSpec.sslContext(sslClient)) : client;
         } catch (Exception e) {
-            log.error("ssl error: {}", e.getMessage());
+            config.getThrowableConsumer().accept(e);
             return client;
         }
     }

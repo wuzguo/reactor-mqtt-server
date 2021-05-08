@@ -54,8 +54,8 @@ public class MessageSender {
     }
 
 
-    private Mono<Void> sendMessage(NettyOutbound outbound, MqttMessage message) {
-        return outbound.sendObject(message).then();
+    public Mono<Void> sendMessage(NettyOutbound outbound, MqttMessage message) {
+        return outbound.sendObject(message).then().doOnError(Throwable::printStackTrace);
     }
 
     public Mono<Void> sendPublishMessage(NettyOutbound outbound, MqttPublishMessage message) {

@@ -1,9 +1,9 @@
-package com.study.iot.mqtt.protocol;
+package com.study.iot.mqtt.protocol.mqtt;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
+import com.study.iot.mqtt.protocol.Protocol;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
-import com.study.iot.mqtt.protocol.mqtt.MqttTransport;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
