@@ -48,7 +48,6 @@ public class WsTransport extends ProtocolTransport {
                 .option(ChannelOption.SO_RCVBUF, config.getRevBufSize())
                 .option(ChannelOption.SO_SNDBUF, config.getSendBufSize());
         return config.isSsl() ? server.secure(sslContextSpec -> sslContextSpec.sslContext(Objects.requireNonNull(buildContext()))) : server;
-
     }
 
 

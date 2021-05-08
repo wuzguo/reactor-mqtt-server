@@ -57,8 +57,8 @@ public class MqttTransport extends ProtocolTransport {
 
     private SslContext buildContext() {
         try {
-            SelfSignedCertificate ssc = new SelfSignedCertificate();
-            return SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
+            SelfSignedCertificate certificate = new SelfSignedCertificate();
+            return SslContextBuilder.forServer(certificate.certificate(), certificate.privateKey()).build();
         } catch (Exception e) {
             log.error("ssl error: {}", e.getMessage());
         }
@@ -72,13 +72,13 @@ public class MqttTransport extends ProtocolTransport {
             protocol.getHandlers().forEach(connect::addHandler);
             DisposableConnection disposableConnection = new DisposableConnection(connection);
             connection.onDispose(() -> retryConnect(config, disposableConnection));
-            log.info("connected successed !");
+            log.info("connected successes !");
             return disposableConnection;
         });
     }
 
     private void retryConnect(ConnectConfiguration config, DisposableConnection disposableConnection) {
-        log.info("Short-term reconnection");
+        log.info("short-term reconnection");
         buildClient(config)
                 .connect()
                 .doOnError(config.getThrowableConsumer())
@@ -93,12 +93,14 @@ public class MqttTransport extends ProtocolTransport {
                         disposableConnection.setOutbound(connection.outbound());
                         clientSession.init();
                     });
-
                 });
     }
 
     private TcpClient buildClient(ConnectConfiguration config) {
-        TcpClient client = TcpClient.create().port(config.getPort()).host(config.getIp()).wiretap(config.isLog());
+        TcpClient client = TcpClient.create()
+                .port(config.getPort())
+                .host(config.getIp())
+                .wiretap(config.isLog());
         try {
             SslContext sslClient = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
             return config.isSsl() ? client.secure(sslContextSpec -> sslContextSpec.sslContext(sslClient)) : client;
