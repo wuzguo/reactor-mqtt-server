@@ -34,10 +34,12 @@ public class MqttTransport extends ProtocolTransport {
     @Override
     public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<DisposableConnection> processor) {
         return buildServer(config).doOnConnection(connection -> {
+            log.info("mqtt protocol connection: {}, ", connection.channel());
             protocol.getHandlers().forEach(connection::addHandlerLast);
             processor.onNext(new DisposableConnection(connection));
-            log.info("server successfully started，mqtt protocol listening port: {}", config.getPort());
-        }).bind().doOnError(config.getThrowableConsumer());
+        }).bind().doOnSuccess(disposableServer -> {
+            log.info("server successfully started，mqtt protocol listening ip: {} port: {}", config.getIp(), config.getPort());
+        }).doOnError(config.getThrowableConsumer());
     }
 
     private TcpServer buildServer(ConnectConfiguration config) {

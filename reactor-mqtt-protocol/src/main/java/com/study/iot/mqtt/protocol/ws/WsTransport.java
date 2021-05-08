@@ -30,10 +30,12 @@ public class WsTransport extends ProtocolTransport {
     @Override
     public Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<DisposableConnection> processor) {
         return buildServer(config).doOnConnection(connection -> {
+            log.info("websocket protocol connection: {}, ", connection.channel());
             protocol.getHandlers().forEach(connection::addHandlerLast);
             processor.onNext(new DisposableConnection(connection));
-            log.info("server successfully started，websocket protocol listening port: {}", config.getPort());
-        }).bind().doOnError(config.getThrowableConsumer());
+        }).bind().doOnSuccess(disposableServer -> {
+            log.info("server successfully started，websocket protocol listening ip: {} port: {}", config.getIp(), config.getPort());
+        }).doOnError(config.getThrowableConsumer());
     }
 
     private TcpServer buildServer(ConnectConfiguration config) {
