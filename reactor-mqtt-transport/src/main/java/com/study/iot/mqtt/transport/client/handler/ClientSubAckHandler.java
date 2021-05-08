@@ -19,8 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @StrategyService(group = StrategyGroup.CLIENT, type = MqttMessageType.SUBACK)
 public class ClientSubAckHandler implements StrategyCapable {
-    @Override
-    public void handler(MqttMessage message, DisposableConnection connection) {
 
+    @Override
+    public void handle(MqttMessage message, DisposableConnection connection) {
+        log.info("client SubAck message: {}, connection: {}", message, connection);
     }
 }

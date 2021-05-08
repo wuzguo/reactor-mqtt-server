@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerConnectHandler implements StrategyCapable {
 
     @Override
-    public void handler(MqttMessage message, DisposableConnection connection) {
-
+    public void handle(MqttMessage message, DisposableConnection connection) {
+        log.info("server connect message: {}, connection: {}", message, connection);
     }
 }

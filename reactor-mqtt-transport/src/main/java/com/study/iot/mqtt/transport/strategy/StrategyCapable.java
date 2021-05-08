@@ -22,5 +22,5 @@ public interface StrategyCapable {
      * @param connection    {@link DisposableConnection}
      * @param configuration {@link ConnectConfiguration}
      */
-    void handler(MqttMessage message, DisposableConnection connection);
+    void handle(MqttMessage message, DisposableConnection connection);
 }

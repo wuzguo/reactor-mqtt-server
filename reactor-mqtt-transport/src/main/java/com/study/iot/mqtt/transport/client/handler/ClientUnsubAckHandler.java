@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientUnsubAckHandler implements StrategyCapable {
 
     @Override
-    public void handler(MqttMessage message, DisposableConnection connection) {
-
+    public void handle(MqttMessage message, DisposableConnection connection) {
+        log.info("client UnsubAck message: {}, connection: {}", message, connection);
     }
 }

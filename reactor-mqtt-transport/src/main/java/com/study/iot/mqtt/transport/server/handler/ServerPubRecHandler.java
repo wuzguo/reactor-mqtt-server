@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerPubRecHandler implements StrategyCapable {
 
     @Override
-    public void handler(MqttMessage message, DisposableConnection connection) {
-
+    public void handle(MqttMessage message, DisposableConnection connection) {
+        log.info("server PubRec message: {}, connection: {}", message, connection);
     }
 }

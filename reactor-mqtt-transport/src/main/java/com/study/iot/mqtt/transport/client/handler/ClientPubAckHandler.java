@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientPubAckHandler implements StrategyCapable {
 
     @Override
-    public void handler(MqttMessage message, DisposableConnection connection) {
-
+    public void handle(MqttMessage message, DisposableConnection connection) {
+        log.info("client PubAck message: {}, connection: {}", message, connection);
     }
 }

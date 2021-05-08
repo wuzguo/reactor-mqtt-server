@@ -23,7 +23,7 @@ public class ClientPubRelHandler implements StrategyCapable {
 
 
     @Override
-    public void handler(MqttMessage message, DisposableConnection connection) {
-
+    public void handle(MqttMessage message, DisposableConnection connection) {
+        log.info("client PubRel message: {}, connection: {}", message, connection);
     }
 }

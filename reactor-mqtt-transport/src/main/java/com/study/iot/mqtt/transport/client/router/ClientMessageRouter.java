@@ -30,6 +30,6 @@ public class ClientMessageRouter {
         }
 
         Optional.ofNullable(container.getStrategy(StrategyGroup.CLIENT, message.fixedHeader().messageType()))
-                .ifPresent(capable -> ((StrategyCapable) capable).handler(message, connection));
+                .ifPresent(capable -> ((StrategyCapable) capable).handle(message, connection));
     }
 }
