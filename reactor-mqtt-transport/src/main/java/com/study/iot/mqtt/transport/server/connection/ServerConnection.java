@@ -81,7 +81,7 @@ public class ServerConnection implements ServerSession {
             transport.destory();
         });
         inbound.receiveObject().cast(MqttMessage.class)
-                .subscribe(message -> messageRouter.handler(message, transport));
+                .subscribe(message -> messageRouter.handle(message, transport));
     }
 
     @Override

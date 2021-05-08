@@ -21,11 +21,11 @@ public class ClientMessageRouter {
         this.container = container;
     }
 
-    public void handler(MqttMessage message, DisposableConnection connection) {
-        log.info("accept message channel {} info {}", connection.getConnection(), message);
+    public void handle(MqttMessage message, DisposableConnection connection) {
+        log.info("accept message channel {}，message {}", connection.getConnection().channel(), message);
 
         if (!message.decoderResult().isSuccess()) {
-            log.error("accept message  error {}", message.decoderResult().toString());
+            log.error("accept message  error {}", message.decoderResult());
             return;
         }
 

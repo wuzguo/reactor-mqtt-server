@@ -3,7 +3,7 @@ package com.study.iot.mqtt.transport.client.connection;
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
-import com.study.iot.mqtt.protocol.MqttMessageApi;
+import com.study.iot.mqtt.common.connection.MessageBuilder;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
@@ -51,7 +51,7 @@ public class ClientConnection implements ClientSession {
     @Override
     public void init() {
         ClientConfiguration.Options options = configuration.getOptions();
-        Disposable disposable = Mono.fromRunnable(() -> connection.write(MqttMessageApi.buildConnect(
+        Disposable disposable = Mono.fromRunnable(() -> connection.write(MessageBuilder.buildConnect(
                 options.getClientIdentifier(),
                 options.getWillTopic(),
                 options.getWillMessage(),
@@ -63,7 +63,7 @@ public class ClientConnection implements ClientSession {
                 options.getWillQos(),
                 configuration.getHeart()
         )).subscribe()).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe();
-        connection.write(MqttMessageApi.buildConnect(
+        connection.write(MessageBuilder.buildConnect(
                 options.getClientIdentifier(),
                 options.getWillTopic(),
                 options.getWillMessage(),
@@ -79,12 +79,12 @@ public class ClientConnection implements ClientSession {
         // 发送心跳
         connection.getConnection().onWriteIdle(configuration.getHeart(), () -> connection.sendPingReq().subscribe());
         // 发送心跳
-        connection.getConnection().onReadIdle(configuration.getHeart() * 2, () -> connection.sendPingReq().subscribe());
+        connection.getConnection().onReadIdle(configuration.getHeart() * 2L, () -> connection.sendPingReq().subscribe());
         connection.getConnection().onDispose(() -> configuration.getOnClose().run());
 
         NettyInbound inbound = connection.getInbound();
         inbound.receiveObject().cast(MqttMessage.class)
-                .subscribe(message -> clientMessageRouter.handler(message, connection));
+                .subscribe(message -> clientMessageRouter.handle(message, connection));
         connection.getConnection().channel().attr(AttributeKeys.clientConnectionAttributeKey).set(this);
         List<MqttTopicSubscription> mqttTopicSubscriptions = connection.getTopics().stream()
                 .map(s -> new MqttTopicSubscription(s, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());
@@ -92,9 +92,9 @@ public class ClientConnection implements ClientSession {
         if (mqttTopicSubscriptions.size() > 0) {
             int messageId = connection.messageId();
             connection.addDisposable(messageId, Mono.fromRunnable(() ->
-                    connection.write(MqttMessageApi.buildSub(messageId, mqttTopicSubscriptions)).subscribe())
+                    connection.write(MessageBuilder.buildSub(messageId, mqttTopicSubscriptions)).subscribe())
                     .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-            connection.write(MqttMessageApi.buildSub(messageId, mqttTopicSubscriptions)).subscribe();
+            connection.write(MessageBuilder.buildSub(messageId, mqttTopicSubscriptions)).subscribe();
         }
     }
 
@@ -104,13 +104,13 @@ public class ClientConnection implements ClientSession {
         MqttQoS mqttQoS = MqttQoS.valueOf(qos);
         switch (mqttQoS) {
             case AT_MOST_ONCE:
-                return connection.write(MqttMessageApi.buildPub(false, MqttQoS.AT_MOST_ONCE, retained, messageId, topic, Unpooled.wrappedBuffer(message)));
+                return connection.write(MessageBuilder.buildPub(false, MqttQoS.AT_MOST_ONCE, retained, messageId, topic, Unpooled.wrappedBuffer(message)));
             case EXACTLY_ONCE:
             case AT_LEAST_ONCE:
                 return Mono.fromRunnable(() -> {
-                    connection.write(MqttMessageApi.buildPub(false, mqttQoS, retained, messageId, topic, Unpooled.wrappedBuffer(message))).subscribe();
+                    connection.write(MessageBuilder.buildPub(false, mqttQoS, retained, messageId, topic, Unpooled.wrappedBuffer(message))).subscribe();
                     connection.addDisposable(messageId, Mono.fromRunnable(() ->
-                            connection.write(MqttMessageApi.buildPub(true, mqttQoS, retained, messageId, topic, Unpooled.wrappedBuffer(message))).subscribe())
+                            connection.write(MessageBuilder.buildPub(true, mqttQoS, retained, messageId, topic, Unpooled.wrappedBuffer(message))).subscribe())
                             .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe()); // retry
                 });
             default:
@@ -140,10 +140,10 @@ public class ClientConnection implements ClientSession {
                 .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());
         int messageId = connection.messageId();
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
-                connection.write(MqttMessageApi.buildSub(messageId, topicSubscriptions)).subscribe())
+                connection.write(MessageBuilder.buildSub(messageId, topicSubscriptions)).subscribe())
                 // retry
                 .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-        return connection.write(MqttMessageApi.buildSub(messageId, topicSubscriptions));
+        return connection.write(MessageBuilder.buildSub(messageId, topicSubscriptions));
     }
 
     @Override
@@ -151,10 +151,10 @@ public class ClientConnection implements ClientSession {
         this.topics.removeAll(topics);
         int messageId = connection.messageId();
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
-                connection.write(MqttMessageApi.buildUnSub(messageId, topics)).subscribe())
+                connection.write(MessageBuilder.buildUnSub(messageId, topics)).subscribe())
                 // retry
                 .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-        return connection.write(MqttMessageApi.buildUnSub(messageId, topics));
+        return connection.write(MessageBuilder.buildUnSub(messageId, topics));
     }
 
     @Override
