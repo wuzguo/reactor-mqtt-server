@@ -29,7 +29,10 @@ spring:
         not-persistence-initial-size: 64
         # 非持久化缓存占用内存最大值(MB)
         not-persistence-max-size: 128
-
+  redis:
+    host: 10.20.1.182
+    port: 6379
+    database: 0
 logging:
   level:
     root: info

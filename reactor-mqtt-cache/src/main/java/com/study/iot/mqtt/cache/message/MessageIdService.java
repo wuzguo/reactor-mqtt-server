@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.cache.message;
 
-import com.study.iot.mqtt.common.service.IMessageIdService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ignite.IgniteCache;
 import org.springframework.stereotype.Service;

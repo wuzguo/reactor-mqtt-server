@@ -15,7 +15,10 @@ spring:
         not-persistence-max-size: 128
         # 持久化磁盘存储路径
         persistence-store-path: /opt/mqtt-broker/persistence
-
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
 
 logging:
   level:

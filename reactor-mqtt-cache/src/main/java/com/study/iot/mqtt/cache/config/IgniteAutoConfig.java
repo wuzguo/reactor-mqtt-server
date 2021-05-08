@@ -1,5 +1,7 @@
 package com.study.iot.mqtt.cache.config;
 
+import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.message.RetainMessage;
 import lombok.Setter;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -17,13 +19,13 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMultic
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 自动配置apache ignite
@@ -106,44 +108,30 @@ public class IgniteAutoConfig {
     }
 
     @Bean
-    public IgniteCache<Object, Object> messageIdCache() throws Exception {
-        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("not-persistence-data-region")
+    public IgniteCache<Integer, Integer> messageIdCache() throws Exception {
+        CacheConfiguration<Integer, Integer> cacheConfiguration = new CacheConfiguration<Integer, Integer>().setDataRegionName("not-persistence-data-region")
                 .setCacheMode(CacheMode.PARTITIONED).setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL).setName("messageIdCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
-    public IgniteCache<Object, Object> retainMessageCache() throws Exception {
-        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
-                .setCacheMode(CacheMode.PARTITIONED).setName("retainMessageCache");
+    public IgniteCache<String, DisposableConnection> disposableCache() throws Exception {
+        CacheConfiguration<String, DisposableConnection> cacheConfiguration = new CacheConfiguration<String, DisposableConnection>().setDataRegionName("persistence-data-region")
+                .setCacheMode(CacheMode.PARTITIONED).setName("disposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
-    public IgniteCache<Object, Object> subscribeNotWildcardCache() throws Exception {
-        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
-                .setCacheMode(CacheMode.PARTITIONED).setName("subscribeNotWildcardCache");
+    public IgniteCache<String, RetainMessage> messageCache() throws Exception {
+        CacheConfiguration<String, RetainMessage> cacheConfiguration = new CacheConfiguration<String, RetainMessage>().setDataRegionName("persistence-data-region")
+                .setCacheMode(CacheMode.PARTITIONED).setName("messageCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
-    public IgniteCache<Object, Object> subscribeWildcardCache() throws Exception {
-        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
-                .setCacheMode(CacheMode.PARTITIONED).setName("subscribeWildcardCache");
-        return ignite().getOrCreateCache(cacheConfiguration);
-    }
-
-    @Bean
-    public IgniteCache<Object, Object> dupPublishMessageCache() throws Exception {
-        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
-                .setCacheMode(CacheMode.PARTITIONED).setName("dupPublishMessageCache");
-        return ignite().getOrCreateCache(cacheConfiguration);
-    }
-
-    @Bean
-    public IgniteCache<Object, Object> dupPubRelMessageCache() throws Exception {
-        CacheConfiguration<Object, Object> cacheConfiguration = new CacheConfiguration<>().setDataRegionName("persistence-data-region")
-                .setCacheMode(CacheMode.PARTITIONED).setName("dupPubRelMessageCache");
+    public IgniteCache<String, List<DisposableConnection>> topicDisposableCache() throws Exception {
+        CacheConfiguration<String, List<DisposableConnection>> cacheConfiguration = new CacheConfiguration<String, List<DisposableConnection>>().setDataRegionName("persistence-data-region")
+                .setCacheMode(CacheMode.PARTITIONED).setName("topicDisposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
