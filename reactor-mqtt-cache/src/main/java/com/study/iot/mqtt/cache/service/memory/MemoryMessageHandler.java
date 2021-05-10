@@ -22,8 +22,8 @@ public class MemoryMessageHandler implements MessageHandler {
     private final Map<String, RetainMessage> messages = Maps.newConcurrentMap();
 
     @Override
-    public void saveRetain(boolean dup, boolean retain, int qos, String topicName, byte[] copyByteBuf) {
-        messages.put(topicName, new RetainMessage(dup, retain, qos, topicName, copyByteBuf));
+    public void saveRetain(RetainMessage message) {
+        messages.put(message.getTopic(), message);
     }
 
     @Override

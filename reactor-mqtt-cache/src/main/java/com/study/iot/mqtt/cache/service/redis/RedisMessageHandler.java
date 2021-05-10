@@ -23,8 +23,8 @@ public class RedisMessageHandler implements MessageHandler {
     private RedisOpsTemplate redisOpsTemplate;
 
     @Override
-    public void saveRetain(boolean dup, boolean retain, int qos, String topicName, byte[] copyByteBuf) {
-        redisOpsTemplate.sadd(topicName, new RetainMessage(dup, retain, qos, topicName, copyByteBuf));
+    public void saveRetain(RetainMessage message) {
+        redisOpsTemplate.sadd(message.getTopic(), message);
     }
 
     @Override

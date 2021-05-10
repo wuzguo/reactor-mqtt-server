@@ -54,21 +54,22 @@ public class ServerSubscribeHandler implements StrategyCapable {
             cacheManager.topic().addConnection(topicName, connection);
             Optional.ofNullable(cacheManager.message().getRetain(topicName)).ifPresent(retainMessage -> {
                 if (retainMessage.getQos() == 0) {
-                    MqttPublishMessage mqttMessage = MessageBuilder.buildPub(retainMessage.getDup(),
+                    MqttPublishMessage mqttMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),
                         MqttQoS.valueOf(retainMessage.getQos()),
-                        retainMessage.getRetain(), 1, retainMessage.getTopicName(), retainMessage.getMessage());
+                        retainMessage.getIsRetain(), 1, retainMessage.getTopic(), retainMessage.getCopyByteBuf());
                     connection.sendMessage(mqttMessage).subscribe();
                 } else {
                     int connMessageId = connection.messageId();
                     // retry
                     connection.addDisposable(connMessageId, Mono.fromRunnable(() -> {
                         MqttPublishMessage mqttMessage = MessageBuilder.buildPub(true, header.qosLevel(),
-                            header.isRetain(), connMessageId, retainMessage.getTopicName(), retainMessage.getMessage());
+                            header.isRetain(), connMessageId, retainMessage.getTopic(),
+                            retainMessage.getCopyByteBuf());
                         connection.sendMessage(mqttMessage).subscribe();
                     }).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
                     // pub
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(),
-                        header.isRetain(), connMessageId, retainMessage.getTopicName(), retainMessage.getMessage());
+                        header.isRetain(), connMessageId, retainMessage.getTopic(), retainMessage.getCopyByteBuf());
                     connection.sendMessage(mqttMessage).subscribe();
                 }
             });

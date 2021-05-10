@@ -20,13 +20,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TransportMessage implements Serializable {
 
-    private String topicName;
+    private String topic;
 
-    private byte[] message;
+    private byte[] copyByteBuf;
 
     private Integer qos;
 
-    private Boolean retain;
+    private Boolean isRetain;
 
-    private Boolean dup;
+    private Boolean isDup;
 }

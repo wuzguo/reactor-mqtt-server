@@ -22,7 +22,7 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttUnacceptableProtocolVersionException;
 import io.netty.util.Attribute;
-import io.netty.util.CharsetUtil;
+import java.util.Arrays;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,10 +83,9 @@ public class ServerConnectHandler implements StrategyCapable {
             return;
         }
 
-        // 没有用户密码
+        // 用户名和密码
         String key = mqttPayload.userName();
-        String secret =
-            mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
+        String secret = mqttPayload.passwordInBytes() == null ? null : Arrays.toString(mqttPayload.passwordInBytes());
         if (StringUtil.isAnyBlank(key, secret)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
@@ -129,10 +128,10 @@ public class ServerConnectHandler implements StrategyCapable {
      * @param message    消息
      * @param qoS        QOS
      */
-    private void setWillMessage(DisposableConnection connection, String topicName, boolean retain, byte[] message,
+    private void setWillMessage(DisposableConnection connection, String topicName, boolean isRetain, byte[] message,
         int qoS) {
-        WillMessage willMessage = WillMessage.builder()
-            .message(message).qos(qoS).retain(retain).topicName(topicName).build();
+        WillMessage willMessage = WillMessage.builder().copyByteBuf(message)
+            .qos(qoS).isRetain(isRetain).topic(topicName).build();
         // 设置遗嘱消息
         connection.getConnection().channel().attr(AttributeKeys.willMessage).set(willMessage);
     }

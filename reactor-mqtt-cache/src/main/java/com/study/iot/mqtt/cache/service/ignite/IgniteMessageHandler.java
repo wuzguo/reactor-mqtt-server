@@ -23,8 +23,8 @@ public class IgniteMessageHandler implements MessageHandler {
     private IgniteCache<String, RetainMessage> messageCache;
 
     @Override
-    public void saveRetain(boolean dup, boolean retain, int qos, String topicName, byte[] copyByteBuf) {
-        messageCache.put(topicName, new RetainMessage(dup, retain, qos, topicName, copyByteBuf));
+    public void saveRetain(RetainMessage message) {
+        messageCache.put(message.getTopic(), message);
     }
 
     @Override

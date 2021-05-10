@@ -23,9 +23,9 @@ public class WillMessage implements Serializable {
 
     private Integer qos;
 
-    private String topicName;
+    private String topic;
 
-    private byte[] message;
+    private byte[] copyByteBuf;
 
-    private Boolean retain;
+    private Boolean isRetain;
 }

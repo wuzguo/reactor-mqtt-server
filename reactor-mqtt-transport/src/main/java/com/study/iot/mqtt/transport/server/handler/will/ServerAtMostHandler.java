@@ -23,8 +23,8 @@ public class ServerAtMostHandler implements WillCapable {
     @Override
     public void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
         int messageId = connection.messageId();
-        MqttPublishMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getRetain(),
-            messageId, willMessage.getTopicName(), willMessage.getMessage());
+        MqttPublishMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getIsRetain(),
+            messageId, willMessage.getTopic(), willMessage.getCopyByteBuf());
         connection.sendMessageRetry(messageId, message).subscribe();
     }
 }

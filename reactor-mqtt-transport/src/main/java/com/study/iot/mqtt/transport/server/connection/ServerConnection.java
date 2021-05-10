@@ -65,7 +65,7 @@ public class ServerConnection implements ServerSession {
             Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.willMessage))
                 .map(Attribute::get)
                 .ifPresent(
-                    willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopicName()))
+                    willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopic()))
                         .ifPresent(connections -> connections.forEach(connect -> {
                             MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                             Optional.ofNullable(

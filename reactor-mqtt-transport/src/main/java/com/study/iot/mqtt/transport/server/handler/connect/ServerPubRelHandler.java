@@ -44,13 +44,13 @@ public class ServerPubRelHandler implements StrategyCapable {
         // send comp
         connection.sendMessage(mqttPubRecMessage).subscribe();
         connection.getAndRemoveQos2Message(messageId)
-            .ifPresent(transportMessage -> cacheManager.topic().getConnections(transportMessage.getTopicName())
+            .ifPresent(transportMessage -> cacheManager.topic().getConnections(transportMessage.getTopic())
                 .stream().filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
                 .forEach(disposable -> {
                     int id = connection.messageId();
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false,
                         MqttQoS.valueOf(transportMessage.getQos()), header.isRetain(), id,
-                        transportMessage.getTopicName(), transportMessage.getMessage());
+                        transportMessage.getTopic(), transportMessage.getCopyByteBuf());
                     disposable.sendMessageRetry(id, mqttMessage).subscribe();
                 }));
     }

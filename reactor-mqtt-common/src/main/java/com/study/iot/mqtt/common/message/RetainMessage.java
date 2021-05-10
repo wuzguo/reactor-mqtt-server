@@ -20,13 +20,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RetainMessage implements Serializable {
 
-    private Boolean dup;
+    private Boolean isDup;
 
-    private Boolean retain;
+    private Boolean isRetain;
 
     private Integer qos;
 
-    private String topicName;
+    private String topic;
 
-    private byte[] message;
+    private byte[] copyByteBuf;
 }

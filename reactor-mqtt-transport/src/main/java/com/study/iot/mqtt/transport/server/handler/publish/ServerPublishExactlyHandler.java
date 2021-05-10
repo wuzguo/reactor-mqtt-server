@@ -38,10 +38,10 @@ public class ServerPublishExactlyHandler implements PublishStrategyCapable {
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
             connection.sendMessage(MessageBuilder.buildPubRel(messageId)).subscribe())
             .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-        TransportMessage transportMessage = TransportMessage.builder().retain(header.isRetain())
-            .dup(false)
-            .topicName(variableHeader.topicName())
-            .message(bytes)
+        TransportMessage transportMessage = TransportMessage.builder().isRetain(header.isRetain())
+            .isDup(false)
+            .topic(variableHeader.topicName())
+            .copyByteBuf(bytes)
             .qos(header.qosLevel().value())
             .build();
         connection.saveQos2Message(messageId, transportMessage);

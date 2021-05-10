@@ -2,6 +2,7 @@ package com.study.iot.mqtt.transport.server.handler.connect;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyContainer;
@@ -45,8 +46,10 @@ public class ServerPublishHandler implements StrategyCapable {
         byte[] bytes = copyByteBuf(byteBuf);
         //保留消息
         if (header.isRetain()) {
-            cacheManager.message().saveRetain(header.isDup(), header.isRetain(), header.qosLevel().value(),
-                variableHeader.topicName(), bytes);
+            RetainMessage retainMessage = RetainMessage.builder().topic(variableHeader.topicName())
+                .isRetain(header.isRetain()).isDup(header.isDup()).qos(header.qosLevel().value())
+                .copyByteBuf(bytes).build();
+            cacheManager.message().saveRetain(retainMessage);
         }
         // 又来一个策略模式
         Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH, header.qosLevel()))

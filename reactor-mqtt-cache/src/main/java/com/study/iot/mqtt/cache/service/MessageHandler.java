@@ -6,7 +6,18 @@ import com.study.iot.mqtt.common.message.RetainMessage;
 
 public interface MessageHandler extends CacheCapable {
 
-    void saveRetain(boolean dup, boolean retain, int qos, String topicName, byte[] copyByteBuf);
+    /**
+     * 保存消息
+     *
+     * @param message {@link RetainMessage}
+     */
+    void saveRetain(RetainMessage message);
 
+    /**
+     * 获取消息
+     *
+     * @param topicName Topic对象
+     * @return {@link RetainMessage}
+     */
     RetainMessage getRetain(String topicName);
 }
