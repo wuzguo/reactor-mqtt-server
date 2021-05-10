@@ -21,4 +21,11 @@ public interface ServerSession extends Disposable {
      * @return {@link Void}
      */
     Mono<Void> closeConnect(String identity);
+
+    /**
+     * 在关闭连接的时候处理的内容
+     *
+     * @param disposableConnection {@link DisposableConnection}
+     */
+    void onDispose(DisposableConnection disposableConnection);
 }

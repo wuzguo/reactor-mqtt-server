@@ -48,27 +48,15 @@ public class ServerConnection implements ServerSession {
         NettyInbound inbound = disposableConnection.getInbound();
         Connection connection = disposableConnection.getConnection();
         // 定时关闭
-        Disposable disposable = Mono.fromRunnable(connection::dispose)
+        Disposable closeConnection = Mono.fromRunnable(connection::dispose)
             .delaySubscription(Duration.ofSeconds(10))
             .subscribe();
+        // 设置 close
+        connection.channel().attr(AttributeKeys.closeConnection).set(closeConnection);
         // 设置 connection
         connection.channel().attr(AttributeKeys.disposableConnection).set(disposableConnection);
-        // 设置 close
-        connection.channel().attr(AttributeKeys.closeConnection).set(disposable);
-        // 关闭发送will消息
-        disposableConnection.getConnection().onDispose(() -> {
-            Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.willMessage))
-                .map(Attribute::get)
-                .ifPresent(
-                    willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopic()))
-                        .ifPresent(connections -> connections.forEach(connect -> {
-                            MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                            Optional.ofNullable(
-                                messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
-                                .ifPresent(capable -> ((WillCapable) capable).handle(qoS, connect, willMessage));
-                        })));
-            disposableConnection.destory();
-        });
+        // 关闭连接时处理的逻辑
+        this.onDispose(disposableConnection);
         // 订阅各种消息
         inbound.receiveObject().cast(MqttMessage.class)
             .subscribe(message -> messageRouter.handle(message, disposableConnection));
@@ -83,6 +71,29 @@ public class ServerConnection implements ServerSession {
     public Mono<Void> closeConnect(String identity) {
         return Mono.fromRunnable(() -> Optional.ofNullable(cacheManager.channel().getAndRemove(identity))
             .ifPresent(DisposableConnection::dispose));
+    }
+
+    @Override
+    public void onDispose(DisposableConnection disposableConnection) {
+        Connection connection = disposableConnection.getConnection();
+        connection.onDispose(() -> {
+            Optional.ofNullable(connection.channel().attr(AttributeKeys.willMessage)).map(Attribute::get)
+                .ifPresent(willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopic()))
+                        .ifPresent(connections -> connections.forEach(connect -> {
+                            MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
+                            Optional.ofNullable(
+                                messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
+                                .ifPresent(capable -> ((WillCapable) capable).handle(qoS, connect, willMessage));
+                        })));
+            // 自己超时关闭的时候会走这段代码，要清除缓存中的连接信息
+            // 删除设备标识
+            Optional.ofNullable(connection.channel().attr(AttributeKeys.identity)).map(Attribute::get)
+                .ifPresent(cacheManager.channel()::removeChannel);
+            // 删除topic订阅
+            Optional.ofNullable(disposableConnection.getTopics()).ifPresent(topics -> topics
+                .forEach(topic -> cacheManager.topic().deleteConnection(topic, disposableConnection)));
+            disposableConnection.destory();
+        });
     }
 
     @Override
