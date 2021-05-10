@@ -11,6 +11,7 @@
 - reactor-mqtt-cache： 缓存或持久化模块。
 - reactor-mqtt-common： 基础模块。
 - reactor-mqtt-protocol： 协议模块。
+- reactor-mqtt-transport：消息处理模块。
 
 ### 依赖工具
 
@@ -19,6 +20,7 @@
 - JDK 1.8+
 - Maven 3+
 - Netty 4.1+
+- Ignite 2.6+
 
 ### 持续更新...
 
