@@ -22,7 +22,7 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttUnacceptableProtocolVersionException;
 import io.netty.util.Attribute;
-import java.util.Arrays;
+import io.netty.util.CharsetUtil;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,8 @@ public class ServerConnectHandler implements StrategyCapable {
 
         // 用户名和密码
         String key = mqttPayload.userName();
-        String secret = mqttPayload.passwordInBytes() == null ? null : Arrays.toString(mqttPayload.passwordInBytes());
+        String secret = mqttPayload.passwordInBytes() == null ?
+            null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtil.isAnyBlank(key, secret)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);

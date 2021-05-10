@@ -26,7 +26,6 @@ public class TransportClient {
         return this;
     }
 
-
     public Mono<ClientSession> connect(ClientMessageRouter messageRouter) {
         configuration.setOptions(options);
         return transportFactory.connect(configuration, messageRouter);

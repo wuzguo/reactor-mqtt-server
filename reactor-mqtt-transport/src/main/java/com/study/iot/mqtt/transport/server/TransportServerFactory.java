@@ -33,7 +33,7 @@ public class TransportServerFactory {
             .map(protocolType -> protocolFactory.getProtocol(protocolType)
                 .get()
                 .getTransport()
-                .start(config, UnicastProcessor.create()).subscribe()).collect(Collectors.toList());
+                .start(config, unicastProcessor).subscribe()).collect(Collectors.toList());
         // 返回
         return Mono.just(this.wrapper(disposables, cacheManager, messageRouter))
             .doOnError(config.getThrowable());

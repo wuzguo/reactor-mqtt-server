@@ -30,15 +30,15 @@ import reactor.netty.NettyInbound;
 
 public class ServerConnection implements ServerSession {
 
-    private final List<Disposable> disposableServer;
+    private final List<Disposable> disposables;
 
     private final CacheManager cacheManager;
 
     private final ServerMessageRouter messageRouter;
 
-    public ServerConnection(UnicastProcessor<DisposableConnection> processor, List<Disposable> disposableServer,
+    public ServerConnection(UnicastProcessor<DisposableConnection> processor, List<Disposable> disposables,
         CacheManager cacheManager, ServerMessageRouter messageRouter) {
-        this.disposableServer = disposableServer;
+        this.disposables = disposables;
         this.messageRouter = messageRouter;
         this.cacheManager = cacheManager;
         processor.subscribe(this::subscribe);
@@ -87,6 +87,6 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public void dispose() {
-        Optional.ofNullable(disposableServer).ifPresent(disposables -> disposables.forEach(Disposable::dispose));
+        Optional.ofNullable(disposables).ifPresent(disposables -> disposables.forEach(Disposable::dispose));
     }
 }
