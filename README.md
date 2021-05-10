@@ -12,6 +12,8 @@
 - reactor-mqtt-common： 基础模块。
 - reactor-mqtt-protocol： 协议模块。
 - reactor-mqtt-transport：消息处理模块。
+- reactor-mqtt-client: 模拟MQTT客户端的模块。
+- reactor-mqtt-api: 服务提供的RESTful的API接口。
 
 ### 依赖工具
 
