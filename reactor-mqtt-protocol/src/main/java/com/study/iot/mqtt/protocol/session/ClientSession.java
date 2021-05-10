@@ -22,7 +22,5 @@ public interface ClientSession extends Disposable {
 
     Mono<Void> unsub();
 
-    Mono<Void> messageAcceptor(BiConsumer<String, byte[]> messageAcceptor);
-
     void init();
 }

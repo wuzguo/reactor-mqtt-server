@@ -56,9 +56,9 @@ public class ClientConnection implements ClientSession {
             options.getWillMessage(),
             options.getUserName(),
             options.getPassword(),
-            options.isHasUserName(),
-            options.isHasPassword(),
-            options.isHasWillFlag(),
+            options.getHasUserName(),
+            options.getHasPassword(),
+            options.getHasWillFlag(),
             options.getWillQos(),
             configuration.getHeart()
         )).subscribe()).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe();
@@ -68,9 +68,9 @@ public class ClientConnection implements ClientSession {
             options.getWillMessage(),
             options.getUserName(),
             options.getPassword(),
-            options.isHasUserName(),
-            options.isHasPassword(),
-            options.isHasWillFlag(),
+            options.getHasUserName(),
+            options.getHasPassword(),
+            options.getHasWillFlag(),
             options.getWillQos(),
             configuration.getHeart()
         )).doOnError(throwable -> log.error(throwable.getMessage())).subscribe();
@@ -172,11 +172,6 @@ public class ClientConnection implements ClientSession {
     @Override
     public Mono<Void> unsub() {
         return unsub(this.topics);
-    }
-
-    @Override
-    public Mono<Void> messageAcceptor(BiConsumer<String, byte[]> messageAcceptor) {
-        return Mono.fromRunnable(() -> configuration.setMessageAcceptor(messageAcceptor));
     }
 
     @Override

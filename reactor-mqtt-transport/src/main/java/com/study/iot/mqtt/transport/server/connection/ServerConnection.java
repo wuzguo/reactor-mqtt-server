@@ -18,8 +18,6 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.UnicastProcessor;
 import reactor.netty.Connection;
-import reactor.netty.DisposableChannel;
-import reactor.netty.DisposableServer;
 import reactor.netty.NettyInbound;
 
 /**
@@ -32,18 +30,15 @@ import reactor.netty.NettyInbound;
 
 public class ServerConnection implements ServerSession {
 
-    private final DisposableServer disposableServer;
-
-    private final DisposableServer wsDisposableServer;
+    private final List<Disposable> disposableServer;
 
     private final CacheManager cacheManager;
 
     private final ServerMessageRouter messageRouter;
 
-    public ServerConnection(UnicastProcessor<DisposableConnection> processor, DisposableServer disposableServer,
-        DisposableServer wsDisposableServer, CacheManager cacheManager, ServerMessageRouter messageRouter) {
+    public ServerConnection(UnicastProcessor<DisposableConnection> processor, List<Disposable> disposableServer,
+        CacheManager cacheManager, ServerMessageRouter messageRouter) {
         this.disposableServer = disposableServer;
-        this.wsDisposableServer = wsDisposableServer;
         this.messageRouter = messageRouter;
         this.cacheManager = cacheManager;
         processor.subscribe(this::subscribe);
@@ -92,7 +87,6 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public void dispose() {
-        disposableServer.dispose();
-        Optional.ofNullable(wsDisposableServer).ifPresent(DisposableChannel::dispose);
+        Optional.ofNullable(disposableServer).ifPresent(disposables -> disposables.forEach(Disposable::dispose));
     }
 }

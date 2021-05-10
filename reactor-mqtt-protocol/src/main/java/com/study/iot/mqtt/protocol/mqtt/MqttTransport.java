@@ -3,8 +3,9 @@ package com.study.iot.mqtt.protocol.mqtt;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
-import com.study.iot.mqtt.protocol.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
+import com.study.iot.mqtt.protocol.config.ConnectConfiguration;
+import com.study.iot.mqtt.protocol.config.ServerConfiguration;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;
@@ -26,35 +27,34 @@ import reactor.netty.tcp.TcpServer;
 @Slf4j
 public class MqttTransport extends ProtocolTransport {
 
-    public MqttTransport(MqttProtocol mqttProtocol) {
-        super(mqttProtocol);
+    public MqttTransport(MqttProtocol protocol) {
+        super(protocol);
     }
 
     @Override
-    public Mono<? extends DisposableServer> start(ConnectConfiguration config,
+    public Mono<? extends DisposableServer> start(ServerConfiguration config,
         UnicastProcessor<DisposableConnection> processor) {
         return buildServer(config).doOnConnection(connection -> {
             log.info("mqtt protocol connection: {}, ", connection.channel());
             protocol.getHandlers().forEach(connection::addHandlerLast);
             processor.onNext(new DisposableConnection(connection));
         }).bind().doOnSuccess(disposableServer -> {
-            log.info("server successfully started，mqtt protocol listening ip: {} port: {}", config.getIp(),
-                config.getPort());
-        }).doOnError(config.getThrowableConsumer());
+            log.info("mqtt protocol ip: {} port: {}", config.getHost(), config.getPort());
+        }).doOnError(config.getThrowable());
     }
 
-    private TcpServer buildServer(ConnectConfiguration config) {
+    private TcpServer buildServer(ServerConfiguration configuration) {
         TcpServer server = TcpServer.create()
-            .port(config.getPort())
-            .wiretap(config.isLog())
-            .host(config.getIp())
+            .port(configuration.getPort())
+            .wiretap(configuration.getIsLog())
+            .host(configuration.getHost())
             .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-            .option(ChannelOption.SO_KEEPALIVE, config.isKeepAlive())
-            .option(ChannelOption.TCP_NODELAY, config.isNoDelay())
-            .option(ChannelOption.SO_BACKLOG, config.getBacklog())
-            .option(ChannelOption.SO_RCVBUF, config.getRevBufSize())
-            .option(ChannelOption.SO_SNDBUF, config.getSendBufSize());
-        return config.isSsl() ? server
+            .option(ChannelOption.SO_KEEPALIVE, configuration.getKeepAlive())
+            .option(ChannelOption.TCP_NODELAY, configuration.getNoDelay())
+            .option(ChannelOption.SO_BACKLOG, configuration.getBacklog())
+            .option(ChannelOption.SO_RCVBUF, configuration.getRevBufSize())
+            .option(ChannelOption.SO_SNDBUF, configuration.getSendBufSize());
+        return configuration.getIsSsl() ? server
             .secure(sslContextSpec -> sslContextSpec.sslContext(Objects.requireNonNull(buildContext()))) : server;
 
     }
@@ -70,22 +70,22 @@ public class MqttTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<DisposableConnection> connect(ConnectConfiguration config) {
-        return buildClient(config).connect().map(connection -> {
+    public Mono<DisposableConnection> connect(ConnectConfiguration configuration) {
+        return buildClient(configuration).connect().map(connection -> {
             Connection connect = connection;
             protocol.getHandlers().forEach(connect::addHandler);
             DisposableConnection disposableConnection = new DisposableConnection(connection);
-            connection.onDispose(() -> retryConnect(config, disposableConnection));
+            connection.onDispose(() -> retryConnect(configuration, disposableConnection));
             log.info("connected successes !");
             return disposableConnection;
         });
     }
 
-    private void retryConnect(ConnectConfiguration config, DisposableConnection disposableConnection) {
+    private void retryConnect(ConnectConfiguration configuration, DisposableConnection disposableConnection) {
         log.info("short-term reconnection");
-        buildClient(config)
+        buildClient(configuration)
             .connect()
-            .doOnError(config.getThrowableConsumer())
+            .doOnError(configuration.getThrowable())
             .retry()
             .cast(Connection.class)
             .subscribe(connection -> {
@@ -101,17 +101,18 @@ public class MqttTransport extends ProtocolTransport {
             });
     }
 
-    private TcpClient buildClient(ConnectConfiguration config) {
+    private TcpClient buildClient(ConnectConfiguration configuration) {
         TcpClient client = TcpClient.create()
-            .port(config.getPort())
-            .host(config.getIp())
-            .wiretap(config.isLog());
+            .port(configuration.getPort())
+            .host(configuration.getHost())
+            .wiretap(configuration.getIsLog());
         try {
             SslContext sslClient = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE)
                 .build();
-            return config.isSsl() ? client.secure(sslContextSpec -> sslContextSpec.sslContext(sslClient)) : client;
+            return configuration.getIsSsl() ? client.secure(sslContextSpec -> sslContextSpec.sslContext(sslClient)) :
+                client;
         } catch (Exception e) {
-            config.getThrowableConsumer().accept(e);
+            configuration.getThrowable().accept(e);
             return client;
         }
     }

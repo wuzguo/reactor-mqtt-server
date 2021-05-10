@@ -1,7 +1,6 @@
 package com.study.iot.mqtt.transport.client;
 
 
-import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.ProtocolFactory;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
@@ -20,10 +19,10 @@ public class TransportClientFactory {
     }
 
     public Mono<ClientSession> connect(ClientConfiguration config, ClientMessageRouter messageRouter) {
-        return Mono.from(protocolFactory.getProtocol(ProtocolType.valueOf(config.getProtocol()))
+        return Mono.from(protocolFactory.getProtocol(config.getProtocol())
             .get().getTransport().connect(config))
             .map(connection -> this.wrapper(connection, config, messageRouter))
-            .doOnError(config.getThrowableConsumer());
+            .doOnError(config.getThrowable());
     }
 
     private ClientSession wrapper(DisposableConnection connection, ClientConfiguration config,

@@ -1,88 +1,70 @@
 package com.study.iot.mqtt.protocol.config;
 
 
-import com.study.iot.mqtt.common.enums.CacheStrategy;
-import com.study.iot.mqtt.protocol.ConnectConfiguration;
-import java.util.Objects;
-import java.util.function.BiConsumer;
+import com.study.iot.mqtt.common.annocation.ProtocolType;
 import java.util.function.Consumer;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/5/10 14:58
+ */
 
 @Data
-public class ClientConfiguration implements ConnectConfiguration {
-
-    private String ip;
-
-    private int port;
-
-    private String protocol;
-
-    private int heart = 30;
-
-    private boolean log;
-
-    private boolean ssl;
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+public class ClientConfiguration extends ConnectConfiguration {
 
     /**
      * 发送缓冲区大小 默认 32k
      */
-    private int sendBufSize = 32 * 1024;
+    private Integer sendBufSize = 32 * 1024;
     /**
      * 接收缓冲区大小 默认 32k
      */
-    private int revBufSize = 32 * 1024;
+    private Integer revBufSize = 32 * 1024;
 
     /**
      * Socket参数，服务端接受连接的队列长度，如果队列已满，客户端连接将被拒绝。默认值 这里默认设置 128
      */
-    private int backlog = 128;
+    private Integer backlog = 128;
 
     /**
      * Socket参数，连接保活，默认值为False。启用该功能时，TCP会主动探测空闲连接的有效性。可以将此功能视为TCP的心跳机制， 需要注意的是：默认的心跳间隔是7200s即2小时。Netty默认关闭该功能。
      */
-    private boolean keepAlive = false;
+    private Boolean keepAlive = false;
     /**
      * Socket参数，立即发送数据，默认值为True（Netty默认为True而操作系统默认为False）。该值设置Nagle算法的启用， 该算法将小的碎片数据连接成更大的报文来最小化所发送的报文的数量，
      * 如果需要发送一些较小的报文，则需要禁用该算法。 Netty默认禁用该算法，从而最小化报文传输延时
      */
-    private boolean noDelay = true;
+    private Boolean noDelay = true;
+
 
     private Options options = new Options();
 
-    private Consumer<Throwable> throwableConsumer;
+    /**
+     * 异常处理
+     */
+    private Consumer<Throwable> throwable;
 
-    private BiConsumer<String, byte[]> messageAcceptor;
+    /**
+     * 协议
+     */
+    private ProtocolType protocol;
 
+    /**
+     * 关闭处理
+     */
     private Runnable onClose = () -> {
     };
 
-
-    @Override
-    public CacheStrategy getCacheStrategy() {
-        return null;
-    }
-
-    @Override
-    public void checkConfig() {
-        Objects.requireNonNull(ip, "ip is not null");
-        Objects.requireNonNull(port, "port is not null");
-        Objects.requireNonNull(protocol, "protocol is not null");
-        Objects.requireNonNull(options.getClientIdentifier(), "clientIdentifier is not null");
-        if (options.isHasWillFlag()) {
-            Objects.requireNonNull(options.getWillMessage(), "willMessage is not null");
-            Objects.requireNonNull(options.getWillQos(), "willQos is not null");
-            Objects.requireNonNull(options.getWillTopic(), "willTopic is not null");
-        }
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    public class Options {
+    @Data
+    public static class Options {
 
         private String clientIdentifier;
 
@@ -94,16 +76,16 @@ public class ClientConfiguration implements ConnectConfiguration {
 
         private String password;
 
-        private boolean hasUserName;
+        private Boolean hasUserName;
 
-        private boolean hasPassword;
+        private Boolean hasPassword;
 
-        private boolean hasWillRetain;
+        private Boolean hasWillRetain;
 
-        private int willQos;
+        private Integer willQos;
 
-        private boolean hasWillFlag;
+        private Boolean hasWillFlag;
 
-        private boolean hasCleanSession;
+        private Boolean hasCleanSession;
     }
 }
