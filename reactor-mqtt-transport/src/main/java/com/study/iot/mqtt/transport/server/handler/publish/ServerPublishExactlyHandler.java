@@ -5,10 +5,8 @@ import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.common.message.TransportMessage;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
-import com.study.iot.mqtt.transport.strategy.StrategyCapable;
-import com.study.iot.mqtt.transport.strategy.QosStrategyService;
+import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
-import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
@@ -24,7 +22,7 @@ import reactor.core.publisher.Mono;
  * @date 2021/5/7 13:54
  */
 
-@QosStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.EXACTLY_ONCE)
+@PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.EXACTLY_ONCE)
 public class ServerPublishExactlyHandler implements PublishStrategyCapable {
 
     @Override

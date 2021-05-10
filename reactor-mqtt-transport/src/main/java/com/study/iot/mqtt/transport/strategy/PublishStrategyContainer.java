@@ -32,7 +32,7 @@ public class PublishStrategyContainer  implements ApplicationContextAware {
     }
 
     private void initializingContainer(ApplicationContext applicationContext) {
-        Optional.of(applicationContext.getBeansWithAnnotation(QosStrategyService.class))
+        Optional.of(applicationContext.getBeansWithAnnotation(PublishStrategyService.class))
             .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
                 if (!PublishStrategyCapable.class.isAssignableFrom(v.getClass())) {
                     throw new BeanDefinitionValidationException(String
@@ -40,7 +40,7 @@ public class PublishStrategyContainer  implements ApplicationContextAware {
                 }
 
                 Class<? extends PublishStrategyCapable> strategyClass = (Class<? extends PublishStrategyCapable>) v.getClass();
-                QosStrategyService strategyService = strategyClass.getAnnotation(QosStrategyService.class);
+                PublishStrategyService strategyService = strategyClass.getAnnotation(PublishStrategyService.class);
 
                 String group = strategyService.group();
                 Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = container.get(group);

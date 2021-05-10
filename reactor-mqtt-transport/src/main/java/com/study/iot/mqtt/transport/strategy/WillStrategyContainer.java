@@ -31,7 +31,7 @@ public class WillStrategyContainer implements ApplicationContextAware {
     }
 
     private void initializingContainer(ApplicationContext applicationContext) {
-        Optional.of(applicationContext.getBeansWithAnnotation(QosStrategyService.class))
+        Optional.of(applicationContext.getBeansWithAnnotation(WillStrategyService.class))
             .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
                 if (!WillCapable.class.isAssignableFrom(v.getClass())) {
                     throw new BeanDefinitionValidationException(String
@@ -39,15 +39,15 @@ public class WillStrategyContainer implements ApplicationContextAware {
                 }
 
                 Class<? extends WillCapable> strategyClass = (Class<? extends WillCapable>) v.getClass();
-                QosStrategyService QosStrategyService = strategyClass.getAnnotation(QosStrategyService.class);
+                WillStrategyService WillStrategyService = strategyClass.getAnnotation(WillStrategyService.class);
 
-                String group = QosStrategyService.group();
+                String group = WillStrategyService.group();
                 Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
 
-                MqttQoS value = QosStrategyService.type();
+                MqttQoS value = WillStrategyService.type();
                 storage.putIfAbsent(value, strategyClass);
                 container.put(group, storage);
             }));

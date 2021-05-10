@@ -5,7 +5,7 @@ import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
-import com.study.iot.mqtt.transport.strategy.QosStrategyService;
+import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2021/5/7 13:53
  */
 
-@QosStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.AT_LEAST_ONCE)
+@PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.AT_LEAST_ONCE)
 public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
 
     @Autowired
