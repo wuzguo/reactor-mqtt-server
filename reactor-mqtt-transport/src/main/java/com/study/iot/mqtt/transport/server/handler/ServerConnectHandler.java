@@ -85,7 +85,8 @@ public class ServerConnectHandler implements StrategyCapable {
 
         // 没有用户密码
         String key = mqttPayload.userName();
-        String secret = mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
+        String secret =
+            mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtil.isAnyBlank(key, secret)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
@@ -130,8 +131,8 @@ public class ServerConnectHandler implements StrategyCapable {
      */
     private void setWillMessage(DisposableConnection connection, String topicName, boolean retain, byte[] message,
         int qoS) {
-        WillMessage willMessage = WillMessage.builder().message(message).qos(qoS).retain(retain).topicName(topicName)
-            .build();
+        WillMessage willMessage = WillMessage.builder()
+            .message(message).qos(qoS).retain(retain).topicName(topicName).build();
         // 设置遗嘱消息
         connection.getConnection().channel().attr(AttributeKeys.willMessage).set(willMessage);
     }

@@ -1,16 +1,15 @@
 package com.study.iot.mqtt.transport.server.handler;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import io.netty.handler.codec.mqtt.MqttConnectMessage;
-import io.netty.handler.codec.mqtt.MqttConnectPayload;
-import io.netty.handler.codec.mqtt.MqttConnectVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import io.netty.util.Attribute;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,9 +31,13 @@ public class ServerDisConnectHandler implements StrategyCapable {
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server DisConnect message: {}, connection: {}", message, connection);
-        MqttConnectPayload mqttPayload = (MqttConnectPayload) message.payload();
-        String identity = mqttPayload.clientIdentifier();
-       cacheManager.channel().getAndRemove(identity);
+        // 删除设备标识
+        Optional.ofNullable(connection.getConnection().channel().attr(AttributeKeys.identity))
+            .map(Attribute::get)
+            .ifPresent(cacheManager.channel()::removeChannel);
+        // 删除topic订阅
+        Optional.ofNullable(connection.getTopics())
+            .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().deleteConnection(topic, connection)));
         connection.dispose();
     }
 }

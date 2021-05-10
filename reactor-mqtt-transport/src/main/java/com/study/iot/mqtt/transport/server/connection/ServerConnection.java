@@ -64,22 +64,17 @@ public class ServerConnection implements ServerSession {
         disposableConnection.getConnection().onDispose(() -> {
             Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.willMessage))
                 .map(Attribute::get)
-                .ifPresent(willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopicName()))
+                .ifPresent(
+                    willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopicName()))
                         .ifPresent(connections -> connections.forEach(connect -> {
                             MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                             Optional.ofNullable(
                                 messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
                                 .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
                         })));
-            // 删除topic订阅
-            disposableConnection.getTopics()
-                .forEach(topic -> cacheManager.topic().deleteConnection(topic, disposableConnection));
-            Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.identity))
-                .map(Attribute::get)
-                // 删除设备标识
-                .ifPresent(cacheManager.channel()::removeChannel);
             disposableConnection.destory();
         });
+        // 订阅各种消息
         inbound.receiveObject().cast(MqttMessage.class)
             .subscribe(message -> messageRouter.handle(message, disposableConnection));
     }
