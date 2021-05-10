@@ -1,13 +1,19 @@
 package com.study.iot.mqtt.transport.server.handler.connect;
 
 
+import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import io.netty.handler.codec.mqtt.MqttUnsubAckMessage;
+import io.netty.handler.codec.mqtt.MqttUnsubscribeMessage;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <B>说明：描述</B>
@@ -21,8 +27,18 @@ import lombok.extern.slf4j.Slf4j;
 @StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.UNSUBSCRIBE)
 public class ServerUnSubscribeHandler implements StrategyCapable {
 
+    @Autowired
+    private CacheManager cacheManager;
+
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server UnSubscribe message: {}, connection: {}", message, connection);
+
+        MqttUnsubscribeMessage mqttUnsubscribeMessage = (MqttUnsubscribeMessage) message;
+        MqttUnsubAckMessage mqttUnsubAckMessage =
+            MessageBuilder.buildUnsubAck(mqttUnsubscribeMessage.variableHeader().messageId());
+        connection.sendMessage(mqttUnsubAckMessage).subscribe();
+        Optional.ofNullable(mqttUnsubscribeMessage.payload().topics())
+            .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().deleteConnection(topic, connection)));
     }
 }

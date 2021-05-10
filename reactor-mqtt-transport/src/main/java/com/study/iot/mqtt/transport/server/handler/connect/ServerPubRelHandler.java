@@ -47,7 +47,7 @@ public class ServerPubRelHandler implements StrategyCapable {
             .ifPresent(transportMessage -> cacheManager.topic().getConnections(transportMessage.getTopicName())
                 .stream().filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
                 .forEach(disposable -> {
-                    int id = connection.idGen();
+                    int id = connection.messageId();
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false,
                         MqttQoS.valueOf(transportMessage.getQos()), header.isRetain(), id,
                         transportMessage.getTopicName(), transportMessage.getMessage());

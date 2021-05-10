@@ -97,7 +97,7 @@ public class ClientConnection implements ClientSession {
             .map(s -> new MqttTopicSubscription(s, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());
 
         if (mqttTopicSubscriptions.size() > 0) {
-            int messageId = connection.idGen();
+            int messageId = connection.messageId();
             connection.addDisposable(messageId, Mono.fromRunnable(() ->
                 connection.sendMessage(MessageBuilder.buildSub(messageId, mqttTopicSubscriptions)).subscribe())
                 .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
@@ -107,7 +107,7 @@ public class ClientConnection implements ClientSession {
 
     @Override
     public Mono<Void> pub(String topic, byte[] message, boolean retained, int qos) {
-        int messageId = qos == 0 ? 1 : connection.idGen();
+        int messageId = qos == 0 ? 1 : connection.messageId();
         MqttQoS mqttQoS = MqttQoS.valueOf(qos);
         switch (mqttQoS) {
             case AT_MOST_ONCE:
@@ -150,7 +150,7 @@ public class ClientConnection implements ClientSession {
         List<MqttTopicSubscription> topicSubscriptions = Arrays.stream(subMessages)
             .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE))
             .collect(Collectors.toList());
-        int messageId = connection.idGen();
+        int messageId = connection.messageId();
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
             connection.sendMessage(MessageBuilder.buildSub(messageId, topicSubscriptions)).subscribe())
             // retry
@@ -161,7 +161,7 @@ public class ClientConnection implements ClientSession {
     @Override
     public Mono<Void> unsub(List<String> topics) {
         this.topics.removeAll(topics);
-        int messageId = connection.idGen();
+        int messageId = connection.messageId();
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
             connection.sendMessage(MessageBuilder.buildUnSub(messageId, topics)).subscribe())
             // retry

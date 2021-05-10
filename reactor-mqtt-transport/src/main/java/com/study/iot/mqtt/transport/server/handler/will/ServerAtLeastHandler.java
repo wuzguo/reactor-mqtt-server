@@ -22,7 +22,7 @@ public class ServerAtLeastHandler implements WillCapable {
 
     @Override
     public void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
-        MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getRetain(), connection.idGen(),
+        MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getRetain(), connection.messageId(),
             willMessage.getTopicName(), willMessage.getMessage());
         connection.sendMessage(message).subscribe();
     }

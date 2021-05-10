@@ -39,7 +39,7 @@ public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
         cacheManager.topic().getConnections(variableHeader.topicName())
             .stream().filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
-                int id = connection.idGen();
+                int id = connection.messageId();
                 MqttPublishMessage publishMessage = MessageBuilder.buildPub(false, header.qosLevel(),
                     header.isRetain(), id,
                     variableHeader.topicName(),

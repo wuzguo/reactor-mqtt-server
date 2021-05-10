@@ -22,7 +22,7 @@ public class ServerExactlyHandler implements WillCapable {
 
     @Override
     public void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
-        int messageId = connection.idGen();
+        int messageId = connection.messageId();
         MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getRetain(), messageId,
             willMessage.getTopicName(), willMessage.getMessage());
         connection.sendMessageRetry(messageId, message).subscribe();

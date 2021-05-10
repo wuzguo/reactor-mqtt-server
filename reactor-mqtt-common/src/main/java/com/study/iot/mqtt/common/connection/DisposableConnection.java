@@ -53,7 +53,7 @@ public class DisposableConnection implements Disposable, Serializable {
      *
      * @return {@link Integer}
      */
-    public int idGen() {
+    public int messageId() {
         longAdder.increment();
         int value = longAdder.intValue();
         if (value == Integer.MAX_VALUE) {

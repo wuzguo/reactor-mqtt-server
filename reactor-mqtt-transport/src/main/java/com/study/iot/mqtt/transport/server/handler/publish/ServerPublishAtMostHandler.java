@@ -36,7 +36,7 @@ public class ServerPublishAtMostHandler implements PublishStrategyCapable {
             .stream().filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
                 MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),
-                    connection.idGen(), variableHeader.topicName(), bytes);
+                    connection.messageId(), variableHeader.topicName(), bytes);
                 disposable.sendMessage(mqttMessage).subscribe();
             });
     }
