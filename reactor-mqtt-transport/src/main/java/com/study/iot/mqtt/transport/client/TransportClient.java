@@ -78,8 +78,8 @@ public class TransportClient {
         }
 
 
-        public TransportBuilder clientId(String clientId) {
-            options.setClientIdentifier(clientId);
+        public TransportBuilder identity(String identity) {
+            options.setClientIdentifier(identity);
             return this;
         }
 

@@ -12,18 +12,18 @@ import reactor.core.Disposable;
 @UtilityClass
 public class AttributeKeys {
 
-    public AttributeKey<ClientSession> clientConnectionAttributeKey = AttributeKey.valueOf("client_operation");
+    public AttributeKey<ClientSession> clientConnection = AttributeKey.valueOf("client_connection");
 
-    public AttributeKey<ServerSession> serverConnectionAttributeKey = AttributeKey.valueOf("server_operation");
+    public AttributeKey<ServerSession> serverConnection = AttributeKey.valueOf("server_connection");
 
     public AttributeKey<Disposable> closeConnection = AttributeKey.valueOf("close_connection");
 
-    public AttributeKey<DisposableConnection> connectionAttributeKey = AttributeKey.valueOf("transport_connection");
+    public AttributeKey<DisposableConnection> disposableConnection = AttributeKey.valueOf("disposable_connection");
 
-    public AttributeKey<String> device_id = AttributeKey.valueOf("device_id");
+    public AttributeKey<String> identity = AttributeKey.valueOf("identity");
 
     public AttributeKey<Integer> keepalived = AttributeKey.valueOf("keepalived");
 
-    public AttributeKey<WillMessage> WILL_MESSAGE = AttributeKey.valueOf("WILL_MESSAGE");
+    public AttributeKey<WillMessage> willMessage = AttributeKey.valueOf("will_message");
 
 }

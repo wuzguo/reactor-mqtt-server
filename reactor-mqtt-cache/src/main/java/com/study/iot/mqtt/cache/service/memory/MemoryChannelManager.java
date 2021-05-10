@@ -1,14 +1,13 @@
 package com.study.iot.mqtt.cache.service.memory;
 
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 
@@ -23,25 +22,7 @@ import java.util.Map;
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.MEMORY)
 public class MemoryChannelManager implements ChannelManager {
 
-    private final List<DisposableConnection> connections = Lists.newCopyOnWriteArrayList();
-
-
     private final Map<String, DisposableConnection> mapConnection = Maps.newConcurrentMap();
-
-    @Override
-    public List<DisposableConnection> getConnections() {
-        return connections;
-    }
-
-    @Override
-    public void addConnections(DisposableConnection connection) {
-        connections.add(connection);
-    }
-
-    @Override
-    public void removeConnection(DisposableConnection connection) {
-        connections.remove(connection);
-    }
 
     @Override
     public void add(String identity, DisposableConnection connection) {
@@ -59,7 +40,12 @@ public class MemoryChannelManager implements ChannelManager {
     }
 
     @Override
-    public Boolean check(String identity) {
+    public Boolean containsKey(String identity) {
         return mapConnection.containsKey(identity);
+    }
+
+    @Override
+    public Collection<DisposableConnection> getConnections() {
+        return mapConnection.values();
     }
 }

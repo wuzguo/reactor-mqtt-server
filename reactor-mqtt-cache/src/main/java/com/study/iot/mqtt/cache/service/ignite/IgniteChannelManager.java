@@ -5,6 +5,7 @@ import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
+import java.util.Collection;
 import java.util.List;
 import javax.annotation.Resource;
 import org.apache.ignite.IgniteCache;
@@ -24,21 +25,6 @@ public class IgniteChannelManager implements ChannelManager {
     private IgniteCache<String, DisposableConnection> disposableCache;
 
     @Override
-    public List<DisposableConnection> getConnections() {
-        return null;
-    }
-
-    @Override
-    public void addConnections(DisposableConnection connection) {
-
-    }
-
-    @Override
-    public void removeConnection(DisposableConnection connection) {
-
-    }
-
-    @Override
     public void add(String identity, DisposableConnection connection) {
         disposableCache.put(identity, connection);
     }
@@ -54,7 +40,12 @@ public class IgniteChannelManager implements ChannelManager {
     }
 
     @Override
-    public Boolean check(String identity) {
+    public Boolean containsKey(String identity) {
         return disposableCache.containsKey(identity);
+    }
+
+    @Override
+    public Collection<DisposableConnection> getConnections() {
+        return null;
     }
 }

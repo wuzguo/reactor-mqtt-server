@@ -11,5 +11,5 @@ public interface ServerSession extends Disposable {
     Mono<List<DisposableConnection>> getConnections();
 
 
-    Mono<Void> closeConnect(String clientId);
+    Mono<Void> closeConnect(String identity);
 }

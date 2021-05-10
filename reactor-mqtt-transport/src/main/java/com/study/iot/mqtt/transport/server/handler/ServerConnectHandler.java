@@ -75,7 +75,7 @@ public class ServerConnectHandler implements StrategyCapable {
         MqttConnectPayload mqttPayload = connectMessage.payload();
         ChannelManager channelManager = cacheManager.channel();
         String identity = mqttPayload.clientIdentifier();
-        if (channelManager.check(identity)) {
+        if (channelManager.containsKey(identity)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false);
             connection.sendMessage(connAckMessage).subscribe();
@@ -133,7 +133,7 @@ public class ServerConnectHandler implements StrategyCapable {
         WillMessage willMessage = WillMessage.builder().message(message).qos(qoS).retain(retain).topicName(topicName)
             .build();
         // 设置遗嘱消息
-        connection.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE).set(willMessage);
+        connection.getConnection().channel().attr(AttributeKeys.willMessage).set(willMessage);
     }
 
     /**
@@ -146,14 +146,16 @@ public class ServerConnectHandler implements StrategyCapable {
     private void acceptConnect(DisposableConnection connection, String identity, int keepalive) {
         // 心跳超时关闭
         connection.getConnection().onReadIdle(keepalive * 2000L, () -> connection.getConnection().dispose());
-        // 设置设备标识
+        // 设置连接保持时间
         connection.getConnection().channel().attr(AttributeKeys.keepalived).set(keepalive);
+        // 设置设备标识
+        connection.getConnection().channel().attr(AttributeKeys.identity).set(identity);
+        // 保持标识和连接的关系
         cacheManager.channel().add(identity, connection);
         // 取消关闭连接
         Optional.ofNullable(connection.getConnection().channel().attr(AttributeKeys.closeConnection))
             .map(Attribute::get)
             .ifPresent(Disposable::dispose);
-        cacheManager.channel().addConnections(connection);
         // 连接成功
         connection.sendMessage(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED)).subscribe();
     }

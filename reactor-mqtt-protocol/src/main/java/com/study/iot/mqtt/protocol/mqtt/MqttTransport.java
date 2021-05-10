@@ -91,7 +91,7 @@ public class MqttTransport extends ProtocolTransport {
             .subscribe(connection -> {
                 protocol.getHandlers().forEach(connection::addHandler);
                 Optional.ofNullable(
-                    disposableConnection.getConnection().channel().attr(AttributeKeys.clientConnectionAttributeKey))
+                    disposableConnection.getConnection().channel().attr(AttributeKeys.clientConnection))
                     .map(Attribute::get).ifPresent(clientSession -> {
                     disposableConnection.setConnection(connection);
                     disposableConnection.setInbound(connection.inbound());

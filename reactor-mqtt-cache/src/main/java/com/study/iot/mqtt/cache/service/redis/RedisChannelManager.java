@@ -8,6 +8,7 @@ import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,21 +28,6 @@ public class RedisChannelManager implements ChannelManager {
     private RedisOpsTemplate redisOpsTemplate;
 
     @Override
-    public List<DisposableConnection> getConnections() {
-        return null;
-    }
-
-    @Override
-    public void addConnections(DisposableConnection connection) {
-
-    }
-
-    @Override
-    public void removeConnection(DisposableConnection connection) {
-
-    }
-
-    @Override
     public void add(String identity, DisposableConnection connection) {
         redisOpsTemplate.sadd(identity, connection);
     }
@@ -59,7 +45,12 @@ public class RedisChannelManager implements ChannelManager {
     }
 
     @Override
-    public Boolean check(String identity) {
+    public Boolean containsKey(String identity) {
         return ObjectUtil.isNull(redisOpsTemplate.get(identity, DisposableConnection.class));
+    }
+
+    @Override
+    public Collection<DisposableConnection> getConnections() {
+        return null;
     }
 }

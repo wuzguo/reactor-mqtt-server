@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.transport.server.connection;
 
+import com.google.common.collect.Lists;
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
@@ -48,50 +49,49 @@ public class ServerConnection implements ServerSession {
         processor.subscribe(this::subscribe);
     }
 
-    private void subscribe(DisposableConnection transport) {
-        NettyInbound inbound = transport.getInbound();
-        Connection connection = transport.getConnection();
+    private void subscribe(DisposableConnection disposableConnection) {
+        NettyInbound inbound = disposableConnection.getInbound();
+        Connection connection = disposableConnection.getConnection();
         // 定时关闭
         Disposable disposable = Mono.fromRunnable(connection::dispose)
             .delaySubscription(Duration.ofSeconds(10))
             .subscribe();
         // 设置 connection
-        connection.channel().attr(AttributeKeys.connectionAttributeKey).set(transport);
+        connection.channel().attr(AttributeKeys.disposableConnection).set(disposableConnection);
         // 设置 close
         connection.channel().attr(AttributeKeys.closeConnection).set(disposable);
         // 关闭发送will消息
-        transport.getConnection().onDispose(() -> {
-            Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE))
+        disposableConnection.getConnection().onDispose(() -> {
+            Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.willMessage))
                 .map(Attribute::get)
-                .ifPresent(willMessage -> Optional.ofNullable(
-                    cacheManager.topic().getConnections(willMessage.getTopicName()))
-                    .ifPresent(connections -> connections.forEach(connect -> {
-                        MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                        Optional.ofNullable(messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
-                            .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
-                    })));
-            // 删除链接
-            cacheManager.channel().removeConnection(transport);
+                .ifPresent(willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopicName()))
+                        .ifPresent(connections -> connections.forEach(connect -> {
+                            MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
+                            Optional.ofNullable(
+                                messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
+                                .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
+                        })));
             // 删除topic订阅
-            transport.getTopics().forEach(topic -> cacheManager.topic().deleteConnection(topic, transport));
-            Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.device_id))
+            disposableConnection.getTopics()
+                .forEach(topic -> cacheManager.topic().deleteConnection(topic, disposableConnection));
+            Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.identity))
                 .map(Attribute::get)
-                // 设置device
+                // 删除设备标识
                 .ifPresent(cacheManager.channel()::removeChannel);
-            transport.destory();
+            disposableConnection.destory();
         });
         inbound.receiveObject().cast(MqttMessage.class)
-            .subscribe(message -> messageRouter.handle(message, transport));
+            .subscribe(message -> messageRouter.handle(message, disposableConnection));
     }
 
     @Override
     public Mono<List<DisposableConnection>> getConnections() {
-        return Mono.just(cacheManager.channel().getConnections());
+        return Mono.just(Lists.newArrayList(cacheManager.channel().getConnections()));
     }
 
     @Override
-    public Mono<Void> closeConnect(String clientId) {
-        return Mono.fromRunnable(() -> Optional.ofNullable(cacheManager.channel().getAndRemove(clientId))
+    public Mono<Void> closeConnect(String identity) {
+        return Mono.fromRunnable(() -> Optional.ofNullable(cacheManager.channel().getAndRemove(identity))
             .ifPresent(DisposableConnection::dispose));
     }
 

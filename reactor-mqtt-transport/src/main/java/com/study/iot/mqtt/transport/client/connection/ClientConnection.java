@@ -92,7 +92,7 @@ public class ClientConnection implements ClientSession {
         NettyInbound inbound = connection.getInbound();
         inbound.receiveObject().cast(MqttMessage.class)
             .subscribe(message -> clientMessageRouter.handle(message, connection));
-        connection.getConnection().channel().attr(AttributeKeys.clientConnectionAttributeKey).set(this);
+        connection.getConnection().channel().attr(AttributeKeys.clientConnection).set(this);
         List<MqttTopicSubscription> mqttTopicSubscriptions = connection.getTopics().stream()
             .map(s -> new MqttTopicSubscription(s, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());
 
