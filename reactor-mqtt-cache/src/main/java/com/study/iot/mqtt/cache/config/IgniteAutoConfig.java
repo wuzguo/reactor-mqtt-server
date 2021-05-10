@@ -2,6 +2,8 @@ package com.study.iot.mqtt.cache.config;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.RetainMessage;
+import java.util.Arrays;
+import java.util.List;
 import lombok.Setter;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -23,9 +25,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * 自动配置apache ignite
@@ -78,17 +77,22 @@ public class IgniteAutoConfig {
         configuration.setGridLogger(new Slf4jLogger(logger));
         // 非持久化数据区域
         DataRegionConfiguration notPersistence = new DataRegionConfiguration().setPersistenceEnabled(false)
-                .setInitialSize(igniteProperties().getNotPersistenceInitialSize() * 1024 * 1024L)
-                .setMaxSize(igniteProperties().getNotPersistenceMaxSize() * 1024 * 1024L).setName("not-persistence-data-region");
+            .setInitialSize(igniteProperties().getNotPersistenceInitialSize() * 1024 * 1024L)
+            .setMaxSize(igniteProperties().getNotPersistenceMaxSize() * 1024 * 1024L)
+            .setName("not-persistence-data-region");
         // 持久化数据区域
         DataRegionConfiguration persistence = new DataRegionConfiguration().setPersistenceEnabled(true)
-                .setInitialSize(igniteProperties().getPersistenceInitialSize() * 1024 * 1024L)
-                .setMaxSize(igniteProperties().getPersistenceMaxSize() * 1024 * 1024L).setName("persistence-data-region");
-        DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration().setDefaultDataRegionConfiguration(notPersistence)
-                .setDataRegionConfigurations(persistence)
-                .setWalArchivePath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties().getPersistenceStorePath() : null)
-                .setWalPath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties().getPersistenceStorePath() : null)
-                .setStoragePath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties().getPersistenceStorePath() : null);
+            .setInitialSize(igniteProperties().getPersistenceInitialSize() * 1024 * 1024L)
+            .setMaxSize(igniteProperties().getPersistenceMaxSize() * 1024 * 1024L).setName("persistence-data-region");
+        DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration()
+            .setDefaultDataRegionConfiguration(notPersistence)
+            .setDataRegionConfigurations(persistence)
+            .setWalArchivePath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties()
+                .getPersistenceStorePath() : null)
+            .setWalPath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties()
+                .getPersistenceStorePath() : null)
+            .setStoragePath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties()
+                .getPersistenceStorePath() : null);
         configuration.setDataStorageConfiguration(dataStorageConfiguration);
         // 集群, 基于组播或静态IP配置
         TcpDiscoverySpi tcpDiscoverySpi = new TcpDiscoverySpi();
@@ -109,29 +113,34 @@ public class IgniteAutoConfig {
 
     @Bean
     public IgniteCache<Integer, Integer> messageIdCache() throws Exception {
-        CacheConfiguration<Integer, Integer> cacheConfiguration = new CacheConfiguration<Integer, Integer>().setDataRegionName("not-persistence-data-region")
-                .setCacheMode(CacheMode.PARTITIONED).setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL).setName("messageIdCache");
+        CacheConfiguration<Integer, Integer> cacheConfiguration = new CacheConfiguration<Integer, Integer>()
+            .setDataRegionName("not-persistence-data-region")
+            .setCacheMode(CacheMode.PARTITIONED).setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL)
+            .setName("messageIdCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
     public IgniteCache<String, DisposableConnection> disposableCache() throws Exception {
-        CacheConfiguration<String, DisposableConnection> cacheConfiguration = new CacheConfiguration<String, DisposableConnection>().setDataRegionName("persistence-data-region")
-                .setCacheMode(CacheMode.PARTITIONED).setName("disposableCache");
+        CacheConfiguration<String, DisposableConnection> cacheConfiguration = new CacheConfiguration<String, DisposableConnection>()
+            .setDataRegionName("persistence-data-region")
+            .setCacheMode(CacheMode.PARTITIONED).setName("disposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
     public IgniteCache<String, RetainMessage> messageCache() throws Exception {
-        CacheConfiguration<String, RetainMessage> cacheConfiguration = new CacheConfiguration<String, RetainMessage>().setDataRegionName("persistence-data-region")
-                .setCacheMode(CacheMode.PARTITIONED).setName("messageCache");
+        CacheConfiguration<String, RetainMessage> cacheConfiguration = new CacheConfiguration<String, RetainMessage>()
+            .setDataRegionName("persistence-data-region")
+            .setCacheMode(CacheMode.PARTITIONED).setName("messageCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
     @Bean
     public IgniteCache<String, List<DisposableConnection>> topicDisposableCache() throws Exception {
-        CacheConfiguration<String, List<DisposableConnection>> cacheConfiguration = new CacheConfiguration<String, List<DisposableConnection>>().setDataRegionName("persistence-data-region")
-                .setCacheMode(CacheMode.PARTITIONED).setName("topicDisposableCache");
+        CacheConfiguration<String, List<DisposableConnection>> cacheConfiguration = new CacheConfiguration<String, List<DisposableConnection>>()
+            .setDataRegionName("persistence-data-region")
+            .setCacheMode(CacheMode.PARTITIONED).setName("topicDisposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 

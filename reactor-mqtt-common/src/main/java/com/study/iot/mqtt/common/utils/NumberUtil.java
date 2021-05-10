@@ -17,6 +17,23 @@ import org.springframework.util.NumberUtils;
 public class NumberUtil extends NumberUtils {
 
     /**
+     * All possible bytes for representing a number as a String
+     */
+    final static byte[] DIGITS = {
+        '0', '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', 'a', 'b',
+        'c', 'd', 'e', 'f', 'g', 'h',
+        'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't',
+        'u', 'v', 'w', 'x', 'y', 'z',
+        'A', 'B', 'C', 'D', 'E', 'F',
+        'G', 'H', 'I', 'J', 'K', 'L',
+        'M', 'N', 'O', 'P', 'Q', 'R',
+        'S', 'T', 'U', 'V', 'W', 'X',
+        'Y', 'Z'
+    };
+
+    /**
      * <p>Convert a <code>String</code> to an <code>int</code>, returning
      * <code>zero</code> if the conversion fails.</p>
      *
@@ -29,8 +46,7 @@ public class NumberUtil extends NumberUtils {
      * </pre>
      *
      * @param str the string to convert, may be null
-     * @return the int represented by the string, or <code>zero</code> if
-     * conversion fails
+     * @return the int represented by the string, or <code>zero</code> if conversion fails
      */
     public static int toInt(final String str) {
         return toInt(str, 0);
@@ -76,8 +92,7 @@ public class NumberUtil extends NumberUtils {
      * </pre>
      *
      * @param str the string to convert, may be null
-     * @return the long represented by the string, or <code>0</code> if
-     * conversion fails
+     * @return the long represented by the string, or <code>0</code> if conversion fails
      */
     public static long toLong(final String str) {
         return toLong(str, 0L);
@@ -109,23 +124,6 @@ public class NumberUtil extends NumberUtils {
             return defaultValue;
         }
     }
-
-    /**
-     * All possible bytes for representing a number as a String
-     */
-    final static byte[] DIGITS = {
-            '0', '1', '2', '3', '4', '5',
-            '6', '7', '8', '9', 'a', 'b',
-            'c', 'd', 'e', 'f', 'g', 'h',
-            'i', 'j', 'k', 'l', 'm', 'n',
-            'o', 'p', 'q', 'r', 's', 't',
-            'u', 'v', 'w', 'x', 'y', 'z',
-            'A', 'B', 'C', 'D', 'E', 'F',
-            'G', 'H', 'I', 'J', 'K', 'L',
-            'M', 'N', 'O', 'P', 'Q', 'R',
-            'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z'
-    };
 
     /**
      * 将 long 转短字符串 为 62 进制

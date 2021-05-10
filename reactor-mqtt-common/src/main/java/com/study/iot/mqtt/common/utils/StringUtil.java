@@ -2,15 +2,18 @@ package com.study.iot.mqtt.common.utils;
 
 import com.google.common.base.Charsets;
 import com.study.iot.mqtt.common.enums.RandomEnum;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.Assert;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.StringUtils;
-
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Stream;
 
 
 /**
@@ -23,6 +26,13 @@ import java.util.stream.Stream;
 
 @UtilityClass
 public class StringUtil extends StringUtils {
+
+    /**
+     * 随机字符串因子
+     */
+    private static final String INT_STR = "0123456789";
+    private static final String STR_STR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private static final String ALL_STR = INT_STR + STR_STR;
 
     /**
      * 首字母变小写
@@ -127,8 +137,8 @@ public class StringUtil extends StringUtils {
     /**
      * Check whether the given {@code CharSequence} contains actual <em>text</em>.
      * <p>More specifically, this method returns {@code true} if the
-     * {@code CharSequence} is not {@code null}, its length is greater than
-     * 0, and it contains at least one non-whitespace character.
+     * {@code CharSequence} is not {@code null}, its length is greater than 0, and it contains at least one
+     * non-whitespace character.
      * <pre class="code">
      * StringUtil.isBlank(null) = true
      * StringUtil.isBlank("") = true
@@ -138,8 +148,8 @@ public class StringUtil extends StringUtils {
      * </pre>
      *
      * @param cs the {@code CharSequence} to check (may be {@code null})
-     * @return {@code true} if the {@code CharSequence} is not {@code null},
-     * its length is greater than 0, and it does not contain whitespace only
+     * @return {@code true} if the {@code CharSequence} is not {@code null}, its length is greater than 0, and it does
+     * not contain whitespace only
      * @see Character#isWhitespace
      */
     public static boolean isBlank(@Nullable final CharSequence cs) {
@@ -157,8 +167,7 @@ public class StringUtil extends StringUtils {
      * </pre>
      *
      * @param cs the CharSequence to check, may be null
-     * @return {@code true} if the CharSequence is
-     * not empty and not null and not whitespace
+     * @return {@code true} if the CharSequence is not empty and not null and not whitespace
      * @see Character#isWhitespace
      */
     public static boolean isNotBlank(@Nullable final CharSequence cs) {
@@ -257,7 +266,8 @@ public class StringUtil extends StringUtils {
         // 替换变量
         StringBuilder sb = new StringBuilder((int) (message.length() * 1.5));
         int cursor = 0;
-        for (int start, end; (start = message.indexOf(StringPool.DOLLAR_LEFT_BRACE, cursor)) != -1 && (end = message.indexOf(CharPool.RIGHT_BRACE, start)) != -1; ) {
+        for (int start, end; (start = message.indexOf(StringPool.DOLLAR_LEFT_BRACE, cursor)) != -1
+            && (end = message.indexOf(CharPool.RIGHT_BRACE, start)) != -1; ) {
             sb.append(message, cursor, start);
             String key = message.substring(start + 2, end);
             Object value = params.get(StringUtil.trimWhitespace(key));
@@ -290,7 +300,8 @@ public class StringUtil extends StringUtils {
         int cursor = 0;
         int index = 0;
         int argsLength = arguments.length;
-        for (int start, end; (start = message.indexOf(CharPool.LEFT_BRACE, cursor)) != -1 && (end = message.indexOf(CharPool.RIGHT_BRACE, start)) != -1 && index < argsLength; ) {
+        for (int start, end; (start = message.indexOf(CharPool.LEFT_BRACE, cursor)) != -1
+            && (end = message.indexOf(CharPool.RIGHT_BRACE, start)) != -1 && index < argsLength; ) {
             sb.append(message, cursor, start);
             sb.append(arguments[index]);
             cursor = end + 1;
@@ -324,8 +335,7 @@ public class StringUtil extends StringUtils {
     }
 
     /**
-     * Convert a {@code String} array into a comma delimited {@code String}
-     * (i.e., CSV).
+     * Convert a {@code String} array into a comma delimited {@code String} (i.e., CSV).
      * <p>Useful for {@code toString()} implementations.
      *
      * @param arr the array to display
@@ -426,13 +436,6 @@ public class StringUtil extends StringUtils {
             val >>>= 4;
         } while (charPos > offset);
     }
-
-    /**
-     * 随机字符串因子
-     */
-    private static final String INT_STR = "0123456789";
-    private static final String STR_STR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    private static final String ALL_STR = INT_STR + STR_STR;
 
     /**
      * 随机数生成

@@ -21,12 +21,13 @@ public class TransportClientFactory {
 
     public Mono<ClientSession> connect(ClientConfiguration config, ClientMessageRouter messageRouter) {
         return Mono.from(protocolFactory.getProtocol(ProtocolType.valueOf(config.getProtocol()))
-                .get().getTransport().connect(config))
-                .map(connection -> this.wrapper(connection, config, messageRouter))
-                .doOnError(config.getThrowableConsumer());
+            .get().getTransport().connect(config))
+            .map(connection -> this.wrapper(connection, config, messageRouter))
+            .doOnError(config.getThrowableConsumer());
     }
 
-    private ClientSession wrapper(DisposableConnection connection, ClientConfiguration config, ClientMessageRouter messageRouter) {
+    private ClientSession wrapper(DisposableConnection connection, ClientConfiguration config,
+        ClientMessageRouter messageRouter) {
         return new ClientConnection(connection, config, messageRouter);
     }
 

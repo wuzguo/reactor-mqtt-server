@@ -5,9 +5,8 @@ import com.study.iot.mqtt.cache.service.MessageHandler;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.common.message.RetainMessage;
-import org.apache.ignite.IgniteCache;
-
 import javax.annotation.Resource;
+import org.apache.ignite.IgniteCache;
 
 /**
  * <B>说明：描述</B>
@@ -21,7 +20,7 @@ import javax.annotation.Resource;
 public class IgniteMessageHandler implements MessageHandler {
 
     @Resource
-    private IgniteCache<String,  RetainMessage> messageCache;
+    private IgniteCache<String, RetainMessage> messageCache;
 
     @Override
     public void saveRetain(boolean dup, boolean retain, int qos, String topicName, byte[] copyByteBuf) {

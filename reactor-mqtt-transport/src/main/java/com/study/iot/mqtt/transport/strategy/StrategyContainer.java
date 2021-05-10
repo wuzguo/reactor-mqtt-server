@@ -2,14 +2,13 @@ package com.study.iot.mqtt.transport.strategy;
 
 import com.google.common.collect.Maps;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import java.util.Map;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionValidationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * <B>说明：描述</B>
@@ -22,7 +21,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class StrategyContainer implements ApplicationContextAware {
 
-    private static final Map<String, Map<MqttMessageType, Class<? extends StrategyCapable>>> container = Maps.newConcurrentMap();
+    private static final Map<String, Map<MqttMessageType, Class<? extends StrategyCapable>>> container = Maps
+        .newConcurrentMap();
 
     private final ApplicationContext applicationContext;
 
@@ -33,25 +33,25 @@ public class StrategyContainer implements ApplicationContextAware {
 
     private void initializingContainer(ApplicationContext applicationContext) {
         Optional.of(applicationContext.getBeansWithAnnotation(StrategyService.class))
-                .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
-                    if (!StrategyCapable.class.isAssignableFrom(v.getClass())) {
-                        throw new BeanDefinitionValidationException(String
-                                .format("%s must implemented interface StrategyCapable.", v.getClass()));
-                    }
+            .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
+                if (!StrategyCapable.class.isAssignableFrom(v.getClass())) {
+                    throw new BeanDefinitionValidationException(String
+                        .format("%s must implemented interface StrategyCapable.", v.getClass()));
+                }
 
-                    Class<? extends StrategyCapable> strategyClass = (Class<? extends StrategyCapable>) v.getClass();
-                    StrategyService strategyService = strategyClass.getAnnotation(StrategyService.class);
+                Class<? extends StrategyCapable> strategyClass = (Class<? extends StrategyCapable>) v.getClass();
+                StrategyService strategyService = strategyClass.getAnnotation(StrategyService.class);
 
-                    String group = strategyService.group();
-                    Map<MqttMessageType, Class<? extends StrategyCapable>> storage = container.get(group);
-                    if (storage == null) {
-                        storage = Maps.newConcurrentMap();
-                    }
+                String group = strategyService.group();
+                Map<MqttMessageType, Class<? extends StrategyCapable>> storage = container.get(group);
+                if (storage == null) {
+                    storage = Maps.newConcurrentMap();
+                }
 
-                    MqttMessageType value = strategyService.type();
-                    storage.putIfAbsent(value, strategyClass);
-                    container.put(group, storage);
-                }));
+                MqttMessageType value = strategyService.type();
+                storage.putIfAbsent(value, strategyClass);
+                container.put(group, storage);
+            }));
     }
 
     /**
@@ -66,14 +66,14 @@ public class StrategyContainer implements ApplicationContextAware {
         Map<MqttMessageType, Class<? extends StrategyCapable>> storage = container.get(group);
         if (storage == null) {
             throw new BeanDefinitionValidationException(String
-                    .format("StrategyService group '%s' not found in value container", group));
+                .format("StrategyService group '%s' not found in value container", group));
 
         }
 
         Class<? extends StrategyCapable> strategy = storage.get(value);
         if (strategy == null) {
             throw new BeanDefinitionValidationException(String
-                    .format("StrategyService value '%s' not found in value group '%s'", value, group));
+                .format("StrategyService value '%s' not found in value group '%s'", value, group));
 
         }
         return (T) applicationContext.getBean(strategy);

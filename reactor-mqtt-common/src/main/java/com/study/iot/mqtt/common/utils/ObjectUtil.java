@@ -1,10 +1,9 @@
 package com.study.iot.mqtt.common.utils;
 
+import java.util.Optional;
 import lombok.experimental.UtilityClass;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
-
-import java.util.Optional;
 
 /**
  * <B>说明：描述</B>

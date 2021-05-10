@@ -1,22 +1,31 @@
 package com.study.iot.mqtt.transport.sender;
 
+import static io.netty.handler.codec.mqtt.MqttQoS.AT_MOST_ONCE;
+
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.message.IMessageIdService;
 import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.common.message.TransportMessage;
-import io.netty.handler.codec.mqtt.*;
+import io.netty.handler.codec.mqtt.MqttConnAckMessage;
+import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
+import io.netty.handler.codec.mqtt.MqttFixedHeader;
+import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageFactory;
+import io.netty.handler.codec.mqtt.MqttMessageType;
+import io.netty.handler.codec.mqtt.MqttPubAckMessage;
+import io.netty.handler.codec.mqtt.MqttPublishMessage;
+import io.netty.handler.codec.mqtt.MqttQoS;
+import io.netty.handler.codec.mqtt.MqttSubAckMessage;
+import io.netty.handler.codec.mqtt.MqttUnsubAckMessage;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 import reactor.netty.NettyOutbound;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static io.netty.handler.codec.mqtt.MqttQoS.AT_MOST_ONCE;
 
 /**
  * <B>说明：描述</B>
@@ -38,9 +47,9 @@ public class MessageSender {
 
     private void addRetrySubscriber(NettyOutbound outbound, int messageId, MqttMessage mqttMessage) {
         this.addDisposable(messageId, Mono.fromRunnable(() ->
-                outbound.sendObject(mqttMessage).then())
-                .delaySubscription(Duration.ofSeconds(10)).repeat(5).doFinally(e -> removeQos2Message(messageId))
-                .subscribe());
+            outbound.sendObject(mqttMessage).then())
+            .delaySubscription(Duration.ofSeconds(10)).repeat(5).doFinally(e -> removeQos2Message(messageId))
+            .subscribe());
     }
 
     public void addDisposable(Integer messageId, Disposable disposable) {
@@ -49,7 +58,7 @@ public class MessageSender {
 
     public void cancelDisposable(Integer messageId) {
         Optional.ofNullable(mapDisposable.get(messageId))
-                .ifPresent(Disposable::dispose);
+            .ifPresent(Disposable::dispose);
         mapDisposable.remove(messageId);
     }
 
@@ -62,66 +71,78 @@ public class MessageSender {
         return sendMessage(outbound, message);
     }
 
-    public Mono<Void> sendPublishMessage(NettyOutbound outbound, MqttQoS qos, boolean isRetain, String topic, byte[] message) {
+    public Mono<Void> sendPublishMessage(NettyOutbound outbound, MqttQoS qos, boolean isRetain, String topic,
+        byte[] message) {
         MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(false, qos, isRetain, idService.next(),
-                topic, message);
+            topic, message);
         return sendMessage(outbound, mqttPublishMessage);
     }
 
-    public Mono<Void> sendPublishMessage(NettyOutbound outbound, MqttMessageType mqttMessageType, MqttQoS qos, boolean isDup, boolean isRetain,
-                                         String topic, Integer messageId, byte[] message) {
+    public Mono<Void> sendPublishMessage(NettyOutbound outbound, MqttMessageType mqttMessageType, MqttQoS qos,
+        boolean isDup, boolean isRetain,
+        String topic, Integer messageId, byte[] message) {
         if (messageId == null) {
             messageId = idService.next();
         }
-        MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(isDup, qos, isRetain, messageId, topic, message);
+        MqttPublishMessage mqttPublishMessage = MessageBuilder
+            .buildPub(isDup, qos, isRetain, messageId, topic, message);
         return sendMessage(outbound, mqttPublishMessage);
     }
 
 
-    public Mono<Void> sendPublishMessageRetry(NettyOutbound outbound, MqttMessageType mqttMessageType, MqttQoS qos, boolean isRetain,
-                                              String topic, Integer messageId, byte[] message) {
+    public Mono<Void> sendPublishMessageRetry(NettyOutbound outbound, MqttMessageType mqttMessageType, MqttQoS qos,
+        boolean isRetain,
+        String topic, Integer messageId, byte[] message) {
         MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(false, qos, false, messageId, topic, message);
-        MqttPublishMessage retryMqttPublishMessage = MessageBuilder.buildPub(false, qos, true, messageId, topic, message);
+        MqttPublishMessage retryMqttPublishMessage = MessageBuilder
+            .buildPub(false, qos, true, messageId, topic, message);
         addRetrySubscriber(outbound, messageId, retryMqttPublishMessage);
         return sendMessage(outbound, mqttPublishMessage);
     }
 
-    public Mono<Void> sendPublishMessageRetry(NettyOutbound outbound, MqttQoS qos, boolean isRetain, String topic, byte[] message) {
+    public Mono<Void> sendPublishMessageRetry(NettyOutbound outbound, MqttQoS qos, boolean isRetain, String topic,
+        byte[] message) {
         int messageId = idService.next();
-        MqttPublishMessage mqttPublishMessage = MessageBuilder.buildPub(false, qos, isRetain, messageId, topic, message);
-        MqttPublishMessage retryMqttPublishMessage = MessageBuilder.buildPub(false, qos, true, messageId, topic, message);
+        MqttPublishMessage mqttPublishMessage = MessageBuilder
+            .buildPub(false, qos, isRetain, messageId, topic, message);
+        MqttPublishMessage retryMqttPublishMessage = MessageBuilder
+            .buildPub(false, qos, true, messageId, topic, message);
         addRetrySubscriber(outbound, messageId, retryMqttPublishMessage);
         return sendMessage(outbound, mqttPublishMessage);
     }
 
-    public Mono<Void> sendPubAckMessage(NettyOutbound outbound, MqttMessageType mqttMessageType, boolean isRetain, boolean isDup,
-                                        int messageId) {
+    public Mono<Void> sendPubAckMessage(NettyOutbound outbound, MqttMessageType mqttMessageType, boolean isRetain,
+        boolean isDup,
+        int messageId) {
         MqttPubAckMessage pubAckMessage = MessageBuilder.buildPubAck(isDup, AT_MOST_ONCE, isRetain, messageId);
         return sendMessage(outbound, pubAckMessage);
     }
 
-    public Mono<Void> sendPubAckMessage(NettyOutbound outbound, MqttMessageType mqttMessageType, MqttQoS qos, boolean isRetain, boolean isDup,
-                                        int messageId) {
+    public Mono<Void> sendPubAckMessage(NettyOutbound outbound, MqttMessageType mqttMessageType, MqttQoS qos,
+        boolean isRetain, boolean isDup,
+        int messageId) {
         MqttPubAckMessage pubAckMessage = MessageBuilder.buildPubAck(isDup, qos, isRetain, messageId);
         return sendMessage(outbound, pubAckMessage);
     }
 
-    public Mono<Void> sendPubAckMessageRetry(NettyOutbound outbound, MqttMessageType mqttMessageType, boolean isRetain, boolean isDup,
-                                             int messageId) {
+    public Mono<Void> sendPubAckMessageRetry(NettyOutbound outbound, MqttMessageType mqttMessageType, boolean isRetain,
+        boolean isDup,
+        int messageId) {
         MqttPubAckMessage pubAckMessage = MessageBuilder.buildPubAck(isDup, AT_MOST_ONCE, isRetain, messageId);
         addRetrySubscriber(outbound, messageId, pubAckMessage);
         return sendMessage(outbound, pubAckMessage);
     }
 
 
-    public Mono<Void> sendConnAckMessage(NettyOutbound outbound, MqttConnectReturnCode mqttConnectReturnCode, boolean sessionPresent) {
+    public Mono<Void> sendConnAckMessage(NettyOutbound outbound, MqttConnectReturnCode mqttConnectReturnCode,
+        boolean sessionPresent) {
         MqttConnAckMessage connAckMessage = MessageBuilder.buildConnAck(mqttConnectReturnCode, sessionPresent);
         return sendMessage(outbound, connAckMessage);
     }
 
     public Mono<Void> sendPingResp(NettyOutbound outbound) {
         MqttMessage pingRespMessage = MqttMessageFactory.newMessage(
-                new MqttFixedHeader(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE, false, 0), null, null);
+            new MqttFixedHeader(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE, false, 0), null, null);
         return sendMessage(outbound, pingRespMessage);
     }
 

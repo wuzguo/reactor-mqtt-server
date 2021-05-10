@@ -7,7 +7,6 @@ import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
 import com.study.iot.mqtt.transport.strategy.WillStrategyService;
-import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 
@@ -28,7 +27,8 @@ public class ServerAtMostHandler implements WillCapable {
     public void handler(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
         Integer messageId = messageIdService.next();
         MqttPublishMessage message = MessageBuilder
-                .buildPub(false, qoS, willMessage.getRetain(), messageId, willMessage.getTopicName(), willMessage.getMessage());
+            .buildPub(false, qoS, willMessage.getRetain(), messageId, willMessage.getTopicName(),
+                willMessage.getMessage());
         connection.sendMessageRetry(messageId, message).subscribe();
     }
 }

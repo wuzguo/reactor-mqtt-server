@@ -4,6 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.common.message.TransportMessage;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import java.io.Serializable;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.LongAdder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
@@ -12,13 +18,6 @@ import reactor.core.publisher.Mono;
 import reactor.netty.Connection;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
-
-import java.io.Serializable;
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.LongAdder;
 
 
 @Slf4j
@@ -80,7 +79,7 @@ public class DisposableConnection implements Disposable, Serializable {
     public Mono<Void> sendMessageRetry(Integer messageId, MqttMessage message) {
         // retry
         this.addDisposable(messageId, Mono.fromRunnable(() -> this.sendMessage(message).subscribe())
-                .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
+            .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
         // pub
         return this.sendMessage(message);
     }

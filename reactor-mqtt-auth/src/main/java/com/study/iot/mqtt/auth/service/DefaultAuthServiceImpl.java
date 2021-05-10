@@ -3,10 +3,7 @@ package com.study.iot.mqtt.auth.service;
 import com.study.iot.mqtt.common.utils.DigestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
-import org.apache.commons.codec.digest.Md5Crypt;
 import reactor.core.publisher.Mono;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * <B>说明：描述</B>

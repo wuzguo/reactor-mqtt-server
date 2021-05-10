@@ -1,9 +1,8 @@
 package com.study.iot.mqtt.common.annocation;
 
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.Objects;
 
 /**
  * <B>说明：描述</B>

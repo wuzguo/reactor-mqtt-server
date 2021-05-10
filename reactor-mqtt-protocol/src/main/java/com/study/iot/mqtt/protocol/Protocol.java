@@ -3,7 +3,6 @@ package com.study.iot.mqtt.protocol;
 
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import io.netty.channel.ChannelHandler;
-
 import java.util.List;
 
 public interface Protocol {

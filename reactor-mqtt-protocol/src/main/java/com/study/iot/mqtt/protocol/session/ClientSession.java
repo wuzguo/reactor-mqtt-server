@@ -1,11 +1,9 @@
 package com.study.iot.mqtt.protocol.session;
 
-import com.study.iot.mqtt.protocol.config.ClientConfiguration;
-import reactor.core.Disposable;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
 import java.util.function.BiConsumer;
+import reactor.core.Disposable;
+import reactor.core.publisher.Mono;
 
 public interface ClientSession extends Disposable {
 

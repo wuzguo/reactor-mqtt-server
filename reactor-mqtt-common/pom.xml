@@ -1,71 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <artifactId>reactor-mqtt-common</artifactId>
+    <dependencies>
+        <dependency>
+            <artifactId>lombok</artifactId>
+            <groupId>org.projectlombok</groupId>
+        </dependency>
+
+        <dependency>
+            <artifactId>log4j-api</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>log4j-core</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>slf4j-api</artifactId>
+            <groupId>org.slf4j</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>logback-core</artifactId>
+            <groupId>ch.qos.logback</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>logback-classic</artifactId>
+            <groupId>ch.qos.logback</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>netty-transport</artifactId>
+            <groupId>io.netty</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>netty-codec-mqtt</artifactId>
+            <groupId>io.netty</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>reactor-core</artifactId>
+            <groupId>io.projectreactor</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>reactor-netty</artifactId>
+            <groupId>io.projectreactor.netty</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-core</artifactId>
+            <groupId>org.springframework</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+        </dependency>
+    </dependencies>
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>reactor-mqtt-server</artifactId>
         <groupId>com.study.iot.mqtt</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>reactor-mqtt-common</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-mqtt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.projectreactor.netty</groupId>
-            <artifactId>reactor-netty</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>

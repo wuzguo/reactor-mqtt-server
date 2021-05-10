@@ -2,14 +2,13 @@ package com.study.iot.mqtt.transport.strategy;
 
 import com.google.common.collect.Maps;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import java.util.Map;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionValidationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * <B>说明：描述</B>
@@ -33,25 +32,25 @@ public class WillStrategyContainer implements ApplicationContextAware {
 
     private void initializingContainer(ApplicationContext applicationContext) {
         Optional.of(applicationContext.getBeansWithAnnotation(WillStrategyService.class))
-                .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
-                    if (!WillCapable.class.isAssignableFrom(v.getClass())) {
-                        throw new BeanDefinitionValidationException(String
-                                .format("%s must implemented interface WillCapable.", v.getClass()));
-                    }
+            .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
+                if (!WillCapable.class.isAssignableFrom(v.getClass())) {
+                    throw new BeanDefinitionValidationException(String
+                        .format("%s must implemented interface WillCapable.", v.getClass()));
+                }
 
-                    Class<? extends WillCapable> strategyClass = (Class<? extends WillCapable>) v.getClass();
-                    WillStrategyService WillStrategyService = strategyClass.getAnnotation(WillStrategyService.class);
+                Class<? extends WillCapable> strategyClass = (Class<? extends WillCapable>) v.getClass();
+                WillStrategyService WillStrategyService = strategyClass.getAnnotation(WillStrategyService.class);
 
-                    String group = WillStrategyService.group();
-                    Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
-                    if (storage == null) {
-                        storage = Maps.newConcurrentMap();
-                    }
+                String group = WillStrategyService.group();
+                Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
+                if (storage == null) {
+                    storage = Maps.newConcurrentMap();
+                }
 
-                    MqttQoS value = WillStrategyService.type();
-                    storage.putIfAbsent(value, strategyClass);
-                    container.put(group, storage);
-                }));
+                MqttQoS value = WillStrategyService.type();
+                storage.putIfAbsent(value, strategyClass);
+                container.put(group, storage);
+            }));
     }
 
     /**
@@ -66,14 +65,14 @@ public class WillStrategyContainer implements ApplicationContextAware {
         Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
         if (storage == null) {
             throw new BeanDefinitionValidationException(String
-                    .format("WillStrategyService group '%s' not found in value container", group));
+                .format("WillStrategyService group '%s' not found in value container", group));
 
         }
 
         Class<? extends WillCapable> strategy = storage.get(value);
         if (strategy == null) {
             throw new BeanDefinitionValidationException(String
-                    .format("WillStrategyService value '%s' not found in value group '%s'", value, group));
+                .format("WillStrategyService value '%s' not found in value group '%s'", value, group));
 
         }
         return (T) applicationContext.getBean(strategy);

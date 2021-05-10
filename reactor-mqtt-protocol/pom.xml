@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <artifactId>reactor-mqtt-protocol</artifactId>
+    <dependencies>
+        <dependency>
+            <artifactId>reactor-core</artifactId>
+            <groupId>io.projectreactor</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>netty-codec-mqtt</artifactId>
+            <groupId>io.netty</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>lombok</artifactId>
+            <groupId>org.projectlombok</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>reactor-mqtt-common</artifactId>
+            <groupId>com.study.iot.mqtt</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>reactor-mqtt-server</artifactId>
         <groupId>com.study.iot.mqtt</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>reactor-mqtt-protocol</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-mqtt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.study.iot.mqtt</groupId>
-            <artifactId>reactor-mqtt-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 </project>

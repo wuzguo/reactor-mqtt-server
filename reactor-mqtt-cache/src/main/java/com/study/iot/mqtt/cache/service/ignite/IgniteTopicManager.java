@@ -6,11 +6,10 @@ import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
-import org.apache.ignite.IgniteCache;
-
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Resource;
+import org.apache.ignite.IgniteCache;
 
 /**
  * <B>说明：描述</B>
@@ -33,7 +32,8 @@ public class IgniteTopicManager implements TopicManager {
 
     @Override
     public void addConnection(String topic, DisposableConnection connection) {
-        List<DisposableConnection> connections = Optional.ofNullable(topicDisposableCache.get(topic)).orElse(Lists.newArrayList());
+        List<DisposableConnection> connections = Optional.ofNullable(topicDisposableCache.get(topic))
+            .orElse(Lists.newArrayList());
         connections.add(connection);
         topicDisposableCache.put(topic, connections);
     }

@@ -10,6 +10,9 @@ import com.study.iot.mqtt.transport.strategy.WillCapable;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.Attribute;
+import java.time.Duration;
+import java.util.List;
+import java.util.Optional;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.UnicastProcessor;
@@ -17,10 +20,6 @@ import reactor.netty.Connection;
 import reactor.netty.DisposableChannel;
 import reactor.netty.DisposableServer;
 import reactor.netty.NettyInbound;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * <B>说明：描述</B>
@@ -41,7 +40,7 @@ public class ServerConnection implements ServerSession {
     private final ServerMessageRouter messageRouter;
 
     public ServerConnection(UnicastProcessor<DisposableConnection> processor, DisposableServer disposableServer,
-                            DisposableServer wsDisposableServer, CacheManager cacheManager, ServerMessageRouter messageRouter) {
+        DisposableServer wsDisposableServer, CacheManager cacheManager, ServerMessageRouter messageRouter) {
         this.disposableServer = disposableServer;
         this.wsDisposableServer = wsDisposableServer;
         this.messageRouter = messageRouter;
@@ -54,34 +53,35 @@ public class ServerConnection implements ServerSession {
         Connection connection = transport.getConnection();
         // 定时关闭
         Disposable disposable = Mono.fromRunnable(connection::dispose)
-                .delaySubscription(Duration.ofSeconds(10))
-                .subscribe();
+            .delaySubscription(Duration.ofSeconds(10))
+            .subscribe();
         // 设置 connection
         connection.channel().attr(AttributeKeys.connectionAttributeKey).set(transport);
         // 设置 close
         connection.channel().attr(AttributeKeys.closeConnection).set(disposable);
         // 关闭发送will消息
         transport.getConnection().onDispose(() -> {
-            Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE)).map(Attribute::get)
-                    .ifPresent(willMessage -> Optional.ofNullable(
-                            cacheManager.topic().getConnections(willMessage.getTopicName()))
-                            .ifPresent(connections -> connections.forEach(connect -> {
-                                MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                                Optional.ofNullable(messageRouter.getWillContainer().getStrategy(StrategyGroup.WILL_SERVER, qoS))
-                                        .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
-                            })));
+            Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.WILL_MESSAGE))
+                .map(Attribute::get)
+                .ifPresent(willMessage -> Optional.ofNullable(
+                    cacheManager.topic().getConnections(willMessage.getTopicName()))
+                    .ifPresent(connections -> connections.forEach(connect -> {
+                        MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
+                        Optional.ofNullable(messageRouter.getWillContainer().getStrategy(StrategyGroup.WILL_SERVER, qoS))
+                            .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
+                    })));
             // 删除链接
             cacheManager.channel().removeConnection(transport);
             // 删除topic订阅
             transport.getTopics().forEach(topic -> cacheManager.topic().deleteConnection(topic, transport));
             Optional.ofNullable(transport.getConnection().channel().attr(AttributeKeys.device_id))
-                    .map(Attribute::get)
-                    // 设置device
-                    .ifPresent(cacheManager.channel()::removeChannel);
+                .map(Attribute::get)
+                // 设置device
+                .ifPresent(cacheManager.channel()::removeChannel);
             transport.destory();
         });
         inbound.receiveObject().cast(MqttMessage.class)
-                .subscribe(message -> messageRouter.handle(message, transport));
+            .subscribe(message -> messageRouter.handle(message, transport));
     }
 
     @Override
@@ -92,7 +92,7 @@ public class ServerConnection implements ServerSession {
     @Override
     public Mono<Void> closeConnect(String clientId) {
         return Mono.fromRunnable(() -> Optional.ofNullable(cacheManager.channel().getAndRemove(clientId))
-                .ifPresent(DisposableConnection::dispose));
+            .ifPresent(DisposableConnection::dispose));
     }
 
     @Override

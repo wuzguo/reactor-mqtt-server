@@ -1,16 +1,15 @@
 package com.study.iot.mqtt.common.utils;
 
 import com.google.common.base.Charsets;
-import lombok.experimental.UtilityClass;
-import org.springframework.lang.Nullable;
-import org.springframework.util.DigestUtils;
-
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import lombok.experimental.UtilityClass;
+import org.springframework.lang.Nullable;
+import org.springframework.util.DigestUtils;
 
 /**
  * <B>说明：描述</B>
@@ -23,7 +22,9 @@ import java.security.NoSuchAlgorithmException;
 
 @UtilityClass
 public class DigestUtil extends DigestUtils {
-    private static final char[] HEX_CODE = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+    private static final char[] HEX_CODE = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
+        'f'};
 
     /**
      * Calculates the MD5 digest and returns the value as a 32 character hex string.

@@ -1,12 +1,11 @@
 package com.study.iot.mqtt.cache.service.path;
 
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <B>说明：描述</B>
@@ -91,10 +90,8 @@ public class TopicMap<K, V> {
     class Node<K, V> {
 
         private final K topic;
-
-        List<V> vs = new CopyOnWriteArrayList<>();
-
         private final Map<K, Node<K, V>> mapNodes = Maps.newConcurrentMap();
+        List<V> vs = new CopyOnWriteArrayList<>();
 
         Node(K topic) {
             this.topic = topic;

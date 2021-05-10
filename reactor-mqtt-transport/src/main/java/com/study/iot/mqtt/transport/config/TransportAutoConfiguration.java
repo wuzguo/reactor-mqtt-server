@@ -36,7 +36,8 @@ public class TransportAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ServerMessageRouter serverMessageRouter(StrategyContainer container, WillStrategyContainer willStrategyContainer) {
+    public ServerMessageRouter serverMessageRouter(StrategyContainer container,
+        WillStrategyContainer willStrategyContainer) {
         return new ServerMessageRouter(container, willStrategyContainer);
     }
 

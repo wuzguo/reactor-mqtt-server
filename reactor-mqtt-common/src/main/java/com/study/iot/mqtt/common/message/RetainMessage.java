@@ -1,11 +1,10 @@
 package com.study.iot.mqtt.common.message;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 /**
  * <B>说明：描述</B>

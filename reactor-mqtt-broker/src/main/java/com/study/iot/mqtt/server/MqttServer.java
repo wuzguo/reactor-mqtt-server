@@ -32,14 +32,14 @@ public class MqttServer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         TransportServer.create("localhost", 1884)
-                .heart(100000)
-                .protocol(ProtocolType.MQTT)
-                .ssl(false)
-                .auth((key, secret) -> true)
-                .cache(CacheStrategy.MEMORY)
-                .log(true)
-                .exception(e -> log.error("exception occurred when starting mqtt server：{}", e.getMessage()))
-                .start(cacheManager, messageRouter)
-                .block();
+            .heart(100000)
+            .protocol(ProtocolType.MQTT)
+            .ssl(false)
+            .auth((key, secret) -> true)
+            .cache(CacheStrategy.MEMORY)
+            .log(true)
+            .exception(e -> log.error("exception occurred when starting mqtt server：{}", e.getMessage()))
+            .start(cacheManager, messageRouter)
+            .block();
     }
 }

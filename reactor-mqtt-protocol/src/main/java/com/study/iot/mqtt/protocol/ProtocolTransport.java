@@ -15,7 +15,8 @@ public abstract class ProtocolTransport {
     }
 
 
-    public abstract Mono<? extends DisposableServer> start(ConnectConfiguration config, UnicastProcessor<DisposableConnection> processor);
+    public abstract Mono<? extends DisposableServer> start(ConnectConfiguration config,
+        UnicastProcessor<DisposableConnection> processor);
 
 
     public abstract Mono<DisposableConnection> connect(ConnectConfiguration config);

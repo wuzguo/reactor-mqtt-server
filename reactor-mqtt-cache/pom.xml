@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <artifactId>reactor-mqtt-cache</artifactId>
+    <dependencies>
+        <dependency>
+            <artifactId>ignite-core</artifactId>
+            <groupId>org.apache.ignite</groupId>
+            <version>2.6.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>ignite-slf4j</artifactId>
+            <groupId>org.apache.ignite</groupId>
+            <version>2.6.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>reactor-mqtt-common</artifactId>
+            <groupId>com.study.iot.mqtt</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>spring-context</artifactId>
+            <groupId>org.springframework</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <groupId>org.springframework.boot</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-data-redis</artifactId>
+            <groupId>org.springframework.data</groupId>
+            <version>2.4.5</version>
+        </dependency>
+    </dependencies>
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>reactor-mqtt-server</artifactId>
         <groupId>com.study.iot.mqtt</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>reactor-mqtt-cache</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.ignite</groupId>
-            <artifactId>ignite-core</artifactId>
-            <version>2.6.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ignite</groupId>
-            <artifactId>ignite-slf4j</artifactId>
-            <version>2.6.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.study.iot.mqtt</groupId>
-            <artifactId>reactor-mqtt-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-            <version>2.4.5</version>
-        </dependency>
-    </dependencies>
 </project>

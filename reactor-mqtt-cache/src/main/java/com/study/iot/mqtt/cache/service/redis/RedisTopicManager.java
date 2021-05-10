@@ -8,10 +8,9 @@ import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <B>说明：描述</B>
@@ -29,7 +28,8 @@ public class RedisTopicManager implements TopicManager {
 
     @Override
     public List<DisposableConnection> getConnections(String topic) {
-        return Optional.ofNullable(redisOpsTemplate.getList(topic, DisposableConnection.class)).orElse(Lists.newArrayList());
+        return Optional.ofNullable(redisOpsTemplate.getList(topic, DisposableConnection.class))
+            .orElse(Lists.newArrayList());
     }
 
     @Override

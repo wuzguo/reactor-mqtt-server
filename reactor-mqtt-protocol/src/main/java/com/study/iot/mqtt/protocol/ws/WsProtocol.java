@@ -6,14 +6,12 @@ import com.study.iot.mqtt.protocol.Protocol;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
 import com.study.iot.mqtt.protocol.codec.ByteBufToWebSocketFrameEncoder;
 import com.study.iot.mqtt.protocol.codec.WebSocketFrameToByteBufDecoder;
-import com.study.iot.mqtt.protocol.ws.WsTransport;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
-
 import java.util.List;
 
 
@@ -32,10 +30,10 @@ public class WsProtocol implements Protocol {
     @Override
     public List<ChannelHandler> getHandlers() {
         return Lists.newArrayList(new HttpServerCodec(),
-                new HttpObjectAggregator(65536),
-                new WebSocketServerProtocolHandler("/", "mqtt, mqttv3.1, mqttv3.1.1"),
-                new WebSocketFrameToByteBufDecoder(),
-                new ByteBufToWebSocketFrameEncoder(),
-                new MqttDecoder(5 * 1024 * 1024), MqttEncoder.INSTANCE);
+            new HttpObjectAggregator(65536),
+            new WebSocketServerProtocolHandler("/", "mqtt, mqttv3.1, mqttv3.1.1"),
+            new WebSocketFrameToByteBufDecoder(),
+            new ByteBufToWebSocketFrameEncoder(),
+            new MqttDecoder(5 * 1024 * 1024), MqttEncoder.INSTANCE);
     }
 }

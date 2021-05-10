@@ -3,7 +3,11 @@ package com.study.iot.mqtt.common.utils;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.databind.type.MapType;
@@ -11,9 +15,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import lombok.experimental.UtilityClass;
-import org.springframework.lang.Nullable;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -23,6 +24,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.experimental.UtilityClass;
+import org.springframework.lang.Nullable;
 
 @UtilityClass
 public class JsonUtil {
@@ -67,7 +70,7 @@ public class JsonUtil {
 
     public static void writeValue(Writer writer, Object value) {
         try {
-			MAPPER.writeValue(writer, value);
+            MAPPER.writeValue(writer, value);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -258,12 +261,11 @@ public class JsonUtil {
     }
 
     /**
-     * 范型readValue json ==> Pager&lt;MyBean&gt;: readValue(json, Pager.class,
-     * MyBean.class)<br>
-     * json ==> List<Set<Integer>>: readValue(json, List.class, Integer.class)<br>
+     * 范型readValue json ==> Pager&lt;MyBean&gt;: readValue(json, Pager.class, MyBean.class)<br> json ==>
+     * List<Set<Integer>>: readValue(json, List.class, Integer.class)<br>
      */
     public static <T> T readValue(String json, Class<?> parametrized, Class<?> parametersFor,
-                                  Class<?>... parameterClasses) {
+        Class<?>... parameterClasses) {
         if (StringUtil.isBlank(json)) {
             return null;
         }
@@ -310,7 +312,8 @@ public class JsonUtil {
             return null;
         }
         try {
-            return MAPPER.readValue(content, MAPPER.getTypeFactory().constructCollectionLikeType(List.class, elementClass));
+            return MAPPER
+                .readValue(content, MAPPER.getTypeFactory().constructCollectionLikeType(List.class, elementClass));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -322,7 +325,7 @@ public class JsonUtil {
         }
         try {
             return MAPPER.readValue(content, MAPPER.getTypeFactory()
-                    .constructCollectionLikeType(collectionClass == null ? List.class : collectionClass, elementClass));
+                .constructCollectionLikeType(collectionClass == null ? List.class : collectionClass, elementClass));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -333,8 +336,7 @@ public class JsonUtil {
     }
 
     /**
-     * 转换为目标类，如果value是字符串，将被认为是json串<br>
-     * 所以特别注意：'"abc"'是json字符串，目标类型是String时，转换结果为'abc'而不是'"abc"'<br>
+     * 转换为目标类，如果value是字符串，将被认为是json串<br> 所以特别注意：'"abc"'是json字符串，目标类型是String时，转换结果为'abc'而不是'"abc"'<br>
      *
      * @param value
      * @param clazz

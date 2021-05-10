@@ -9,6 +9,7 @@ package com.study.iot.mqtt.common.utils;
  */
 
 public interface StringPool {
+
     String AMPERSAND = "&";
     String AND = "and";
     String AT = "@";

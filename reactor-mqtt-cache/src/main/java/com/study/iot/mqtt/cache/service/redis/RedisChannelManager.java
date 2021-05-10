@@ -8,9 +8,8 @@ import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**

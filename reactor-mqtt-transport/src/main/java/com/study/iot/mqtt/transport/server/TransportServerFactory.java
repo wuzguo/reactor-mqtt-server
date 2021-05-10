@@ -28,7 +28,8 @@ public class TransportServerFactory {
         protocolFactory = new ProtocolFactory();
     }
 
-    public Mono<ServerSession> start(ServerConfiguration config, CacheManager cacheManager, ServerMessageRouter messageRouter) {
+    public Mono<ServerSession> start(ServerConfiguration config, CacheManager cacheManager,
+        ServerMessageRouter messageRouter) {
         // 开启
         if (config.getProtocol().equals(ProtocolType.MQTT.name())) {
             WsTransport wsTransport = new WsTransport(new WsProtocol());
@@ -37,11 +38,11 @@ public class TransportServerFactory {
         }
 
         return Mono.from(protocolFactory.getProtocol(ProtocolType.valueOf(config.getProtocol()))
-                .get()
-                .getTransport()
-                .start(config, unicastProcessor))
-                .map(disposable -> this.wrapper(disposable, cacheManager, messageRouter))
-                .doOnError(config.getThrowableConsumer());
+            .get()
+            .getTransport()
+            .start(config, unicastProcessor))
+            .map(disposable -> this.wrapper(disposable, cacheManager, messageRouter))
+            .doOnError(config.getThrowableConsumer());
     }
 
     private ServerConfiguration copy(ServerConfiguration config) {
@@ -61,7 +62,8 @@ public class TransportServerFactory {
         return serverConfiguration;
     }
 
-    private ServerSession wrapper(DisposableServer disposable, CacheManager cacheManager, ServerMessageRouter messageRouter) {
+    private ServerSession wrapper(DisposableServer disposable, CacheManager cacheManager,
+        ServerMessageRouter messageRouter) {
         return new ServerConnection(unicastProcessor, disposable, disposableServer, cacheManager, messageRouter);
     }
 }

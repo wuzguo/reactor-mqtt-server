@@ -2,7 +2,6 @@ package com.study.iot.mqtt.cache.service;
 
 import com.study.iot.mqtt.cache.strategy.CacheCapable;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
-
 import java.util.List;
 
 public interface ChannelManager extends CacheCapable {

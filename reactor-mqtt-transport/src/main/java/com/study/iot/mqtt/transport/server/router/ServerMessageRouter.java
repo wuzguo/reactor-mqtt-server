@@ -7,10 +7,9 @@ import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import com.study.iot.mqtt.transport.strategy.WillStrategyContainer;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Optional;
 
 @Slf4j
 @Getter
@@ -34,6 +33,6 @@ public class ServerMessageRouter {
         }
 
         Optional.ofNullable(container.getStrategy(StrategyGroup.SERVER, message.fixedHeader().messageType()))
-                .ifPresent(capable -> ((StrategyCapable) capable).handle(message, connection));
+            .ifPresent(capable -> ((StrategyCapable) capable).handle(message, connection));
     }
 }

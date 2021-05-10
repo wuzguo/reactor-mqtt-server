@@ -1,16 +1,27 @@
 package com.study.iot.mqtt.common.utils;
 
 import com.google.common.collect.Maps;
-import lombok.experimental.UtilityClass;
-import org.apache.logging.log4j.core.util.datetime.FastDateFormat;
-import org.springframework.util.Assert;
-
 import java.text.ParseException;
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+import lombok.experimental.UtilityClass;
+import org.apache.logging.log4j.core.util.datetime.FastDateFormat;
+import org.springframework.util.Assert;
 
 /**
  * <B>说明：描述</B>
@@ -23,17 +34,12 @@ import java.util.*;
 @UtilityClass
 public class DateUtil {
 
-    private static final Map<String, TimeZone> mapTimeZone = Maps.newConcurrentMap();
-
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone(ZoneOffset.UTC);
-
     public static final ZoneId ZONE_ID = ZoneOffset.UTC;
-
     public static final String PATTERN_TIME_ZONE = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-
     // This class is immutable and thread-safe.
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
+    private static final Map<String, TimeZone> mapTimeZone = Maps.newConcurrentMap();
 
     /**
      * @param dateStr str格式 yyyy-MM-dd
@@ -105,7 +111,8 @@ public class DateUtil {
     }
 
     public static TimeZone getTimeZone(Integer timezoneOffset) {
-        return getTimeZone(timezoneOffset == null ? null : "GMT" + (timezoneOffset < 0 ? "" : "+") + timezoneOffset + ":00");
+        return getTimeZone(
+            timezoneOffset == null ? null : "GMT" + (timezoneOffset < 0 ? "" : "+") + timezoneOffset + ":00");
     }
 
 

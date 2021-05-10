@@ -1,11 +1,18 @@
 package com.study.iot.mqtt.common.utils;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import org.springframework.lang.Nullable;
-
-import java.lang.reflect.Array;
-import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -24,8 +31,7 @@ public class CollectionUtil extends org.springframework.util.CollectionUtils {
     }
 
     /**
-     * Return {@code true} if the supplied Collection is not {@code null} or empty.
-     * Otherwise, return {@code false}.
+     * Return {@code true} if the supplied Collection is not {@code null} or empty. Otherwise, return {@code false}.
      *
      * @param collection the Collection to check
      * @return whether the given Collection is not empty
@@ -35,8 +41,7 @@ public class CollectionUtil extends org.springframework.util.CollectionUtils {
     }
 
     /**
-     * Return {@code true} if the supplied Map is not {@code null} or empty.
-     * Otherwise, return {@code false}.
+     * Return {@code true} if the supplied Map is not {@code null} or empty. Otherwise, return {@code false}.
      *
      * @param map the Map to check
      * @return whether the given Map is not empty
@@ -174,7 +179,9 @@ public class CollectionUtil extends org.springframework.util.CollectionUtils {
      * @return
      */
     public static <T> int size(T[] arrays) {
-        if (arrays == null) return -1;
+        if (arrays == null) {
+            return -1;
+        }
         return arrays.length;
     }
 
