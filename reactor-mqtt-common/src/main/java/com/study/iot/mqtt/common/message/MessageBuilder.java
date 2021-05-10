@@ -52,31 +52,29 @@ public class MessageBuilder {
     }
 
     public static MqttConnAckMessage buildConnAck(MqttConnectReturnCode mqttConnectReturnCode, boolean sessionPresent) {
-        MqttConnAckMessage mqttConnAckMessage = MqttMessageBuilders.connAck().returnCode(mqttConnectReturnCode)
-            .sessionPresent(sessionPresent).build();
-        return mqttConnAckMessage;
+        return MqttMessageBuilders.connAck().returnCode(mqttConnectReturnCode).sessionPresent(sessionPresent).build();
     }
 
     public static MqttPubAckMessage buildPubRec(int messageId) {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC, false, MqttQoS.AT_LEAST_ONCE,
             false, 0x02);
-        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttPubAckMessage(mqttFixedHeader, from);
+        MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
+        return new MqttPubAckMessage(mqttFixedHeader, variableHeader);
     }
 
     public static MqttPubAckMessage buildPubRel(int messageId) {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL, false, MqttQoS.AT_LEAST_ONCE,
             false, 0x02);
-        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttPubAckMessage(mqttFixedHeader, from);
+        MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
+        return new MqttPubAckMessage(mqttFixedHeader, variableHeader);
     }
 
 
     public static MqttPubAckMessage buildPubComp(int messageId) {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBCOMP, false, MqttQoS.AT_MOST_ONCE,
             false, 0x02);
-        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttPubAckMessage(mqttFixedHeader, from);
+        MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
+        return new MqttPubAckMessage(mqttFixedHeader, variableHeader);
     }
 
     public static MqttSubAckMessage buildFailureSubAck(int messageId, List<Integer> qos) {
