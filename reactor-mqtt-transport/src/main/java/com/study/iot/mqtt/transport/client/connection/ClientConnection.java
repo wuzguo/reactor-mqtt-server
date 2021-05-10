@@ -15,7 +15,6 @@ import io.netty.handler.codec.mqtt.MqttTopicSubscription;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
@@ -36,7 +35,9 @@ public class ClientConnection implements ClientSession {
     private final DisposableConnection connection;
 
     private final ClientMessageRouter clientMessageRouter;
+
     private final ClientConfiguration configuration;
+
     private List<String> topics = Lists.newArrayList();
 
     public ClientConnection(DisposableConnection connection, ClientConfiguration configuration,
@@ -51,7 +52,7 @@ public class ClientConnection implements ClientSession {
     public void init() {
         ClientConfiguration.Options options = configuration.getOptions();
         Disposable disposable = Mono.fromRunnable(() -> connection.sendMessage(MessageBuilder.buildConnect(
-            options.getClientIdentifier(),
+            options.getClientId(),
             options.getWillTopic(),
             options.getWillMessage(),
             options.getUserName(),
@@ -59,11 +60,11 @@ public class ClientConnection implements ClientSession {
             options.getHasUserName(),
             options.getHasPassword(),
             options.getHasWillFlag(),
-            options.getWillQos(),
+            options.getWillQos().value(),
             configuration.getHeart()
         )).subscribe()).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe();
         connection.sendMessage(MessageBuilder.buildConnect(
-            options.getClientIdentifier(),
+            options.getClientId(),
             options.getWillTopic(),
             options.getWillMessage(),
             options.getUserName(),
@@ -71,7 +72,7 @@ public class ClientConnection implements ClientSession {
             options.getHasUserName(),
             options.getHasPassword(),
             options.getHasWillFlag(),
-            options.getWillQos(),
+            options.getWillQos().value(),
             configuration.getHeart()
         )).doOnError(throwable -> log.error(throwable.getMessage())).subscribe();
         connection.getConnection().channel().attr(AttributeKeys.closeConnection).set(disposable);

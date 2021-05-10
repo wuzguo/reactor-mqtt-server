@@ -2,7 +2,9 @@ package com.study.iot.mqtt.protocol.config;
 
 
 import com.study.iot.mqtt.common.annocation.ProtocolType;
+import io.netty.handler.codec.mqtt.MqttQoS;
 import java.util.function.Consumer;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -45,7 +47,7 @@ public class ClientConfiguration extends ConnectConfiguration {
     private Boolean noDelay = true;
 
 
-    private Options options = new Options();
+    private Options options;
 
     /**
      * 异常处理
@@ -64,9 +66,10 @@ public class ClientConfiguration extends ConnectConfiguration {
     };
 
     @Data
+    @Builder
     public static class Options {
 
-        private String clientIdentifier;
+        private String clientId;
 
         private String willTopic;
 
@@ -82,7 +85,7 @@ public class ClientConfiguration extends ConnectConfiguration {
 
         private Boolean hasWillRetain;
 
-        private Integer willQos;
+        private MqttQoS willQos;
 
         private Boolean hasWillFlag;
 

@@ -14,11 +14,8 @@ public class TransportClient {
 
     private final TransportClientFactory transportFactory;
 
-    private final ClientConfiguration.Options options;
-
-    private TransportClient() {
+    public TransportClient() {
         transportFactory = new TransportClientFactory();
-        options = new Options();
     }
 
     public TransportClient create(ClientConfiguration configuration) {
@@ -27,7 +24,6 @@ public class TransportClient {
     }
 
     public Mono<ClientSession> connect(ClientMessageRouter messageRouter) {
-        configuration.setOptions(options);
         return transportFactory.connect(configuration, messageRouter);
     }
 }
