@@ -1,25 +1,4 @@
 # 生产环境
-spring:
-  mqtt:
-    broker:
-      id: mqtt-broker-1
-      ssl-password: 123456
-      use-epoll: true
-      enable-multicast-group: false
-      # 静态IP方式集群
-      static-ip-addresses: 192.168.1.240, 192.168.1.241
-      cache:
-        persistence-initial-size: 64
-        persistence-max-size: 128
-        not-persistence-initial-size: 64
-        not-persistence-max-size: 128
-        # 持久化磁盘存储路径
-        persistence-store-path: /opt/mqtt-broker/persistence
-  redis:
-    host: localhost
-    port: 6379
-    database: 0
-
 logging:
   level:
     root: warn

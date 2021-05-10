@@ -1,40 +1,4 @@
 # 开发环境配置
-spring:
-  mqtt:
-    broker:
-      # broker唯一标识
-      id: mqtt-broker-1
-      # SSL端口
-      ssl-port: 8885
-      # SSL密钥文件密码
-      ssl-password: 123456
-      # websocket端口
-      websocket-ssl-port: 9995
-      # websocket path 值
-      websocket-path: /mqtt
-      # 心跳时间(秒)
-      keep-alive: 60
-      # 开启Epoll模式, linux下建议开启
-      use-epoll: false
-      # 开启组播方式集群
-      enable-multicast-group: false
-      # 组播地址
-      multicast-group: 239.255.255.255
-      #IP地址
-      static-ip-addresses: 127.0.0.1:47500..47509
-      cache:
-        # 持久化缓存内存初始化大小(MB)
-        persistence-initial-size: 64
-        # 持久化缓存占用内存最大值(MB)
-        persistence-max-size: 128
-        # 非持久化缓存内存初始化大小(MB)
-        not-persistence-initial-size: 64
-        # 非持久化缓存占用内存最大值(MB)
-        not-persistence-max-size: 128
-  redis:
-    host: 10.20.1.182
-    port: 6379
-    database: 0
 logging:
   level:
     root: info
