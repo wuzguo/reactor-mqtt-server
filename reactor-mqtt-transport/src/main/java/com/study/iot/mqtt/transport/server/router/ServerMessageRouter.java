@@ -32,7 +32,7 @@ public class ServerMessageRouter {
             return;
         }
 
-        Optional.ofNullable(container.getStrategy(StrategyGroup.SERVER, message.fixedHeader().messageType()))
+        Optional.ofNullable(container.findStrategy(StrategyGroup.SERVER, message.fixedHeader().messageType()))
             .ifPresent(capable -> ((StrategyCapable) capable).handle(message, connection));
     }
 }

@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 public class DefaultAuthServiceImpl implements IAuthService {
 
     @Override
-    public Mono<Boolean> check(String key, String secret) {
+    public Mono<Boolean> login(String key, String secret) {
         log.info("mqtt server auth, key: {}, secret: {}", key, secret);
         String md5Key = DigestUtil.md5Hex(key);
         return Mono.just(StringUtils.equals(md5Key, secret));

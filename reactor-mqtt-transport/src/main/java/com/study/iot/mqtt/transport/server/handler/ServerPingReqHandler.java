@@ -1,14 +1,14 @@
 package com.study.iot.mqtt.transport.server.handler;
 
-import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <B>说明：描述</B>
@@ -19,16 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.DISCONNECT)
-public class ServerDisConnectHandler implements StrategyCapable {
-
-    @Autowired
-    private CacheManager cacheManager;
+@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.PINGREQ)
+public class ServerPingReqHandler implements StrategyCapable {
 
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server DisConnect message: {}, connection: {}", message, connection);
-        cacheManager.channel().removeConnection(connection);
-        connection.dispose();
+        log.info("server PingResp message: {}, connection: {}", message, connection);
+        MqttMessage mqttMessage = MessageBuilder.buildPing(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE,
+            false, 0);
+        connection.sendMessage(mqttMessage);
     }
 }

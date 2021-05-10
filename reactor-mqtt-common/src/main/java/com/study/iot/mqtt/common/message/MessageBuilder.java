@@ -8,6 +8,7 @@ import io.netty.handler.codec.mqtt.MqttConnectPayload;
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
 import io.netty.handler.codec.mqtt.MqttConnectVariableHeader;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageBuilders;
 import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
@@ -36,6 +37,11 @@ public class MessageBuilder {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH, isDup, qoS, isRetain, 0);
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(topic, messageId);
         return new MqttPublishMessage(mqttFixedHeader, mqttPublishVariableHeader, Unpooled.wrappedBuffer(message));
+    }
+
+    public static MqttMessage buildPing(MqttMessageType messageType, boolean isDup, MqttQoS qosLevel,
+        boolean isRetain, int remainingLength) {
+        return new MqttMessage(new MqttFixedHeader(messageType, isDup, qosLevel, isRetain, remainingLength));
     }
 
 

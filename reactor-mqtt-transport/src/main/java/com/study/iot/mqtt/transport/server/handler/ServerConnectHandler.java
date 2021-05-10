@@ -85,8 +85,7 @@ public class ServerConnectHandler implements StrategyCapable {
 
         // 没有用户密码
         String key = mqttPayload.userName();
-        String secret =
-            mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
+        String secret = mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtil.isAnyBlank(key, secret)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
@@ -96,7 +95,7 @@ public class ServerConnectHandler implements StrategyCapable {
         }
 
         // 验证账号密码
-        authService.check(key, secret).doOnError((throwable) -> {
+        authService.login(key, secret).doOnError((throwable) -> {
             log.error("auth server check error: {}", throwable.getMessage());
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED, false);

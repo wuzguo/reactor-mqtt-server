@@ -19,5 +19,5 @@ public interface IAuthService {
      * @param secret 密码
      * @return {@link Mono<Boolean>}
      */
-    Mono<Boolean> check(String key, String secret);
+    Mono<Boolean> login(String key, String secret);
 }
