@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
  */
 
 @Slf4j
-public class DefaultAuthServiceImpl implements IAuthService {
+public class DefaultAuthService implements IAuthService {
 
     @Override
     public Mono<Boolean> login(String key, String secret) {
