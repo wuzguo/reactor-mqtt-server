@@ -1,4 +1,5 @@
-package com.study.iot.mqtt.transport.server.handler;
+package com.study.iot.mqtt.transport.server.handler.connect;
+
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -13,15 +14,15 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/22 9:20
+ * @date 2021/4/22 9:21
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.PUBACK)
-public class ServerPubAckHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.SUBSCRIBE)
+public class ServerSubscribeHandler implements StrategyCapable {
 
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server PubAck message: {}, connection: {}", message, connection);
+        log.info("server Subscribe message: {}, connection: {}", message, connection);
     }
 }

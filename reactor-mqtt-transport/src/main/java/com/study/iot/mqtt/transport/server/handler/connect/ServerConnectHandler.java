@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler;
+package com.study.iot.mqtt.transport.server.handler.connect;
 
 
 import com.study.iot.mqtt.auth.service.IAuthService;

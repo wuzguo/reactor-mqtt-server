@@ -1,10 +1,11 @@
-package com.study.iot.mqtt.transport.server.handler;
+package com.study.iot.mqtt.transport.server.handler.connect;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,11 +18,13 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.PUBREC)
-public class ServerPubRecHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.PUBCOMP)
+public class ServerPubCompHandler implements StrategyCapable {
 
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server PubRec message: {}, connection: {}", message, connection);
+        log.info("server PubComp message: {}, connection: {}", message, connection);
+        MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
+        connection.cancelDisposable(variableHeader.messageId());
     }
 }

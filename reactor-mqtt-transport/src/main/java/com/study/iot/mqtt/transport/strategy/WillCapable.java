@@ -21,5 +21,5 @@ public interface WillCapable {
      * @param connection  {@link DisposableConnection}
      * @param willMessage {@link WillMessage}
      */
-    void handler(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage);
+    void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage);
 }

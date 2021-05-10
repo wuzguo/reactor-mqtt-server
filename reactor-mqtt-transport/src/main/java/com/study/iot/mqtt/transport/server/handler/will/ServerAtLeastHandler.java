@@ -1,11 +1,11 @@
-package com.study.iot.mqtt.transport.server.will;
+package com.study.iot.mqtt.transport.server.handler.will;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
-import com.study.iot.mqtt.transport.strategy.WillStrategyService;
+import com.study.iot.mqtt.transport.strategy.QosStrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 
@@ -17,14 +17,13 @@ import io.netty.handler.codec.mqtt.MqttQoS;
  * @date 2021/5/7 13:53
  */
 
-@WillStrategyService(group = StrategyGroup.WILL_SERVER, type = MqttQoS.AT_LEAST_ONCE)
+@QosStrategyService(group = StrategyGroup.WILL_SERVER, type = MqttQoS.AT_LEAST_ONCE)
 public class ServerAtLeastHandler implements WillCapable {
 
     @Override
-    public void handler(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
-        MqttMessage message = MessageBuilder
-            .buildPub(false, qoS, willMessage.getRetain(), connection.idGen(), willMessage.getTopicName(),
-                willMessage.getMessage());
+    public void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
+        MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getRetain(), connection.idGen(),
+            willMessage.getTopicName(), willMessage.getMessage());
         connection.sendMessage(message).subscribe();
     }
 }

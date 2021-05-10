@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @Documented
 @Inherited
 @Service
-public @interface WillStrategyService {
+public @interface QosStrategyService {
 
     @AliasFor(value = "value", annotation = Service.class)
     String value() default "";

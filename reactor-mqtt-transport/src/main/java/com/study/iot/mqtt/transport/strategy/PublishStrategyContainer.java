@@ -15,13 +15,14 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/22 9:13
+ * @date 2021/5/10 10:57
  */
 
 @AllArgsConstructor
-public class WillStrategyContainer implements ApplicationContextAware {
+public class PublishStrategyContainer  implements ApplicationContextAware {
 
-    private static final Map<String, Map<MqttQoS, Class<? extends WillCapable>>> container = Maps.newConcurrentMap();
+    private static final Map<String, Map<MqttQoS, Class<? extends PublishStrategyCapable>>> container = Maps
+        .newConcurrentMap();
 
     private final ApplicationContext applicationContext;
 
@@ -33,21 +34,21 @@ public class WillStrategyContainer implements ApplicationContextAware {
     private void initializingContainer(ApplicationContext applicationContext) {
         Optional.of(applicationContext.getBeansWithAnnotation(QosStrategyService.class))
             .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
-                if (!WillCapable.class.isAssignableFrom(v.getClass())) {
+                if (!PublishStrategyCapable.class.isAssignableFrom(v.getClass())) {
                     throw new BeanDefinitionValidationException(String
-                        .format("%s must implemented interface WillCapable.", v.getClass()));
+                        .format("%s must implemented interface PublishStrategyCapable.", v.getClass()));
                 }
 
-                Class<? extends WillCapable> strategyClass = (Class<? extends WillCapable>) v.getClass();
-                QosStrategyService QosStrategyService = strategyClass.getAnnotation(QosStrategyService.class);
+                Class<? extends PublishStrategyCapable> strategyClass = (Class<? extends PublishStrategyCapable>) v.getClass();
+                QosStrategyService strategyService = strategyClass.getAnnotation(QosStrategyService.class);
 
-                String group = QosStrategyService.group();
-                Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
+                String group = strategyService.group();
+                Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = container.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
 
-                MqttQoS value = QosStrategyService.type();
+                MqttQoS value = strategyService.type();
                 storage.putIfAbsent(value, strategyClass);
                 container.put(group, storage);
             }));
@@ -59,17 +60,17 @@ public class WillStrategyContainer implements ApplicationContextAware {
      * @param group {@link Group}
      * @param value value Id
      * @param <T>   泛型
-     * @return {@link WillCapable} 结果
+     * @return {@link PublishStrategyCapable} 结果
      */
-    public <T extends WillCapable> T getStrategy(String group, MqttQoS value) {
-        Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
+    public <T extends PublishStrategyCapable> T getStrategy(String group, MqttQoS value) {
+        Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = container.get(group);
         if (storage == null) {
             throw new BeanDefinitionValidationException(String
                 .format("WillStrategyService group '%s' not found in value container", group));
 
         }
 
-        Class<? extends WillCapable> strategy = storage.get(value);
+        Class<? extends PublishStrategyCapable> strategy = storage.get(value);
         if (strategy == null) {
             throw new BeanDefinitionValidationException(String
                 .format("WillStrategyService value '%s' not found in value group '%s'", value, group));
@@ -85,15 +86,15 @@ public class WillStrategyContainer implements ApplicationContextAware {
      * @param group {@link Group}
      * @param value value Id
      * @param <T>   泛型
-     * @return {@link WillCapable} 结果
+     * @return {@link PublishStrategyCapable} 结果
      */
-    public <T extends WillCapable> T findStrategy(String group, MqttQoS value) {
-        Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
+    public <T extends PublishStrategyCapable> T findStrategy(String group, MqttQoS value) {
+        Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = container.get(group);
         if (storage == null) {
             return null;
         }
 
-        Class<? extends WillCapable> strategy = storage.get(value);
+        Class<? extends PublishStrategyCapable> strategy = storage.get(value);
         if (strategy == null) {
             return null;
         }

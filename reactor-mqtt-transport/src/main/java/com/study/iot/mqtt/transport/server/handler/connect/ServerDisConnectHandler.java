@@ -1,11 +1,11 @@
-package com.study.iot.mqtt.transport.server.handler;
+package com.study.iot.mqtt.transport.server.handler.connect;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
+import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.util.Attribute;

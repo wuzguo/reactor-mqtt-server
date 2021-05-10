@@ -14,6 +14,8 @@ public interface StrategyGroup {
 
     String CLIENT = "mqtt.client";
 
+    String SERVER_PUBLISH = "mqtt.server.publish";
+
     String WILL_SERVER = "will.server";
 
     String WILL_CLIENT = "will.client";

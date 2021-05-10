@@ -70,7 +70,7 @@ public class ServerConnection implements ServerSession {
                             MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                             Optional.ofNullable(
                                 messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
-                                .ifPresent(capable -> ((WillCapable) capable).handler(qoS, connect, willMessage));
+                                .ifPresent(capable -> ((WillCapable) capable).handle(qoS, connect, willMessage));
                         })));
             disposableConnection.destory();
         });
