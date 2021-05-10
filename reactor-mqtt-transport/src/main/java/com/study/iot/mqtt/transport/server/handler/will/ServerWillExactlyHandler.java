@@ -14,16 +14,17 @@ import io.netty.handler.codec.mqtt.MqttQoS;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/5/7 13:53
+ * @date 2021/5/7 13:54
  */
 
-@WillStrategyService(group = StrategyGroup.WILL_SERVER, type = MqttQoS.AT_LEAST_ONCE)
-public class ServerAtLeastHandler implements WillCapable {
+@WillStrategyService(group = StrategyGroup.WILL_SERVER, type = MqttQoS.EXACTLY_ONCE)
+public class ServerWillExactlyHandler implements WillCapable {
 
     @Override
     public void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
-        MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getIsRetain(), connection.messageId(),
+        int messageId = connection.messageId();
+        MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getIsRetain(), messageId,
             willMessage.getTopic(), willMessage.getCopyByteBuf());
-        connection.sendMessage(message).subscribe();
+        connection.sendMessageRetry(messageId, message).subscribe();
     }
 }

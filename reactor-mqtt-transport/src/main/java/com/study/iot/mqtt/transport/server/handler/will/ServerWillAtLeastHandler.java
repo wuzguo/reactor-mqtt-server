@@ -6,7 +6,7 @@ import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
 import com.study.iot.mqtt.transport.strategy.WillStrategyService;
-import io.netty.handler.codec.mqtt.MqttPublishMessage;
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 
 /**
@@ -14,17 +14,16 @@ import io.netty.handler.codec.mqtt.MqttQoS;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/5/7 13:54
+ * @date 2021/5/7 13:53
  */
 
-@WillStrategyService(group = StrategyGroup.WILL_SERVER, type = MqttQoS.AT_MOST_ONCE)
-public class ServerAtMostHandler implements WillCapable {
+@WillStrategyService(group = StrategyGroup.WILL_SERVER, type = MqttQoS.AT_LEAST_ONCE)
+public class ServerWillAtLeastHandler implements WillCapable {
 
     @Override
     public void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
-        int messageId = connection.messageId();
-        MqttPublishMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getIsRetain(),
-            messageId, willMessage.getTopic(), willMessage.getCopyByteBuf());
-        connection.sendMessageRetry(messageId, message).subscribe();
+        MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getIsRetain(), connection.messageId(),
+            willMessage.getTopic(), willMessage.getCopyByteBuf());
+        connection.sendMessage(message).subscribe();
     }
 }
