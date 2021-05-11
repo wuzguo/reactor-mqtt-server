@@ -1,12 +1,11 @@
 package com.study.iot.mqtt.producer;
 
+import com.study.iot.mqtt.client.MqttClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration.Options;
 import com.study.iot.mqtt.protocol.session.ClientSession;
-import com.study.iot.mqtt.server.MqttClient;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
-import com.study.iot.mqtt.transport.config.TransportAutoConfiguration;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
@@ -14,8 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * <B>说明：描述</B>
@@ -26,8 +25,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 
 @Slf4j
-@ContextConfiguration(classes = {TransportAutoConfiguration.class})
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
 public class TestProducer {
 
     @Autowired
@@ -36,7 +35,7 @@ public class TestProducer {
     @Test
     public void testProducer1() throws InterruptedException {
         Options options = Options.builder()
-            .clientId("2a9a0cc95adb4030bb183a2e0535280d")
+            .clientId("345a0cc95adb4030bb183a2e0535381b")
             .userName("123456")
             .password("e10adc3949ba59abbe56e057f20f883e")
             .hasUserName(true)

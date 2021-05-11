@@ -36,7 +36,7 @@ public class ClientConnection implements ClientSession {
 
     private final ClientMessageRouter clientMessageRouter;
 
-    private List<String> topics = Lists.newArrayList();
+    private final List<String> topics = Lists.newArrayList();
 
     public ClientConnection(DisposableConnection connection, ClientConfiguration configuration,
         ClientMessageRouter messageRouter) {
@@ -89,12 +89,13 @@ public class ClientConnection implements ClientSession {
         connection.getConnection().onDispose(() -> configuration.getOnClose().run());
 
         NettyInbound inbound = connection.getInbound();
+        // 各种策略模式处理
         inbound.receiveObject().cast(MqttMessage.class)
             .subscribe(message -> clientMessageRouter.handle(message, connection));
 
         connection.getConnection().channel().attr(AttributeKeys.clientConnection).set(this);
         List<MqttTopicSubscription> mqttTopicSubscriptions = connection.getTopics().stream()
-            .map(s -> new MqttTopicSubscription(s, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());
+            .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());
 
         if (mqttTopicSubscriptions.size() > 0) {
             int messageId = connection.messageId();
@@ -162,9 +163,9 @@ public class ClientConnection implements ClientSession {
     public Mono<Void> unsub(List<String> topics) {
         this.topics.removeAll(topics);
         int messageId = connection.messageId();
+        // retry
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
             connection.sendMessage(MessageBuilder.buildUnSub(messageId, topics)).subscribe())
-            // retry
             .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
         return connection.sendMessage(MessageBuilder.buildUnSub(messageId, topics));
     }

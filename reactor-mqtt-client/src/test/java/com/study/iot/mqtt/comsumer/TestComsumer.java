@@ -1,20 +1,19 @@
 package com.study.iot.mqtt.comsumer;
 
+import com.study.iot.mqtt.client.MqttClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration.Options;
 import com.study.iot.mqtt.protocol.session.ClientSession;
-import com.study.iot.mqtt.server.MqttClient;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
-import com.study.iot.mqtt.transport.config.TransportAutoConfiguration;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import java.util.concurrent.CountDownLatch;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * <B>说明：描述</B>
@@ -25,8 +24,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 
 @Slf4j
-@ContextConfiguration(classes = {TransportAutoConfiguration.class})
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
 public class TestComsumer {
 
     @Autowired
@@ -35,7 +34,7 @@ public class TestComsumer {
     @Test
     public void testComsumer1() throws InterruptedException {
         Options options = Options.builder()
-            .clientId("1a9a0cc95adb4030bb183a2e0535280b")
+            .clientId("329a0cc95adb4030bb183a2e0535280b")
             .userName("123456")
             .password("e10adc3949ba59abbe56e057f20f883e")
             .hasUserName(true)
@@ -56,7 +55,8 @@ public class TestComsumer {
             .noDelay(true)
             .isSsl(false)
             .isLog(true)
-            .onClose(()->{})
+            .onClose(() -> {
+            })
             .options(options)
             .throwable(e -> log.error("starting mqtt client exception：{}", e.getMessage()))
             .build();
