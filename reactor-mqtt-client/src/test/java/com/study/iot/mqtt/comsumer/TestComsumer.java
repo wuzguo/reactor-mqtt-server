@@ -8,6 +8,7 @@ import com.study.iot.mqtt.server.MqttClient;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import com.study.iot.mqtt.transport.config.TransportAutoConfiguration;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import java.util.concurrent.CountDownLatch;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,31 +33,37 @@ public class TestComsumer {
     private ClientMessageRouter messageRouter;
 
     @Test
-    public void testComsumer1() {
+    public void testComsumer1() throws InterruptedException {
         Options options = Options.builder()
             .clientId("1a9a0cc95adb4030bb183a2e0535280b")
-            .password("123456")
-            .userName("e10adc3949ba59abbe56e057f20f883e")
-            .willMessage("hello，I'm offline")
-            .willTopic("/session/will/123456")
+            .userName("123456")
+            .password("e10adc3949ba59abbe56e057f20f883e")
+            .hasUserName(true)
+            .hasPassword(true)
+            .willMessage("hello，I'm consumer")
+            .willTopic("/session/will/consumer")
             .willQos(MqttQoS.AT_LEAST_ONCE)
+            .hasWillFlag(true)
             .build();
 
         ClientConfiguration configuration = ClientConfiguration.builder()
             .host("localhost").port(1884)
             .protocol(ProtocolType.MQTT)
-            .heart(100000)
+            .heart(10000)
             .sendBufSize(32 * 1024)
             .revBufSize(32 * 1024)
             .backlog(128)
-            .keepAlive(false)
             .noDelay(true)
             .isSsl(false)
             .isLog(true)
+            .onClose(()->{})
             .options(options)
             .throwable(e -> log.error("starting mqtt client exception：{}", e.getMessage()))
             .build();
-        ClientSession connect = new MqttClient(messageRouter).connect(configuration).block();
-        connect.sub("/session/client/123456").subscribe();
+        CountDownLatch latch = new CountDownLatch(1);
+        ClientSession connect = new MqttClient(configuration).connect(messageRouter).block();
+        Thread.sleep(1000);
+        connect.sub("/session/123456").subscribe();
+        latch.await();
     }
 }

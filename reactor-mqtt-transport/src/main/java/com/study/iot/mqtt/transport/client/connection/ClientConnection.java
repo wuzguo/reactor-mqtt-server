@@ -151,9 +151,9 @@ public class ClientConnection implements ClientSession {
             .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE))
             .collect(Collectors.toList());
         int messageId = connection.messageId();
+        // retry
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
             connection.sendMessage(MessageBuilder.buildSub(messageId, topicSubscriptions)).subscribe())
-            // retry
             .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
         return connection.sendMessage(MessageBuilder.buildSub(messageId, topicSubscriptions));
     }

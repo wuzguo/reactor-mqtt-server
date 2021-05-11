@@ -1,15 +1,10 @@
 package com.study.iot.mqtt.server;
 
-import com.study.iot.mqtt.protocol.session.ClientSession;
-import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
-import com.study.iot.mqtt.protocol.config.ClientConfiguration.Options;
+import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.TransportClient;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
-import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import reactor.core.publisher.Mono;
 
 /**
@@ -23,13 +18,13 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class MqttClient {
 
-    private final ClientMessageRouter messageRouter;
+    private final TransportClient transportClient;
 
-    public MqttClient(ClientMessageRouter messageRouter) {
-        this.messageRouter = messageRouter;
+    public MqttClient(ClientConfiguration configuration) {
+        this.transportClient = new TransportClient().create(configuration);
     }
 
-    public Mono<ClientSession> connect(ClientConfiguration configuration) {
-        return new TransportClient().create(configuration).connect(messageRouter);
+    public Mono<ClientSession> connect(ClientMessageRouter messageRouter) {
+        return transportClient.connect(messageRouter);
     }
 }
