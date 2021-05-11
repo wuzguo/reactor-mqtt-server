@@ -62,6 +62,7 @@
         <module>reactor-mqtt-cache</module>
         <module>reactor-mqtt-transport</module>
         <module>reactor-mqtt-client</module>
+        <module>reactor-mqtt-api</module>
     </modules>
 
     <packaging>pom</packaging>
