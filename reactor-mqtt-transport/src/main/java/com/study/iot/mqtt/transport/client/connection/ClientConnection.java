@@ -36,20 +36,17 @@ public class ClientConnection implements ClientSession {
 
     private final ClientMessageRouter clientMessageRouter;
 
-    private final ClientConfiguration configuration;
-
     private List<String> topics = Lists.newArrayList();
 
     public ClientConnection(DisposableConnection connection, ClientConfiguration configuration,
         ClientMessageRouter messageRouter) {
         this.connection = connection;
-        this.configuration = configuration;
         this.clientMessageRouter = messageRouter;
-        this.init();
+        this.init(configuration);
     }
 
     @Override
-    public void init() {
+    public void init(ClientConfiguration configuration) {
         ClientConfiguration.Options options = configuration.getOptions();
         Disposable disposable = Mono.fromRunnable(() -> connection.sendMessage(MessageBuilder.buildConnect(
             options.getClientId(),
@@ -63,6 +60,7 @@ public class ClientConnection implements ClientSession {
             options.getWillQos().value(),
             configuration.getHeart()
         )).subscribe()).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe();
+
         connection.sendMessage(MessageBuilder.buildConnect(
             options.getClientId(),
             options.getWillTopic(),
@@ -93,6 +91,7 @@ public class ClientConnection implements ClientSession {
         NettyInbound inbound = connection.getInbound();
         inbound.receiveObject().cast(MqttMessage.class)
             .subscribe(message -> clientMessageRouter.handle(message, connection));
+
         connection.getConnection().channel().attr(AttributeKeys.clientConnection).set(this);
         List<MqttTopicSubscription> mqttTopicSubscriptions = connection.getTopics().stream()
             .map(s -> new MqttTopicSubscription(s, MqttQoS.AT_MOST_ONCE)).collect(Collectors.toList());

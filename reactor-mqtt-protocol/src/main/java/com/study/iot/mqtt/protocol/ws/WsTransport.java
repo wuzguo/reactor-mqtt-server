@@ -3,6 +3,7 @@ package com.study.iot.mqtt.protocol.ws;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
+import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.config.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.config.ServerConfiguration;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -66,7 +67,7 @@ public class WsTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<DisposableConnection> connect(ConnectConfiguration configuration) {
+    public Mono<DisposableConnection> connect(ClientConfiguration configuration) {
         return Mono.just(buildClient(configuration)
             .connectNow())
             .map(connection -> {

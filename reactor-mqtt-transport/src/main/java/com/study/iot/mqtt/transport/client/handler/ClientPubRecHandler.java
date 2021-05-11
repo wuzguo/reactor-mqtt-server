@@ -1,12 +1,16 @@
 package com.study.iot.mqtt.transport.client.handler;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 /**
  * <B>说明：描述</B>
@@ -23,5 +27,15 @@ public class ClientPubRecHandler implements StrategyCapable {
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("client PubRec message: {}, connection: {}", message, connection);
+
+        MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
+        int messageId = variableHeader.messageId();
+        connection.cancelDisposable(messageId);
+        // send rel
+        connection.sendMessage(MessageBuilder.buildPubRel(messageId)).subscribe();
+        // retry
+        connection.addDisposable(messageId, Mono.fromRunnable(() ->
+            connection.sendMessage(MessageBuilder.buildPubRel(messageId)).subscribe())
+            .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
     }
 }

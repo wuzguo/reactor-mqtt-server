@@ -4,6 +4,7 @@ package com.study.iot.mqtt.protocol.mqtt;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
+import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.config.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.config.ServerConfiguration;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -70,7 +71,7 @@ public class MqttTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<DisposableConnection> connect(ConnectConfiguration configuration) {
+    public Mono<DisposableConnection> connect(ClientConfiguration configuration) {
         return buildClient(configuration).connect().map(connection -> {
             Connection connect = connection;
             protocol.getHandlers().forEach(connect::addHandler);
@@ -81,7 +82,7 @@ public class MqttTransport extends ProtocolTransport {
         });
     }
 
-    private void retryConnect(ConnectConfiguration configuration, DisposableConnection disposableConnection) {
+    private void retryConnect(ClientConfiguration configuration, DisposableConnection disposableConnection) {
         log.info("short-term reconnection");
         buildClient(configuration)
             .connect()
@@ -96,7 +97,7 @@ public class MqttTransport extends ProtocolTransport {
                     disposableConnection.setConnection(connection);
                     disposableConnection.setInbound(connection.inbound());
                     disposableConnection.setOutbound(connection.outbound());
-                    clientSession.init();
+                    clientSession.init(configuration);
                 });
             });
     }

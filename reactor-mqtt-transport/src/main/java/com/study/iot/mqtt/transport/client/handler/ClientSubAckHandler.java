@@ -4,7 +4,9 @@ import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
+import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,5 +25,7 @@ public class ClientSubAckHandler implements StrategyCapable {
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("client SubAck message: {}, connection: {}", message, connection);
+        MqttMessageIdVariableHeader variableHeader =(MqttMessageIdVariableHeader) message.variableHeader();
+        connection.cancelDisposable(variableHeader.messageId());
     }
 }

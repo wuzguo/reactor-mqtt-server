@@ -1,6 +1,7 @@
 package com.study.iot.mqtt.protocol;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.config.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.config.ServerConfiguration;
 import reactor.core.publisher.Mono;
@@ -21,5 +22,5 @@ public abstract class ProtocolTransport {
         UnicastProcessor<DisposableConnection> processor);
 
 
-    public abstract Mono<DisposableConnection> connect(ConnectConfiguration configuration);
+    public abstract Mono<DisposableConnection> connect(ClientConfiguration configuration);
 }

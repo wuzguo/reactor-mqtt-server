@@ -2,11 +2,15 @@ package com.study.iot.mqtt.transport.client.handler;
 
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
+import io.netty.handler.codec.mqtt.MqttPubAckMessage;
+import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -21,9 +25,21 @@ import lombok.extern.slf4j.Slf4j;
 @StrategyService(group = StrategyGroup.CLIENT, type = MqttMessageType.PUBREL)
 public class ClientPubRelHandler implements StrategyCapable {
 
-
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("client PubRel message: {}, connection: {}", message, connection);
+
+        MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
+        int messageId = variableHeader.messageId();
+        // cancel replay rec
+        connection.cancelDisposable(messageId);
+        MqttPubAckMessage mqttPubRecMessage = MessageBuilder.buildPubComp(messageId);
+        //  send comp
+        connection.sendMessage(mqttPubRecMessage).subscribe();
+        // 移除消息
+        connection.getAndRemoveQos2Message(messageId)
+            .ifPresent(msg -> log
+                .info("client publish topic: {}, message: {}", msg.getTopic(), new String(msg.getCopyByteBuf(),
+                    CharsetUtil.UTF_8)));
     }
 }

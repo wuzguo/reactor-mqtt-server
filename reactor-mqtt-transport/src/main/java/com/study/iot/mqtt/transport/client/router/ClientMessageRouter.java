@@ -28,6 +28,7 @@ public class ClientMessageRouter {
             return;
         }
 
+        // 策略分发
         Optional.ofNullable(container.findStrategy(StrategyGroup.CLIENT, message.fixedHeader().messageType()))
             .ifPresent(capable -> ((StrategyCapable) capable).handle(message, connection));
     }
