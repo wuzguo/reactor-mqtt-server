@@ -19,7 +19,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
  */
 
 @ConditionalOnBean(value = IgniteProperties.class)
-@CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.IGNITE)
+@CacheStrategyService(group = CacheGroup.MESSAGE, type = CacheStrategy.IGNITE)
 public class IgniteMessageHandler implements MessageHandler {
 
     @Resource
