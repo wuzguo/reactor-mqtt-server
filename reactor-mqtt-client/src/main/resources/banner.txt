@@ -1,1 +1,0 @@
-${AnsiColor.BRIGHT_GREEN}====================${AnsiColor.BRIGHT_RED} reactor-mqtt-client ${AnsiColor.BRIGHT_GREEN}====================

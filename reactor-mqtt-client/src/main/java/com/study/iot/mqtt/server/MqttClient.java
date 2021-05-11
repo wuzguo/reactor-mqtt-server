@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
  */
 
 @Slf4j
-public class MqttClient implements ApplicationRunner {
+public class MqttClient {
 
     private final ClientMessageRouter messageRouter;
 
@@ -29,33 +29,7 @@ public class MqttClient implements ApplicationRunner {
         this.messageRouter = messageRouter;
     }
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        Options options = Options.builder()
-            .clientId("1a9a0cc95adb4030bb183a2e0535280b")
-            .password("123456")
-            .userName("e10adc3949ba59abbe56e057f20f883e")
-            .willMessage("hello，I'm offline")
-            .willTopic("/session/will/123456")
-            .willQos(MqttQoS.AT_LEAST_ONCE)
-            .build();
-
-        ClientConfiguration configuration = ClientConfiguration.builder()
-            .host("localhost").port(2884)
-            .protocol(ProtocolType.MQTT)
-            .heart(100000)
-            .sendBufSize(32 * 1024)
-            .revBufSize(32 * 1024)
-            .backlog(128)
-            .keepAlive(false)
-            .noDelay(true)
-            .isSsl(false)
-            .isLog(true)
-            .options(options)
-            .throwable(e -> log.error("starting mqtt client exception：{}", e.getMessage()))
-            .build();
-
-        Mono<ClientSession> connect = new TransportClient().create(configuration).connect(messageRouter);
-        connect.map(clientSession -> clientSession.sub("/session/client/123456")).subscribe();
+    public Mono<ClientSession> connect(ClientConfiguration configuration) {
+        return new TransportClient().create(configuration).connect(messageRouter);
     }
 }
