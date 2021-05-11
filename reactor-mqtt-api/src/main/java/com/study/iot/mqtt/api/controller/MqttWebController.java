@@ -21,8 +21,8 @@ import reactor.core.publisher.Mono;
  */
 
 
-@Validated
 @Slf4j
+@Validated
 @RequestMapping("/mqtt/web")
 @RestController
 public class MqttWebController {
