@@ -1,6 +1,5 @@
-package com.study.iot.mqtt.transport.server.handler.publish;
+package com.study.iot.mqtt.transport.client.handler.publish;
 
-import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -11,7 +10,8 @@ import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.netty.util.CharsetUtil;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <B>说明：描述</B>
@@ -21,29 +21,19 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2021/5/7 13:53
  */
 
-@PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.AT_LEAST_ONCE)
-public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
-
-    @Autowired
-    private CacheManager cacheManager;
+@Slf4j
+@PublishStrategyService(group = StrategyGroup.CLIENT_PUBLISH, type = MqttQoS.AT_LEAST_ONCE)
+public class ClientPublishAtLeastHandler implements PublishStrategyCapable {
 
     @Override
     public void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes) {
-        MqttFixedHeader header = message.fixedHeader();
         MqttPublishVariableHeader variableHeader = message.variableHeader();
+        MqttFixedHeader header = message.fixedHeader();
+        log.info("client publish topic: {}, message: {}", variableHeader.topicName(), new String(bytes,
+            CharsetUtil.UTF_8));
         // back
         MqttPubAckMessage mqttPubAckMessage = MessageBuilder.buildPubAck(header.isDup(), header.qosLevel(),
             header.isRetain(), variableHeader.packetId());
         connection.sendMessage(mqttPubAckMessage).subscribe();
-
-        // pub
-        cacheManager.topic().getConnections(variableHeader.topicName())
-            .stream().filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
-            .forEach(disposable -> {
-                int messageId = connection.messageId();
-                MqttPublishMessage publishMessage = MessageBuilder.buildPub(false, header.qosLevel(),
-                    header.isRetain(), messageId, variableHeader.topicName(), bytes);
-                disposable.sendMessageRetry(messageId, publishMessage).subscribe();
-            });
     }
 }

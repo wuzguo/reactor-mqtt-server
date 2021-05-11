@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.client.handler;
+package com.study.iot.mqtt.transport.client.handler.connect;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.MessageBuilder;

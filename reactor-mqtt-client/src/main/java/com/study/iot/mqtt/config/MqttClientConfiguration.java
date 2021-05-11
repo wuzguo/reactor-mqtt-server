@@ -23,7 +23,7 @@ public class MqttClientConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public MqttClient mqttServer() {
+    public MqttClient mqttClient() {
         return new MqttClient(messageRouter);
     }
 }

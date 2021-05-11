@@ -18,16 +18,16 @@ public class TransportClientFactory {
         protocolFactory = new ProtocolFactory();
     }
 
-    public Mono<ClientSession> connect(ClientConfiguration config, ClientMessageRouter messageRouter) {
-        return Mono.from(protocolFactory.getProtocol(config.getProtocol())
-            .get().getTransport().connect(config))
-            .map(connection -> this.wrapper(connection, config, messageRouter))
-            .doOnError(config.getThrowable());
+    public Mono<ClientSession> connect(ClientConfiguration configuration, ClientMessageRouter messageRouter) {
+        return Mono.from(protocolFactory.getProtocol(configuration.getProtocol())
+            .get().getTransport().connect(configuration))
+            .map(connection -> this.wrapper(connection, configuration, messageRouter))
+            .doOnError(configuration.getThrowable());
     }
 
-    private ClientSession wrapper(DisposableConnection connection, ClientConfiguration config,
+    private ClientSession wrapper(DisposableConnection connection, ClientConfiguration configuration,
         ClientMessageRouter messageRouter) {
-        return new ClientConnection(connection, config, messageRouter);
+        return new ClientConnection(connection, configuration, messageRouter);
     }
 
 }

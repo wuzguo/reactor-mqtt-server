@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler.publish;
+package com.study.iot.mqtt.transport.client.handler.publish;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
@@ -11,6 +11,8 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import io.netty.util.CharsetUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -21,24 +23,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2021/5/7 13:54
  */
 
-@PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.AT_MOST_ONCE)
-public class ServerPublishAtMostHandler implements PublishStrategyCapable {
-
-    @Autowired
-    private CacheManager cacheManager;
+@Slf4j
+@PublishStrategyService(group = StrategyGroup.CLIENT_PUBLISH, type = MqttQoS.AT_MOST_ONCE)
+public class ClientPublishAtMostHandler implements PublishStrategyCapable {
 
     @Override
     public void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes) {
-        MqttFixedHeader header = message.fixedHeader();
         MqttPublishVariableHeader variableHeader = message.variableHeader();
-        // 过滤掉本身 已经关闭的dispose
-        cacheManager.topic().getConnections(variableHeader.topicName())
-            .stream().filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
-            .forEach(disposable -> {
-                int messageId = connection.messageId();
-                MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),
-                    messageId, variableHeader.topicName(), bytes);
-                disposable.sendMessage(mqttMessage).subscribe();
-            });
+        log.info("client publish topic: {}, message: {}", variableHeader.topicName(), new String(bytes,
+            CharsetUtil.UTF_8));
     }
 }

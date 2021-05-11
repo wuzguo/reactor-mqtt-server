@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler.publish;
+package com.study.iot.mqtt.transport.client.handler.publish;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.MessageBuilder;
@@ -22,8 +22,8 @@ import reactor.core.publisher.Mono;
  * @date 2021/5/7 13:54
  */
 
-@PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.EXACTLY_ONCE)
-public class ServerPublishExactlyHandler implements PublishStrategyCapable {
+@PublishStrategyService(group = StrategyGroup.CLIENT_PUBLISH, type = MqttQoS.EXACTLY_ONCE)
+public class ClientPublishExactlyHandler implements PublishStrategyCapable {
 
     @Override
     public void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes) {
@@ -31,13 +31,13 @@ public class ServerPublishExactlyHandler implements PublishStrategyCapable {
         MqttPublishVariableHeader variableHeader = message.variableHeader();
 
         int messageId = variableHeader.packetId();
-        //  send rec
         MqttPubAckMessage mqttPubRecMessage = MessageBuilder.buildPubRec(messageId);
-        connection.sendMessage(mqttPubRecMessage).subscribe();
-        // retry
+        // retry send rec
         connection.addDisposable(messageId, Mono.fromRunnable(() ->
-            connection.sendMessage(MessageBuilder.buildPubRel(messageId)).subscribe())
+            connection.sendMessage(MessageBuilder.buildPubRec(messageId)).subscribe())
             .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
+        //  send rec
+        connection.sendMessage(mqttPubRecMessage).subscribe();
         TransportMessage transportMessage = TransportMessage.builder().isRetain(header.isRetain())
             .isDup(false)
             .topic(variableHeader.topicName())
