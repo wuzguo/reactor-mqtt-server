@@ -21,6 +21,8 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMultic
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +40,7 @@ public class IgniteAutoConfig {
     /**
      * 实例ID
      */
-    private String id;
+    private String instanceName;
 
     /**
      * 是否启动多播组
@@ -64,14 +66,7 @@ public class IgniteAutoConfig {
     public Ignite ignite() throws Exception {
         IgniteConfiguration configuration = new IgniteConfiguration();
         // Ignite实例名称
-        configuration.setIgniteInstanceName(id);
-
-//        // The node will be started as a client node.
-//        configuration.setClientMode(true);
-//
-//        // Classes of custom Java logic will be transferred over the wire from this app.
-//        configuration.setPeerClassLoadingEnabled(true);
-
+        configuration.setIgniteInstanceName(instanceName);
         // Ignite日志
         Logger logger = LoggerFactory.getLogger("org.apache.ignite");
         configuration.setGridLogger(new Slf4jLogger(logger));

@@ -3,7 +3,7 @@ spring:
   mqtt:
     broker:
       # broker唯一标识
-      id: mqtt-broker-1
+      instance-name: mqtt-broker-1
       # SSL端口
       ssl-port: 8885
       # SSL密钥文件密码

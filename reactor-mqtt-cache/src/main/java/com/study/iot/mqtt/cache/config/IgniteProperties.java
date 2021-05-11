@@ -1,10 +1,12 @@
 package com.study.iot.mqtt.cache.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * ignite属性配置
  */
+@ConditionalOnProperty(value = "spring.mqtt.broker.cache")
 @ConfigurationProperties(prefix = "spring.mqtt.broker.cache")
 public class IgniteProperties {
 

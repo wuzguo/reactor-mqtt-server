@@ -1,6 +1,7 @@
 package com.study.iot.mqtt.cache.service.ignite;
 
 import com.google.common.collect.Lists;
+import com.study.iot.mqtt.cache.config.IgniteAutoConfig;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
 import org.apache.ignite.IgniteCache;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 /**
  * <B>说明：描述</B>
@@ -19,6 +21,7 @@ import org.apache.ignite.IgniteCache;
  * @date 2021/5/7 16:19
  */
 
+@ConditionalOnBean(value = IgniteAutoConfig.class)
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.IGNITE)
 public class IgniteTopicManager implements TopicManager {
 

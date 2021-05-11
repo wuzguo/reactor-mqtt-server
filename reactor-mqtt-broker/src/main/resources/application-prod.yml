@@ -2,7 +2,7 @@
 spring:
   mqtt:
     broker:
-      id: mqtt-broker-1
+      instance-name: mqtt-broker-1
       ssl-password: 123456
       use-epoll: true
       enable-multicast-group: false
