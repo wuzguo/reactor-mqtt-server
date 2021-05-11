@@ -1,13 +1,16 @@
 package com.study.iot.mqtt.cache.message;
 
+import com.study.iot.mqtt.cache.config.IgniteProperties;
 import java.util.concurrent.locks.Lock;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ignite.IgniteCache;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@ConditionalOnBean(value = IgniteProperties.class)
 public class MessageIdService implements IMessageIdService {
 
     private final int MIN_MSG_ID = 1;

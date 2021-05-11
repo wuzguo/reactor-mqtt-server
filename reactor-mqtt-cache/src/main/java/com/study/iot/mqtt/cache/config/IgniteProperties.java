@@ -3,6 +3,7 @@ package com.study.iot.mqtt.cache.config;
 import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * ignite属性配置
@@ -10,7 +11,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
 @ConfigurationProperties(prefix = "spring.mqtt.broker.cache")
-@ConditionalOnProperty(value = "spring.mqtt.broker.cache")
+@ConditionalOnProperty(value = "spring.cache.mode", havingValue = "ignite")
+@Configuration
 public class IgniteProperties {
 
     /**

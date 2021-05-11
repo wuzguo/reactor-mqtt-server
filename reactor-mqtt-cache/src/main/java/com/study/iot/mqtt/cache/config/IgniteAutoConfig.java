@@ -21,8 +21,8 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMultic
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "spring.mqtt.broker", ignoreInvalidFields = true)
-@ConditionalOnBean(value = IgniteAutoConfig.class)
+@ConditionalOnBean(value = IgniteProperties.class)
 public class IgniteAutoConfig {
 
     /**
@@ -58,10 +58,8 @@ public class IgniteAutoConfig {
      */
     private String[] staticIpAddresses = new String[0];
 
-    @Bean
-    public IgniteProperties igniteProperties() {
-        return new IgniteProperties();
-    }
+    @Autowired
+    private IgniteProperties igniteProperties;
 
     @Bean
     public Ignite ignite() throws Exception {
@@ -73,21 +71,21 @@ public class IgniteAutoConfig {
         configuration.setGridLogger(new Slf4jLogger(logger));
         // 非持久化数据区域
         DataRegionConfiguration notPersistence = new DataRegionConfiguration().setPersistenceEnabled(false)
-            .setInitialSize(igniteProperties().getNotPersistenceInitialSize() * 1024 * 1024L)
-            .setMaxSize(igniteProperties().getNotPersistenceMaxSize() * 1024 * 1024L)
+            .setInitialSize(igniteProperties.getNotPersistenceInitialSize() * 1024 * 1024L)
+            .setMaxSize(igniteProperties.getNotPersistenceMaxSize() * 1024 * 1024L)
             .setName("not-persistence-data-region");
         // 持久化数据区域
         DataRegionConfiguration persistence = new DataRegionConfiguration().setPersistenceEnabled(true)
-            .setInitialSize(igniteProperties().getPersistenceInitialSize() * 1024 * 1024L)
-            .setMaxSize(igniteProperties().getPersistenceMaxSize() * 1024 * 1024L).setName("persistence-data-region");
+            .setInitialSize(igniteProperties.getPersistenceInitialSize() * 1024 * 1024L)
+            .setMaxSize(igniteProperties.getPersistenceMaxSize() * 1024 * 1024L).setName("persistence-data-region");
         DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration()
             .setDefaultDataRegionConfiguration(notPersistence)
             .setDataRegionConfigurations(persistence)
-            .setWalArchivePath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties()
+            .setWalArchivePath(!StringUtils.isEmpty(igniteProperties.getPersistenceStorePath()) ? igniteProperties
                 .getPersistenceStorePath() : null)
-            .setWalPath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties()
+            .setWalPath(!StringUtils.isEmpty(igniteProperties.getPersistenceStorePath()) ? igniteProperties
                 .getPersistenceStorePath() : null)
-            .setStoragePath(!StringUtils.isEmpty(igniteProperties().getPersistenceStorePath()) ? igniteProperties()
+            .setStoragePath(!StringUtils.isEmpty(igniteProperties.getPersistenceStorePath()) ? igniteProperties
                 .getPersistenceStorePath() : null);
         configuration.setDataStorageConfiguration(dataStorageConfiguration);
         // 集群, 基于组播或静态IP配置

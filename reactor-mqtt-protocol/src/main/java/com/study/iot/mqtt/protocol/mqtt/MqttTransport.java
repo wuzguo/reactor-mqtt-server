@@ -39,7 +39,7 @@ public class MqttTransport extends ProtocolTransport {
             protocol.getHandlers().forEach(connection::addHandlerLast);
             processor.onNext(new DisposableConnection(connection));
         }).bind().doOnSuccess(disposableServer -> {
-            log.info("mqtt protocol ip: {} port: {}", config.getHost(), config.getPort());
+            log.info("mqtt protocol host: {} port: {}", config.getHost(), config.getPort());
         }).doOnError(config.getThrowable());
     }
 

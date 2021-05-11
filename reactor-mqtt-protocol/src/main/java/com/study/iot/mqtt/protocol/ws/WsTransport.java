@@ -35,7 +35,7 @@ public class WsTransport extends ProtocolTransport {
             protocol.getHandlers().forEach(connection::addHandlerLast);
             processor.onNext(new DisposableConnection(connection));
         }).bind().doOnSuccess(disposableServer -> {
-            log.info("websocket protocol ip: {} port: {}", configuration.getHost(), configuration.getPort());
+            log.info("websocket protocol host: {} port: {}", configuration.getHost(), configuration.getPort());
         }).doOnError(configuration.getThrowable());
     }
 
