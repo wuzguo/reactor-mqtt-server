@@ -1,7 +1,6 @@
 package com.study.iot.mqtt.transport.strategy;
 
 import com.study.iot.mqtt.common.connection.DisposableConnection;
-import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 
 /**

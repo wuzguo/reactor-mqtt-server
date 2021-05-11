@@ -18,10 +18,6 @@
 
     <dependencies>
         <dependency>
-            <artifactId>spring-boot-starter</artifactId>
-            <groupId>org.springframework.boot</groupId>
-        </dependency>
-        <dependency>
             <artifactId>reactor-mqtt-transport</artifactId>
             <groupId>com.study.iot.mqtt</groupId>
             <version>0.0.1-SNAPSHOT</version>

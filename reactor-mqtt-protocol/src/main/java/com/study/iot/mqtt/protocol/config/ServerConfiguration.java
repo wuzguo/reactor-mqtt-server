@@ -1,14 +1,11 @@
 package com.study.iot.mqtt.protocol.config;
 
 
-import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.annocation.ProtocolType;
 import java.util.Set;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /**

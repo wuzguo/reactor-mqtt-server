@@ -1,10 +1,9 @@
 package com.study.iot.mqtt.transport.client.handler.connect;
 
-import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.StrategyService;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
+import com.study.iot.mqtt.transport.strategy.StrategyService;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;

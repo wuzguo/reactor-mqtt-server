@@ -1,19 +1,14 @@
 package com.study.iot.mqtt.transport.client.handler.publish;
 
-import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
-import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
-import io.netty.handler.codec.mqtt.MqttMessage;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <B>说明：描述</B>
