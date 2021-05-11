@@ -30,17 +30,16 @@ public class ServerPublishExactlyHandler implements PublishStrategyCapable {
         MqttFixedHeader header = message.fixedHeader();
         MqttPublishVariableHeader variableHeader = message.variableHeader();
 
+        //  send rec
         int messageId = variableHeader.packetId();
         MqttPubAckMessage mqttPubRecMessage = MessageBuilder.buildPubRec(messageId);
-        // retry send rec
-        connection.addDisposable(messageId, Mono.fromRunnable(() ->
-            connection.sendMessage(MessageBuilder.buildPubRec(messageId)).subscribe())
-            .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-        //  send rec
         connection.sendMessage(mqttPubRecMessage).subscribe();
+        // retry
+        connection.addDisposable(messageId, Mono.fromRunnable(() ->
+            connection.sendMessage(MessageBuilder.buildPubRel(messageId)).subscribe())
+            .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
         TransportMessage transportMessage = TransportMessage.builder().isRetain(header.isRetain())
-            .isDup(false)
-            .topic(variableHeader.topicName())
+            .isDup(false).topic(variableHeader.topicName())
             .copyByteBuf(bytes)
             .qos(header.qosLevel().value())
             .build();

@@ -1,14 +1,18 @@
 package com.study.iot.mqtt.transport.server.handler.publish;
 
+import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
+import io.netty.handler.codec.mqtt.MqttFixedHeader;
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
-import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <B>说明：描述</B>
@@ -22,10 +26,20 @@ import lombok.extern.slf4j.Slf4j;
 @PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.AT_MOST_ONCE)
 public class ServerPublishAtMostHandler implements PublishStrategyCapable {
 
+    @Autowired
+    private CacheManager cacheManager;
+
     @Override
     public void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes) {
         MqttPublishVariableHeader variableHeader = message.variableHeader();
-        log.info("client publish topic: {}, message: {}", variableHeader.topicName(), new String(bytes,
-            CharsetUtil.UTF_8));
+        MqttFixedHeader header = message.fixedHeader();
+        // 过滤掉本身 已经关闭的dispose
+        cacheManager.topic().getConnections(variableHeader.topicName())
+            .stream().filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
+            .forEach(disposable -> {
+                MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),
+                    connection.messageId(), variableHeader.topicName(), bytes);
+                disposable.sendMessage(mqttMessage).subscribe();
+            });
     }
 }
