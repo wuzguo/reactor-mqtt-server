@@ -32,9 +32,10 @@ import org.springframework.util.StringUtils;
  * 自动配置apache ignite
  */
 
+@Setter
 @Configuration
 @ConfigurationProperties(prefix = "spring.mqtt.broker", ignoreInvalidFields = true)
-@Setter
+@ConditionalOnBean(value = IgniteAutoConfig.class)
 public class IgniteAutoConfig {
 
     /**
