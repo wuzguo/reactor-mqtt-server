@@ -22,12 +22,12 @@
             <groupId>io.projectreactor</groupId>
         </dependency>
         <dependency>
-            <artifactId>netty-codec-mqtt</artifactId>
-            <groupId>io.netty</groupId>
+            <artifactId>reactor-netty</artifactId>
+            <groupId>io.projectreactor.netty</groupId>
         </dependency>
         <dependency>
-            <artifactId>lombok</artifactId>
-            <groupId>org.projectlombok</groupId>
+            <artifactId>netty-codec-mqtt</artifactId>
+            <groupId>io.netty</groupId>
         </dependency>
         <dependency>
             <artifactId>reactor-mqtt-common</artifactId>

@@ -43,22 +43,6 @@
             <groupId>ch.qos.logback</groupId>
         </dependency>
         <dependency>
-            <artifactId>netty-transport</artifactId>
-            <groupId>io.netty</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>netty-codec-mqtt</artifactId>
-            <groupId>io.netty</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>reactor-core</artifactId>
-            <groupId>io.projectreactor</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>reactor-netty</artifactId>
-            <groupId>io.projectreactor.netty</groupId>
-        </dependency>
-        <dependency>
             <artifactId>spring-core</artifactId>
             <groupId>org.springframework</groupId>
         </dependency>
