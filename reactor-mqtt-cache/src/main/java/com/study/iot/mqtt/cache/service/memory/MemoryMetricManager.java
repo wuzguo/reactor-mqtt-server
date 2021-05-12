@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.MetricManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.LongAdder;

@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.transport.client.connection;
 
 import com.google.common.collect.Lists;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
-import com.study.iot.mqtt.common.message.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.session.ClientSession;

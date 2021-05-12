@@ -5,7 +5,7 @@ import com.study.iot.mqtt.cache.config.IgniteProperties;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;

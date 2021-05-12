@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.common.enums;
+package com.study.iot.mqtt.cache.strategy;
 
 import java.util.Objects;
 import lombok.AllArgsConstructor;

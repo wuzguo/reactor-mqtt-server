@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.cache.strategy;
 
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

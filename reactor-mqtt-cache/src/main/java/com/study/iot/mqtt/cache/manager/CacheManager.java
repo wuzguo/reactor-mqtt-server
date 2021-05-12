@@ -4,7 +4,7 @@ import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.cache.service.MessageManager;
 import com.study.iot.mqtt.cache.service.MetricManager;
 import com.study.iot.mqtt.cache.service.TopicManager;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 
 /**
  * <B>说明：描述</B>

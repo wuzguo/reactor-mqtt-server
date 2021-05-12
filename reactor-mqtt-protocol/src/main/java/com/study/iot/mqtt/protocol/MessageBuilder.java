@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.common.message;
+package com.study.iot.mqtt.protocol;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;

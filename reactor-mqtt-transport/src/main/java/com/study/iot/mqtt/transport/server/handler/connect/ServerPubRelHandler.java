@@ -2,8 +2,8 @@ package com.study.iot.mqtt.transport.server.handler.connect;
 
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
-import com.study.iot.mqtt.common.message.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;

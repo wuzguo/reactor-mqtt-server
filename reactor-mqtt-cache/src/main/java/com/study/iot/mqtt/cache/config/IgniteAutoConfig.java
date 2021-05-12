@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.cache.config;
 
-import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +27,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+import reactor.core.Disposable;
 
 /**
  * 自动配置apache ignite
@@ -125,8 +125,8 @@ public class IgniteAutoConfig {
     }
 
     @Bean
-    public IgniteCache<String, DisposableConnection> disposableCache() throws Exception {
-        CacheConfiguration<String, DisposableConnection> cacheConfiguration = new CacheConfiguration<String, DisposableConnection>()
+    public IgniteCache<String, Disposable> disposableCache() throws Exception {
+        CacheConfiguration<String, Disposable> cacheConfiguration = new CacheConfiguration<String, Disposable>()
             .setDataRegionName("persistence-data-region")
             .setCacheMode(CacheMode.PARTITIONED).setName("disposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);
@@ -141,8 +141,8 @@ public class IgniteAutoConfig {
     }
 
     @Bean
-    public IgniteCache<String, List<DisposableConnection>> topicDisposableCache() throws Exception {
-        CacheConfiguration<String, List<DisposableConnection>> cacheConfiguration = new CacheConfiguration<String, List<DisposableConnection>>()
+    public IgniteCache<String, List<Disposable>> topicDisposableCache() throws Exception {
+        CacheConfiguration<String, List<Disposable>> cacheConfiguration = new CacheConfiguration<String, List<Disposable>>()
             .setDataRegionName("persistence-data-region")
             .setCacheMode(CacheMode.PARTITIONED).setName("topicDisposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);

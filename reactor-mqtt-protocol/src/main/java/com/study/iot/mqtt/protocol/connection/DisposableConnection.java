@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.common.connection;
+package com.study.iot.mqtt.protocol.connection;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

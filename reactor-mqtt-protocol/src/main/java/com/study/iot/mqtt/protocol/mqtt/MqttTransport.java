@@ -4,7 +4,7 @@ package com.study.iot.mqtt.protocol.mqtt;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
 import com.study.iot.mqtt.protocol.config.ConnectConfiguration;
 import com.study.iot.mqtt.protocol.config.ServerConfiguration;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
 import io.netty.buffer.PooledByteBufAllocator;

@@ -4,7 +4,7 @@ import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.service.MessageManager;
 import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 

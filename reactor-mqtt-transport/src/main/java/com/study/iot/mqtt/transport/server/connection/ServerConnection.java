@@ -2,7 +2,7 @@ package com.study.iot.mqtt.transport.server.connection;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.common.utils.CollectionUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.session.ServerSession;
