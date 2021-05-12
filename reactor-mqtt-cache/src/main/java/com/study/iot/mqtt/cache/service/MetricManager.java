@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.cache.service;
 
+import com.study.iot.mqtt.cache.strategy.CacheCapable;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 import reactor.core.publisher.Mono;
@@ -12,7 +13,7 @@ import reactor.core.publisher.Mono;
  * @date 2021/5/12 9:23
  */
 
-public interface MetricManager {
+public interface MetricManager extends CacheCapable {
 
     /**
      * 新增1

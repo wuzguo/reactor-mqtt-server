@@ -2,6 +2,8 @@ package com.study.iot.mqtt.transport.server.handler.connect;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.transport.annotation.MqttMetric;
+import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyContainer;
@@ -37,6 +39,7 @@ public class ServerPublishHandler implements StrategyCapable {
     private CacheManager cacheManager;
 
     @Override
+    @MqttMetric(name = MetricMatterName.TOTAL_PUBLISH_COUNT)
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server Publish message: {}, connection: {}", message, connection);
         MqttFixedHeader header = message.fixedHeader();

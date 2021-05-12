@@ -6,6 +6,8 @@ import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.MessageBuilder;
+import com.study.iot.mqtt.transport.annotation.MqttMetric;
+import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
@@ -47,6 +49,7 @@ public class ServerConnectHandler implements StrategyCapable {
     private IAuthService authService;
 
     @Override
+    @MqttMetric(name = MetricMatterName.TOTAL_CONNECTION_COUNT)
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server connect message: {}, connection: {}", message, connection);
         MqttConnectMessage connectMessage = (MqttConnectMessage) message;
