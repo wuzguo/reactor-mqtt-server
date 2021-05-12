@@ -64,16 +64,10 @@ public class ServerSubscribeHandler implements StrategyCapable {
                 } else {
                     int connMessageId = connection.messageId();
                     // retry
-                    connection.addDisposable(connMessageId, Mono.fromRunnable(() -> {
-                        MqttPublishMessage mqttMessage = MessageBuilder.buildPub(true, header.qosLevel(),
-                            header.isRetain(), connMessageId, retainMessage.getTopic(),
-                            retainMessage.getCopyByteBuf());
-                        connection.sendMessage(mqttMessage).subscribe();
-                    }).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-                    // pub
-                    MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(),
-                        header.isRetain(), connMessageId, retainMessage.getTopic(), retainMessage.getCopyByteBuf());
-                    connection.sendMessage(mqttMessage).subscribe();
+                    MqttPublishMessage mqttMessage = MessageBuilder.buildPub(true, header.qosLevel(),
+                        header.isRetain(), connMessageId, retainMessage.getTopic(),
+                        retainMessage.getCopyByteBuf());
+                    connection.sendMessageRetry(messageId, mqttMessage);
                 }
             });
         });

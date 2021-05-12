@@ -1,11 +1,11 @@
 package com.study.iot.mqtt.transport.client.handler.connect;
 
 
+import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
-import com.study.iot.mqtt.common.message.MessageBuilder;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
@@ -37,9 +37,8 @@ public class ClientPubRelHandler implements StrategyCapable {
         //  send comp
         connection.sendMessage(mqttPubRecMessage).subscribe();
         // 移除消息
-        connection.getAndRemoveQos2Message(messageId)
-            .ifPresent(msg -> log
-                .info("client publish topic: {}, message: {}", msg.getTopic(), new String(msg.getCopyByteBuf(),
-                    CharsetUtil.UTF_8)));
+        connection.getAndRemoveQos2Message(messageId).ifPresent(
+            msg -> log.info("client publish topic: {}, message: {}", msg.getTopic(), new String(msg.getCopyByteBuf(),
+                CharsetUtil.UTF_8)));
     }
 }

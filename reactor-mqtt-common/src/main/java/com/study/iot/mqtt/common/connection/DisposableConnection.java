@@ -101,7 +101,7 @@ public class DisposableConnection implements Disposable, Serializable {
     }
 
 
-    public void addDisposable(Integer messageId, Disposable disposable) {
+    private void addDisposable(Integer messageId, Disposable disposable) {
         mapDisposable.put(messageId, disposable);
     }
 

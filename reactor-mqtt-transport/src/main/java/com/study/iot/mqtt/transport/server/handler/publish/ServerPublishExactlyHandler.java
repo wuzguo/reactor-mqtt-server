@@ -7,12 +7,10 @@ import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
-import io.netty.handler.codec.mqtt.MqttPubAckMessage;
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
-import java.time.Duration;
-import reactor.core.publisher.Mono;
 
 /**
  * <B>说明：描述</B>
@@ -32,12 +30,9 @@ public class ServerPublishExactlyHandler implements PublishStrategyCapable {
 
         //  send rec
         int messageId = variableHeader.packetId();
-        MqttPubAckMessage mqttPubRecMessage = MessageBuilder.buildPubRec(messageId);
-        connection.sendMessage(mqttPubRecMessage).subscribe();
-        // retry
-        connection.addDisposable(messageId, Mono.fromRunnable(() ->
-            connection.sendMessage(MessageBuilder.buildPubRel(messageId)).subscribe())
-            .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
+        MqttMessage mqttMessage = MessageBuilder.buildPubRec(messageId);
+        connection.sendMessageRetry(messageId, mqttMessage);
+
         TransportMessage transportMessage = TransportMessage.builder().isRetain(header.isRetain())
             .isDup(false).topic(variableHeader.topicName())
             .copyByteBuf(bytes)

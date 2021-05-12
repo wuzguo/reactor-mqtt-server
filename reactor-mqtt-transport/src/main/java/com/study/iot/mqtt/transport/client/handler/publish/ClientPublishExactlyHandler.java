@@ -1,18 +1,15 @@
 package com.study.iot.mqtt.transport.client.handler.publish;
 
-import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.common.message.TransportMessage;
+import com.study.iot.mqtt.transport.constant.StrategyGroup;
+import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
+import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
-import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
-import java.time.Duration;
-import reactor.core.publisher.Mono;
 
 /**
  * <B>说明：描述</B>
@@ -29,15 +26,10 @@ public class ClientPublishExactlyHandler implements PublishStrategyCapable {
     public void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes) {
         MqttFixedHeader header = message.fixedHeader();
         MqttPublishVariableHeader variableHeader = message.variableHeader();
-
-        int messageId = variableHeader.packetId();
-        MqttPubAckMessage mqttPubRecMessage = MessageBuilder.buildPubRec(messageId);
         // retry send rec
-        connection.addDisposable(messageId, Mono.fromRunnable(() ->
-            connection.sendMessage(MessageBuilder.buildPubRec(messageId)).subscribe())
-            .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
-        //  send rec
-        connection.sendMessage(mqttPubRecMessage).subscribe();
+        int messageId = variableHeader.packetId();
+        connection.sendMessageRetry(messageId, MessageBuilder.buildPubRec(messageId));
+
         TransportMessage transportMessage = TransportMessage.builder().isRetain(header.isRetain())
             .isDup(false)
             .topic(variableHeader.topicName())

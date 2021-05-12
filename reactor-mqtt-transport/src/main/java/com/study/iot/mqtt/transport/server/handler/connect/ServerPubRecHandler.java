@@ -29,12 +29,7 @@ public class ServerPubRecHandler implements StrategyCapable {
         log.info("server PubRec message: {}, connection: {}", message, connection);
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
         int messageId = variableHeader.messageId();
+        connection.sendMessageRetry(messageId, MessageBuilder.buildPubRel(messageId));
         connection.cancelDisposable(messageId);
-        //  send rel
-        connection.sendMessage(MessageBuilder.buildPubRel(messageId)).subscribe();
-        // retry
-        connection.addDisposable(messageId, Mono.fromRunnable(() ->
-            connection.sendMessage(MessageBuilder.buildPubRel(messageId)).subscribe())
-            .delaySubscription(Duration.ofSeconds(10)).repeat().subscribe());
     }
 }
