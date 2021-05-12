@@ -30,11 +30,6 @@
             <groupId>io.netty</groupId>
         </dependency>
         <dependency>
-            <artifactId>reactor-mqtt-common</artifactId>
-            <groupId>com.study.iot.mqtt</groupId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.study.iot.mqtt</groupId>
             <artifactId>reactor-mqtt-cache</artifactId>
             <version>0.0.1-SNAPSHOT</version>

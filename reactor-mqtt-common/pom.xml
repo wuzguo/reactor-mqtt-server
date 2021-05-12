@@ -21,7 +21,6 @@
             <artifactId>lombok</artifactId>
             <groupId>org.projectlombok</groupId>
         </dependency>
-
         <dependency>
             <artifactId>log4j-api</artifactId>
             <groupId>org.apache.logging.log4j</groupId>

@@ -23,11 +23,6 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>reactor-mqtt-cache</artifactId>
-            <groupId>com.study.iot.mqtt</groupId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <artifactId>reactor-mqtt-auth</artifactId>
             <groupId>com.study.iot.mqtt</groupId>
             <version>0.0.1-SNAPSHOT</version>

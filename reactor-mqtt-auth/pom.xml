@@ -18,14 +18,6 @@
 
     <dependencies>
         <dependency>
-            <artifactId>reactor-core</artifactId>
-            <groupId>io.projectreactor</groupId>
-        </dependency>
-        <dependency>
-            <artifactId>lombok</artifactId>
-            <groupId>org.projectlombok</groupId>
-        </dependency>
-        <dependency>
             <artifactId>commons-codec</artifactId>
             <groupId>commons-codec</groupId>
         </dependency>
@@ -37,6 +29,10 @@
             <artifactId>reactor-mqtt-common</artifactId>
             <groupId>com.study.iot.mqtt</groupId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
         </dependency>
     </dependencies>
 

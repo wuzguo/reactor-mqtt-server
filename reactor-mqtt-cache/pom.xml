@@ -53,9 +53,5 @@
             <artifactId>spring-data-redis</artifactId>
             <groupId>org.springframework.data</groupId>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
     </dependencies>
 </project>
