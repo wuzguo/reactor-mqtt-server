@@ -31,6 +31,13 @@ public class MqttMetricAspect {
         return doMetric(joinPoint, metric);
     }
 
+    /**
+     * 业务逻辑
+     *
+     * @param joinPoint {@link MqttMetric}
+     * @param metric    {@link ProceedingJoinPoint}
+     * @return {@link Object}
+     */
     private Object doMetric(ProceedingJoinPoint joinPoint, MqttMetric metric) {
         log.info("mqtt metric {}", metric);
         this.proceed(joinPoint);
