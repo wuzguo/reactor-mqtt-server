@@ -8,7 +8,7 @@ package com.study.iot.mqtt.transport.constant;
  * @date 2021/5/12 9:45
  */
 
-public interface MetricName {
+public interface MetricMatterName {
 
     /**
      * 总的连接数

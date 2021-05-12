@@ -10,6 +10,7 @@ import com.study.iot.mqtt.common.utils.ObjectUtil;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Mono;
 
 /**
  * <B>说明：描述</B>
@@ -26,46 +27,50 @@ public class RedisMetricManager implements MetricManager {
     private RedisOpsTemplate redisOpsTemplate;
 
     @Override
-    public void increase(String key) {
+    public Mono<Void> increase(String key) {
         LongAdder total = redisOpsTemplate.get(key, LongAdder.class);
         total.increment();
         redisOpsTemplate.setex(key, total);
+        return Mono.empty();
     }
 
     @Override
-    public void increase(String key, LongAdder count) {
+    public Mono<Void> increase(String key, LongAdder count) {
         LongAdder total = redisOpsTemplate.get(key, LongAdder.class);
         total.add(count.longValue());
         redisOpsTemplate.setex(key, total);
+        return Mono.empty();
     }
 
     @Override
-    public void decrease(String key) {
+    public Mono<Void> decrease(String key) {
         LongAdder total = redisOpsTemplate.get(key, LongAdder.class);
         total.decrement();
         redisOpsTemplate.setex(key, total);
+        return Mono.empty();
     }
 
     @Override
-    public void decrease(String key, LongAdder count) {
+    public Mono<Void> decrease(String key, LongAdder count) {
         LongAdder total = redisOpsTemplate.get(key, LongAdder.class);
         total.add(-count.longValue());
         redisOpsTemplate.setex(key, total);
+        return Mono.empty();
     }
 
     @Override
-    public void remove(String key) {
+    public Mono<Void> remove(String key) {
         redisOpsTemplate.del(key);
-
+        return Mono.empty();
     }
 
     @Override
-    public Boolean containsKey(String key) {
-        return ObjectUtil.isNull(redisOpsTemplate.get(key, LongAdder.class));
+    public Mono<Boolean> containsKey(String key) {
+        return Mono.just(ObjectUtil.isNull(redisOpsTemplate.get(key, LongAdder.class)));
     }
 
     @Override
-    public Map<String, LongAdder> loadAll() {
-        return Maps.newHashMap();
+    public Mono<Map<String, LongAdder>> loadAll() {
+        return Mono.just(Maps.newHashMap());
     }
 }

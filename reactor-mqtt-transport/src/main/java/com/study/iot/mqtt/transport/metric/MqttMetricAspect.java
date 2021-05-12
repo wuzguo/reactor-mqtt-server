@@ -33,22 +33,23 @@ public class MqttMetricAspect {
 
 
     private Object doMetric(ProceedingJoinPoint joinPoint, MqttMetric metric) {
-        log.info("mqtt metric: {}", metric);
+        log.info("mqtt metric {}", metric);
         this.proceed(joinPoint);
         // 统计数据
-
-        return cacheManager.metric();
+        if (metric.type().equals(MetricType.INCREASE)) {
+            return cacheManager.metric().increase(metric.name());
+        }
+        return cacheManager.metric().decrease(metric.name());
     }
 
     /**
      * 执行业务逻辑
      *
      * @param joinPoint {@link ProceedingJoinPoint}
-     * @return {@link Object}
      */
-    private Object proceed(ProceedingJoinPoint joinPoint) {
+    private void proceed(ProceedingJoinPoint joinPoint) {
         try {
-            return joinPoint.proceed();
+            joinPoint.proceed();
         } catch (Throwable e) {
             log.error("mqtt metric aop proceed: {}", e.getMessage());
             throw new FrameworkException(e);

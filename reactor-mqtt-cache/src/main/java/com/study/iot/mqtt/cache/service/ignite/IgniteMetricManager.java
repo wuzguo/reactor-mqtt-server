@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.LongAdder;
 import javax.annotation.Resource;
 import org.apache.ignite.IgniteCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import reactor.core.publisher.Mono;
 
 /**
  * <B>说明：描述</B>
@@ -28,37 +29,38 @@ public class IgniteMetricManager implements MetricManager {
     private IgniteCache<String, LongAdder> metricCache;
 
     @Override
-    public void increase(String key) {
-        
+    public Mono<Void> increase(String key) {
+        return Mono.empty();
     }
 
     @Override
-    public void increase(String key, LongAdder count) {
-
+    public Mono<Void> increase(String key, LongAdder count) {
+        return Mono.empty();
     }
 
     @Override
-    public void decrease(String key) {
-
+    public Mono<Void> decrease(String key) {
+        return Mono.empty();
     }
 
     @Override
-    public void decrease(String key, LongAdder count) {
-
+    public Mono<Void> decrease(String key, LongAdder count) {
+        return Mono.empty();
     }
 
     @Override
-    public void remove(String key) {
+    public Mono<Void> remove(String key) {
         metricCache.remove(key);
+        return Mono.empty();
     }
 
     @Override
-    public Boolean containsKey(String key) {
-        return metricCache.containsKey(key);
+    public Mono<Boolean> containsKey(String key) {
+        return Mono.just(metricCache.containsKey(key));
     }
 
     @Override
-    public Map<String, LongAdder> loadAll() {
-        return Maps.newHashMap();
+    public Mono<Map<String, LongAdder>> loadAll() {
+        return Mono.just(Maps.newHashMap());
     }
 }
