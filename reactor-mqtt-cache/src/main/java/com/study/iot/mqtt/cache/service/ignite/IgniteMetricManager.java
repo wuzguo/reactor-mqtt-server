@@ -28,18 +28,28 @@ public class IgniteMetricManager implements MetricManager {
     private IgniteCache<String, LongAdder> metricCache;
 
     @Override
-    public void add(String key, LongAdder count) {
-        metricCache.put(key, count);
+    public void increase(String key) {
+        
+    }
+
+    @Override
+    public void increase(String key, LongAdder count) {
+
+    }
+
+    @Override
+    public void decrease(String key) {
+
+    }
+
+    @Override
+    public void decrease(String key, LongAdder count) {
+
     }
 
     @Override
     public void remove(String key) {
         metricCache.remove(key);
-    }
-
-    @Override
-    public LongAdder getAndRemove(String key) {
-        return metricCache.getAndRemove(key);
     }
 
     @Override

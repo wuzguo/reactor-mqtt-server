@@ -35,7 +35,9 @@ public class MqttMetricAspect {
     private Object doMetric(ProceedingJoinPoint joinPoint, MqttMetric metric) {
         log.info("mqtt metric: {}", metric);
         this.proceed(joinPoint);
-        return null;
+        // 统计数据
+
+        return cacheManager.metric();
     }
 
     /**

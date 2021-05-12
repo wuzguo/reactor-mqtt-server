@@ -26,21 +26,37 @@ public class RedisMetricManager implements MetricManager {
     private RedisOpsTemplate redisOpsTemplate;
 
     @Override
-    public void add(String key, LongAdder count) {
-        redisOpsTemplate.sadd(key, count);
+    public void increase(String key) {
+        LongAdder total = redisOpsTemplate.get(key, LongAdder.class);
+        total.increment();
+        redisOpsTemplate.setex(key, total);
+    }
+
+    @Override
+    public void increase(String key, LongAdder count) {
+        LongAdder total = redisOpsTemplate.get(key, LongAdder.class);
+        total.add(count.longValue());
+        redisOpsTemplate.setex(key, total);
+    }
+
+    @Override
+    public void decrease(String key) {
+        LongAdder total = redisOpsTemplate.get(key, LongAdder.class);
+        total.decrement();
+        redisOpsTemplate.setex(key, total);
+    }
+
+    @Override
+    public void decrease(String key, LongAdder count) {
+        LongAdder total = redisOpsTemplate.get(key, LongAdder.class);
+        total.add(-count.longValue());
+        redisOpsTemplate.setex(key, total);
     }
 
     @Override
     public void remove(String key) {
         redisOpsTemplate.del(key);
 
-    }
-
-    @Override
-    public LongAdder getAndRemove(String key) {
-        LongAdder adder = redisOpsTemplate.get(key, LongAdder.class);
-        redisOpsTemplate.del(key);
-        return adder;
     }
 
     @Override

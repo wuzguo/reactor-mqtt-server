@@ -14,12 +14,34 @@ import java.util.concurrent.atomic.LongAdder;
 public interface MetricManager {
 
     /**
-     * 添加标识
+     * 新增1
+     *
+     * @param key 标识
+     */
+    void increase(String key);
+
+    /**
+     * 新增1
      *
      * @param key   标识
-     * @param count 数量
+     * @param count {@link LongAdder}
      */
-    void add(String key, LongAdder count);
+    void increase(String key, LongAdder count);
+
+    /**
+     * 减少
+     *
+     * @param key 标识
+     */
+    void decrease(String key);
+
+    /**
+     * 减少
+     *
+     * @param key   标识
+     * @param count {@link LongAdder}
+     */
+    void decrease(String key, LongAdder count);
 
     /**
      * 移除标识
@@ -27,14 +49,6 @@ public interface MetricManager {
      * @param key 标识
      */
     void remove(String key);
-
-    /**
-     * 获取并移除
-     *
-     * @param key 标识
-     * @return {@link LongAdder}
-     */
-    LongAdder getAndRemove(String key);
 
     /**
      * 检查

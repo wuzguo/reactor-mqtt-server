@@ -6,6 +6,7 @@ import com.study.iot.mqtt.cache.service.MetricManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
@@ -22,18 +23,36 @@ public class MemoryMetricManager implements MetricManager {
     private final Map<String, LongAdder> mapMetric = Maps.newConcurrentMap();
 
     @Override
-    public void add(String key, LongAdder count) {
-        mapMetric.put(key, count);
+    public void increase(String key) {
+        LongAdder total = Optional.ofNullable(mapMetric.get(key)).orElse(new LongAdder());
+        total.increment();
+        mapMetric.put(key, total);
+    }
+
+    @Override
+    public void increase(String key, LongAdder count) {
+        LongAdder total = Optional.ofNullable(mapMetric.get(key)).orElse(new LongAdder());
+        total.add(count.longValue());
+        mapMetric.put(key, total);
+    }
+
+    @Override
+    public void decrease(String key) {
+        LongAdder total = Optional.ofNullable(mapMetric.get(key)).orElse(new LongAdder());
+        total.decrement();
+        mapMetric.put(key, total);
+    }
+
+    @Override
+    public void decrease(String key, LongAdder count) {
+        LongAdder total = Optional.ofNullable(mapMetric.get(key)).orElse(new LongAdder());
+        total.add(-count.longValue());
+        mapMetric.put(key, total);
     }
 
     @Override
     public void remove(String key) {
         mapMetric.remove(key);
-    }
-
-    @Override
-    public LongAdder getAndRemove(String key) {
-        return mapMetric.remove(key);
     }
 
     @Override
