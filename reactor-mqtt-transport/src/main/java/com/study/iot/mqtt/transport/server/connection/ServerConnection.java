@@ -92,10 +92,10 @@ public class ServerConnection implements ServerSession {
             // 自己超时关闭的时候会走这段代码，要清除缓存中的连接信息
             // 删除设备标识
             Optional.ofNullable(connection.channel().attr(AttributeKeys.identity)).map(Attribute::get)
-                .ifPresent(cacheManager.channel()::removeChannel);
+                .ifPresent(cacheManager.channel()::remove);
             // 删除topic订阅
             Optional.ofNullable(disposableConnection.getTopics()).ifPresent(topics -> topics
-                .forEach(topic -> cacheManager.topic().deleteConnection(topic, disposableConnection)));
+                .forEach(topic -> cacheManager.topic().remove(topic, disposableConnection)));
             disposableConnection.destory();
         });
     }

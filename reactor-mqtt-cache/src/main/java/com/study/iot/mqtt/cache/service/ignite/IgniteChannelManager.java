@@ -33,7 +33,7 @@ public class IgniteChannelManager implements ChannelManager {
     }
 
     @Override
-    public void removeChannel(String identity) {
+    public void remove(String identity) {
         disposableCache.remove(identity);
     }
 

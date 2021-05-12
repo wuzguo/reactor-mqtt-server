@@ -51,7 +51,7 @@ public class ServerSubscribeHandler implements StrategyCapable {
         connection.sendMessage(mqttSubAckMessage).subscribe();
         subscribeMessage.payload().topicSubscriptions().forEach(topicSubscription -> {
             String topicName = topicSubscription.topicName();
-            cacheManager.topic().addConnection(topicName, connection);
+            cacheManager.topic().add(topicName, connection);
             Optional.ofNullable(cacheManager.message().getRetain(topicName)).ifPresent(retainMessage -> {
                 if (retainMessage.getQos() == 0) {
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),

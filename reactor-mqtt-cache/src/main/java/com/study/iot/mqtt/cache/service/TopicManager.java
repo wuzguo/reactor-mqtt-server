@@ -21,7 +21,7 @@ public interface TopicManager extends CacheCapable {
      * @param topic      {@link String}
      * @param connection {@link DisposableConnection}
      */
-    void addConnection(String topic, DisposableConnection connection);
+    void add(String topic, DisposableConnection connection);
 
     /**
      * 删除连接
@@ -29,5 +29,5 @@ public interface TopicManager extends CacheCapable {
      * @param topic      {@link String}
      * @param connection {@link DisposableConnection}
      */
-    void deleteConnection(String topic, DisposableConnection connection);
+    void remove(String topic, DisposableConnection connection);
 }

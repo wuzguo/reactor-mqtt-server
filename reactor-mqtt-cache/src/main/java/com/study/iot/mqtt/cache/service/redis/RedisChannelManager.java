@@ -33,7 +33,7 @@ public class RedisChannelManager implements ChannelManager {
     }
 
     @Override
-    public void removeChannel(String identity) {
+    public void remove(String identity) {
         redisOpsTemplate.del(identity);
     }
 

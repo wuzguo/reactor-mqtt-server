@@ -33,12 +33,12 @@ public class RedisTopicManager implements TopicManager {
     }
 
     @Override
-    public void addConnection(String topic, DisposableConnection connection) {
+    public void add(String topic, DisposableConnection connection) {
         redisOpsTemplate.sadd(topic, connection);
     }
 
     @Override
-    public void deleteConnection(String topic, DisposableConnection connection) {
+    public void remove(String topic, DisposableConnection connection) {
         redisOpsTemplate.del(topic);
     }
 }

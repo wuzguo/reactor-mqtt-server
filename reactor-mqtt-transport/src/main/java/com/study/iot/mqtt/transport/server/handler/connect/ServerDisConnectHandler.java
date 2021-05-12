@@ -34,10 +34,10 @@ public class ServerDisConnectHandler implements StrategyCapable {
         // 删除设备标识
         Optional.ofNullable(connection.getConnection().channel().attr(AttributeKeys.identity))
             .map(Attribute::get)
-            .ifPresent(cacheManager.channel()::removeChannel);
+            .ifPresent(cacheManager.channel()::remove);
         // 删除topic订阅
         Optional.ofNullable(connection.getTopics())
-            .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().deleteConnection(topic, connection)));
+            .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().remove(topic, connection)));
         connection.dispose();
     }
 }

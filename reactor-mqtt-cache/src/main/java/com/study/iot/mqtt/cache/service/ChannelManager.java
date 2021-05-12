@@ -19,7 +19,7 @@ public interface ChannelManager extends CacheCapable {
      *
      * @param identity 设备标识
      */
-    void removeChannel(String identity);
+    void remove(String identity);
 
     /**
      * 获取并移除

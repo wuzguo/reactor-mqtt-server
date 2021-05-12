@@ -34,7 +34,7 @@ public class IgniteTopicManager implements TopicManager {
     }
 
     @Override
-    public void addConnection(String topic, DisposableConnection connection) {
+    public void add(String topic, DisposableConnection connection) {
         List<DisposableConnection> connections = Optional.ofNullable(topicDisposableCache.get(topic))
             .orElse(Lists.newArrayList());
         connections.add(connection);
@@ -42,7 +42,7 @@ public class IgniteTopicManager implements TopicManager {
     }
 
     @Override
-    public void deleteConnection(String topic, DisposableConnection connection) {
+    public void remove(String topic, DisposableConnection connection) {
         Optional.ofNullable(topicDisposableCache.get(topic)).ifPresent(connections -> connections.remove(connection));
     }
 }

@@ -30,7 +30,7 @@ public class MemoryChannelManager implements ChannelManager {
     }
 
     @Override
-    public void removeChannel(String identity) {
+    public void remove(String identity) {
         mapConnection.remove(identity);
     }
 
