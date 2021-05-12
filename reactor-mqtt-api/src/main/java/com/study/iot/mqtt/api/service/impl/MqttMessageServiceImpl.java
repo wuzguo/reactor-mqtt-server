@@ -2,6 +2,7 @@ package com.study.iot.mqtt.api.service.impl;
 
 import com.study.iot.mqtt.api.domain.bo.MqttMessageBo;
 import com.study.iot.mqtt.api.service.IMqttMessageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
  * @date 2021/5/11 16:40
  */
 
+@Slf4j
 @Service
 public class MqttMessageServiceImpl implements IMqttMessageService {
 
