@@ -33,10 +33,6 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>spring-context</artifactId>
-            <groupId>org.springframework</groupId>
-        </dependency>
-        <dependency>
             <artifactId>spring-boot</artifactId>
             <groupId>org.springframework.boot</groupId>
         </dependency>
@@ -56,7 +52,6 @@
         <dependency>
             <artifactId>spring-data-redis</artifactId>
             <groupId>org.springframework.data</groupId>
-            <version>2.4.5</version>
         </dependency>
     </dependencies>
 </project>

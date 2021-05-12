@@ -30,10 +30,6 @@
             <groupId>commons-codec</groupId>
         </dependency>
         <dependency>
-            <artifactId>spring-context</artifactId>
-            <groupId>org.springframework</groupId>
-        </dependency>
-        <dependency>
             <artifactId>spring-boot-autoconfigure</artifactId>
             <groupId>org.springframework.boot</groupId>
         </dependency>
