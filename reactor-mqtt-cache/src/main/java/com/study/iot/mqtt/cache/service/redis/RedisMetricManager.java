@@ -1,10 +1,12 @@
 package com.study.iot.mqtt.cache.service.redis;
 
+import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.MetricManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.utils.ObjectUtil;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,26 +27,29 @@ public class RedisMetricManager implements MetricManager {
 
     @Override
     public void add(String key, LongAdder count) {
-
+        redisOpsTemplate.sadd(key, count);
     }
 
     @Override
     public void remove(String key) {
+        redisOpsTemplate.del(key);
 
     }
 
     @Override
     public LongAdder getAndRemove(String key) {
-        return null;
+        LongAdder adder = redisOpsTemplate.get(key, LongAdder.class);
+        redisOpsTemplate.del(key);
+        return adder;
     }
 
     @Override
     public Boolean containsKey(String key) {
-        return null;
+        return ObjectUtil.isNull(redisOpsTemplate.get(key, LongAdder.class));
     }
 
     @Override
     public Map<String, LongAdder> loadAll() {
-        return null;
+        return Maps.newHashMap();
     }
 }

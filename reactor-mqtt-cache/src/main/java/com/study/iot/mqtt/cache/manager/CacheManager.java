@@ -2,6 +2,7 @@ package com.study.iot.mqtt.cache.manager;
 
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.cache.service.MessageManager;
+import com.study.iot.mqtt.cache.service.MetricManager;
 import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 
@@ -36,6 +37,13 @@ public interface CacheManager {
      * @return {@link TopicManager}
      */
     TopicManager topic();
+
+    /**
+     * 获取 Metric
+     *
+     * @return {@link MetricManager}
+     */
+    MetricManager metric();
 
     /**
      * 初始化
