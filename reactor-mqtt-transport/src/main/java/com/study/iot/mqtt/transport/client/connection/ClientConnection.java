@@ -1,10 +1,10 @@
 package com.study.iot.mqtt.transport.client.connection;
 
 import com.google.common.collect.Lists;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.AttributeKeys;
+import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.config.ClientConfiguration;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
@@ -105,17 +105,15 @@ public class ClientConnection implements ClientSession {
     }
 
     @Override
-    public Mono<Void> pub(String topic, byte[] message, boolean retained, int qos) {
-        int messageId = qos == 0 ? 1 : connection.messageId();
-        MqttQoS mqttQoS = MqttQoS.valueOf(qos);
+    public Mono<Void> pub(String topic, byte[] message, boolean retained, MqttQoS mqttQoS) {
         switch (mqttQoS) {
             case AT_MOST_ONCE:
                 return connection.sendMessage(
-                    MessageBuilder.buildPub(false, MqttQoS.AT_MOST_ONCE, retained, messageId, topic, message));
+                    MessageBuilder.buildPub(false, MqttQoS.AT_MOST_ONCE, retained, 1, topic, message));
             case EXACTLY_ONCE:
             case AT_LEAST_ONCE:
-                return connection.sendMessageRetry(messageId,
-                    MessageBuilder.buildPub(false, mqttQoS, retained, messageId, topic, message));
+                return connection.sendMessageRetry(connection.messageId(),
+                    MessageBuilder.buildPub(false, mqttQoS, retained, connection.messageId(), topic, message));
             default:
                 return Mono.empty();
         }
@@ -123,17 +121,17 @@ public class ClientConnection implements ClientSession {
 
     @Override
     public Mono<Void> pub(String topic, byte[] message) {
-        return pub(topic, message, false, 0);
+        return pub(topic, message, false, MqttQoS.AT_MOST_ONCE);
     }
 
     @Override
-    public Mono<Void> pub(String topic, byte[] message, int qos) {
-        return pub(topic, message, false, qos);
+    public Mono<Void> pub(String topic, byte[] message, MqttQoS mqttQoS) {
+        return pub(topic, message, false, mqttQoS);
     }
 
     @Override
     public Mono<Void> pub(String topic, byte[] message, boolean retained) {
-        return pub(topic, message, retained, 0);
+        return pub(topic, message, retained, MqttQoS.AT_MOST_ONCE);
     }
 
     @Override
