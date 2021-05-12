@@ -19,6 +19,13 @@ import reactor.netty.Connection;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/5/12 9:46
+ */
 
 @Slf4j
 @Data
@@ -45,7 +52,7 @@ public class DisposableConnection implements Disposable, Serializable {
     }
 
     public <T> Flux<T> receive(Class<T> cls) {
-        return inbound.receive().cast(cls);
+        return inbound.receiveObject().cast(cls);
     }
 
     /**
@@ -96,7 +103,7 @@ public class DisposableConnection implements Disposable, Serializable {
         return Optional.ofNullable(message);
     }
 
-    public boolean containQos2Message(Integer messageId, byte[] bytes) {
+    public boolean containQos2Message(Integer messageId) {
         return mapQosMessage.containsKey(messageId);
     }
 

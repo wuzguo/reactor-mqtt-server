@@ -20,7 +20,6 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.UnicastProcessor;
 import reactor.netty.Connection;
-import reactor.netty.NettyInbound;
 
 /**
  * <B>说明：描述</B>
@@ -47,7 +46,6 @@ public class ServerConnection implements ServerSession {
     }
 
     private void subscribe(DisposableConnection disposableConnection) {
-        NettyInbound inbound = disposableConnection.getInbound();
         Connection connection = disposableConnection.getConnection();
         // 定时关闭
         Disposable closeConnection = Mono.fromRunnable(connection::dispose)
@@ -60,7 +58,7 @@ public class ServerConnection implements ServerSession {
         // 关闭连接时处理的逻辑
         this.onDispose(disposableConnection);
         // 订阅各种消息
-        inbound.receiveObject().cast(MqttMessage.class)
+        disposableConnection.receive(MqttMessage.class)
             .subscribe(message -> messageRouter.handle(message, disposableConnection));
     }
 

@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
-import reactor.netty.NettyInbound;
 
 /**
  * <B>说明：描述</B>
@@ -89,9 +88,8 @@ public class ClientConnection implements ClientSession {
         });
         connection.getConnection().onDispose(() -> configuration.getOnClose().run());
 
-        NettyInbound inbound = connection.getInbound();
         // 各种策略模式处理
-        inbound.receiveObject().cast(MqttMessage.class)
+        connection.receive(MqttMessage.class)
             .subscribe(message -> clientMessageRouter.handle(message, connection));
 
         connection.getConnection().channel().attr(AttributeKeys.clientConnection).set(this);
