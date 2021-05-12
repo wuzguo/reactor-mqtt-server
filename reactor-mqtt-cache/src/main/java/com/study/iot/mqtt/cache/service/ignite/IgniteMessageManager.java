@@ -3,7 +3,7 @@ package com.study.iot.mqtt.cache.service.ignite;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.config.IgniteProperties;
-import com.study.iot.mqtt.cache.service.MessageHandler;
+import com.study.iot.mqtt.cache.service.MessageManager;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import javax.annotation.Resource;
@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 @ConditionalOnBean(value = IgniteProperties.class)
 @CacheStrategyService(group = CacheGroup.MESSAGE, type = CacheStrategy.IGNITE)
-public class IgniteMessageHandler implements MessageHandler {
+public class IgniteMessageManager implements MessageManager {
 
     @Resource
     private IgniteCache<String, RetainMessage> messageCache;

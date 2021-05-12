@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.cache.manager;
 
 import com.study.iot.mqtt.cache.service.ChannelManager;
-import com.study.iot.mqtt.cache.service.MessageHandler;
+import com.study.iot.mqtt.cache.service.MessageManager;
 import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 
@@ -26,9 +26,9 @@ public interface CacheManager {
     /**
      * 获取消息管理
      *
-     * @return {@link MessageHandler}
+     * @return {@link MessageManager}
      */
-    MessageHandler message();
+    MessageManager message();
 
     /**
      * 获取topic

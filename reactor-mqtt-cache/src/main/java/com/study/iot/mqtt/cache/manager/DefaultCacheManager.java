@@ -2,7 +2,7 @@ package com.study.iot.mqtt.cache.manager;
 
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.ChannelManager;
-import com.study.iot.mqtt.cache.service.MessageHandler;
+import com.study.iot.mqtt.cache.service.MessageManager;
 import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyContainer;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
@@ -37,7 +37,7 @@ public class DefaultCacheManager implements CacheManager {
     }
 
     @Override
-    public MessageHandler message() {
+    public MessageManager message() {
         return container.getStrategy(CacheGroup.MESSAGE, strategy);
     }
 
