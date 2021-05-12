@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.cache.service;
 
 import com.study.iot.mqtt.cache.strategy.CacheCapable;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
 import java.util.List;
+import reactor.core.Disposable;
 
 
 public interface TopicManager extends CacheCapable {
@@ -11,23 +11,23 @@ public interface TopicManager extends CacheCapable {
      * 获取连接
      *
      * @param topic {@link String}
-     * @return {@link DisposableConnection}
+     * @return {@link Disposable}
      */
-    List<DisposableConnection> getConnections(String topic);
+    List<Disposable> getConnections(String topic);
 
     /**
      * 添加连接
      *
      * @param topic      {@link String}
-     * @param connection {@link DisposableConnection}
+     * @param connection {@link Disposable}
      */
-    void add(String topic, DisposableConnection connection);
+    void add(String topic, Disposable connection);
 
     /**
      * 删除连接
      *
      * @param topic      {@link String}
-     * @param connection {@link DisposableConnection}
+     * @param connection {@link Disposable}
      */
-    void remove(String topic, DisposableConnection connection);
+    void remove(String topic, Disposable connection);
 }

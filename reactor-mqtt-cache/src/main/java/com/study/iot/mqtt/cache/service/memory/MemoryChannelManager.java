@@ -9,6 +9,7 @@ import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import java.util.Collection;
 import java.util.Map;
+import reactor.core.Disposable;
 
 
 /**
@@ -22,30 +23,30 @@ import java.util.Map;
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.MEMORY)
 public class MemoryChannelManager implements ChannelManager {
 
-    private final Map<String, DisposableConnection> mapConnection = Maps.newConcurrentMap();
+    private final Map<String, Disposable> mapDisposable = Maps.newConcurrentMap();
 
     @Override
-    public void add(String identity, DisposableConnection connection) {
-        mapConnection.put(identity, connection);
+    public void add(String identity, Disposable disposable) {
+        mapDisposable.put(identity, disposable);
     }
 
     @Override
     public void remove(String identity) {
-        mapConnection.remove(identity);
+        mapDisposable.remove(identity);
     }
 
     @Override
-    public DisposableConnection getAndRemove(String identity) {
-        return mapConnection.remove(identity);
+    public Disposable getAndRemove(String identity) {
+        return mapDisposable.remove(identity);
     }
 
     @Override
     public Boolean containsKey(String identity) {
-        return mapConnection.containsKey(identity);
+        return mapDisposable.containsKey(identity);
     }
 
     @Override
-    public Collection<DisposableConnection> getConnections() {
-        return mapConnection.values();
+    public Collection<Disposable> getConnections() {
+        return mapDisposable.values();
     }
 }

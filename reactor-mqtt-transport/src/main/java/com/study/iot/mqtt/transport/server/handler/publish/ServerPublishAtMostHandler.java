@@ -35,7 +35,8 @@ public class ServerPublishAtMostHandler implements PublishStrategyCapable {
         MqttFixedHeader header = message.fixedHeader();
         // 过滤掉本身 已经关闭的dispose
         cacheManager.topic().getConnections(variableHeader.topicName())
-            .stream().filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
+            .stream().map(disposable -> (DisposableConnection) disposable)
+            .filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
                 MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),
                     connection.messageId(), variableHeader.topicName(), bytes);

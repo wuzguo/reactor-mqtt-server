@@ -3,12 +3,13 @@ package com.study.iot.mqtt.cache.service.memory;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
-import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.cache.service.path.CacheTopicManager;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import java.util.List;
+import reactor.core.Disposable;
 
 /**
  * <B>说明：描述</B>
@@ -24,17 +25,17 @@ public class MemoryTopicManager implements TopicManager {
     private final CacheTopicManager topicManager = new CacheTopicManager();
 
     @Override
-    public List<DisposableConnection> getConnections(String topic) {
+    public List<Disposable> getConnections(String topic) {
         return topicManager.getConnections(topic).orElse(Lists.newArrayList());
     }
 
     @Override
-    public void add(String topic, DisposableConnection connection) {
-        topicManager.addConnection(topic, connection);
+    public void add(String topic, Disposable disposable) {
+        topicManager.addConnection(topic, disposable);
     }
 
     @Override
-    public void remove(String topic, DisposableConnection connection) {
-        topicManager.deleteConnection(topic, connection);
+    public void remove(String topic, Disposable disposable) {
+        topicManager.deleteConnection(topic, disposable);
     }
 }

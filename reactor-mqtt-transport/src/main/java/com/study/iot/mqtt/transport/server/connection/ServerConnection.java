@@ -63,15 +63,15 @@ public class ServerConnection implements ServerSession {
     }
 
     @Override
-    public Mono<List<DisposableConnection>> getConnections() {
-        Collection<DisposableConnection> collection = cacheManager.channel().getConnections();
+    public Mono<List<Disposable>> getConnections() {
+        Collection<Disposable> collection = cacheManager.channel().getConnections();
         return CollectionUtil.isEmpty(collection) ? Mono.empty() : Mono.just(Lists.newArrayList(collection));
     }
 
     @Override
     public Mono<Void> closeConnect(String identity) {
         return Mono.fromRunnable(() -> Optional.ofNullable(cacheManager.channel().getAndRemove(identity))
-            .ifPresent(DisposableConnection::dispose));
+            .ifPresent(Disposable::dispose));
     }
 
     @Override
@@ -81,11 +81,12 @@ public class ServerConnection implements ServerSession {
             Optional.ofNullable(connection.channel().attr(AttributeKeys.willMessage)).map(Attribute::get)
                 .ifPresent(
                     willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopic()))
-                        .ifPresent(connections -> connections.forEach(connect -> {
+                        .ifPresent(disposables -> disposables.forEach(disposable -> {
                             MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                             Optional.ofNullable(
                                 messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
-                                .ifPresent(capable -> ((WillCapable) capable).handle(qoS, connect, willMessage));
+                                .ifPresent(capable -> ((WillCapable) capable)
+                                    .handle(qoS, (DisposableConnection) disposable, willMessage));
                         })));
             // 自己超时关闭的时候会走这段代码，要清除缓存中的连接信息
             // 删除设备标识

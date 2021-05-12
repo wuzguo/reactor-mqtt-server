@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.cache.service;
 
 import com.study.iot.mqtt.cache.strategy.CacheCapable;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
 import java.util.Collection;
+import reactor.core.Disposable;
 
 public interface ChannelManager extends CacheCapable {
 
@@ -10,9 +10,9 @@ public interface ChannelManager extends CacheCapable {
      * 添加连接
      *
      * @param identity   设备标识
-     * @param connection 连接
+     * @param disposable 连接
      */
-    void add(String identity, DisposableConnection connection);
+    void add(String identity, Disposable disposable);
 
     /**
      * 移除通道
@@ -25,9 +25,9 @@ public interface ChannelManager extends CacheCapable {
      * 获取并移除
      *
      * @param identity 设备ID
-     * @return {@link DisposableConnection}
+     * @return {@link Disposable}
      */
-    DisposableConnection getAndRemove(String identity);
+    Disposable getAndRemove(String identity);
 
     /**
      * 检查
@@ -40,7 +40,7 @@ public interface ChannelManager extends CacheCapable {
     /**
      * 获取所有连接
      *
-     * @return {@link DisposableConnection}
+     * @return {@link Disposable}
      */
-    Collection<DisposableConnection> getConnections();
+    Collection<Disposable> getConnections();
 }

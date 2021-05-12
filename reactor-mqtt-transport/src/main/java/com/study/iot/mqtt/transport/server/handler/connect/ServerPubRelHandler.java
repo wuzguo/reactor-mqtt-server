@@ -2,11 +2,11 @@ package com.study.iot.mqtt.transport.server.handler.connect;
 
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
+import com.study.iot.mqtt.common.connection.DisposableConnection;
+import com.study.iot.mqtt.common.message.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
-import com.study.iot.mqtt.common.message.MessageBuilder;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
@@ -45,7 +45,8 @@ public class ServerPubRelHandler implements StrategyCapable {
         connection.sendMessage(mqttPubRecMessage).subscribe();
         connection.getAndRemoveQos2Message(messageId)
             .ifPresent(transportMessage -> cacheManager.topic().getConnections(transportMessage.getTopic())
-                .stream().filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
+                .stream().map(disposable -> (DisposableConnection) disposable)
+                .filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
                 .forEach(disposable -> {
                     int id = connection.messageId();
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false,

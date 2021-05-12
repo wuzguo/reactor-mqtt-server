@@ -52,6 +52,7 @@ public class MqttServer implements ApplicationRunner {
             .build();
         // 启动服务
         ServerSession session = new TransportServer().create(configuration).start(cacheManager, messageRouter).block();
-        session.getConnections().subscribe(disposables -> disposables.forEach(DisposableConnection::destory));
+        session.getConnections().subscribe(disposables -> disposables.stream()
+            .map(disposable -> (DisposableConnection) disposable).forEach(DisposableConnection::destory));
     }
 }

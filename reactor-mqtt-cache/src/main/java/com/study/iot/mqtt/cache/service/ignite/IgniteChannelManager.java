@@ -11,6 +11,7 @@ import java.util.Collections;
 import javax.annotation.Resource;
 import org.apache.ignite.IgniteCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import reactor.core.Disposable;
 
 /**
  * <B>说明：描述</B>
@@ -25,11 +26,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 public class IgniteChannelManager implements ChannelManager {
 
     @Resource
-    private IgniteCache<String, DisposableConnection> disposableCache;
+    private IgniteCache<String, Disposable> disposableCache;
 
     @Override
-    public void add(String identity, DisposableConnection connection) {
-        disposableCache.put(identity, connection);
+    public void add(String identity, Disposable disposable) {
+        disposableCache.put(identity, disposable);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class IgniteChannelManager implements ChannelManager {
     }
 
     @Override
-    public DisposableConnection getAndRemove(String identity) {
+    public Disposable getAndRemove(String identity) {
         return disposableCache.getAndRemove(identity);
     }
 
@@ -48,7 +49,7 @@ public class IgniteChannelManager implements ChannelManager {
     }
 
     @Override
-    public Collection<DisposableConnection> getConnections() {
+    public Collection<Disposable> getConnections() {
         return Collections.emptyList();
     }
 }

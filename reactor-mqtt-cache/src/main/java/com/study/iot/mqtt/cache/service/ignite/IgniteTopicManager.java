@@ -1,17 +1,17 @@
 package com.study.iot.mqtt.cache.service.ignite;
 
 import com.google.common.collect.Lists;
-import com.study.iot.mqtt.cache.constant.CacheGroup;
-import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.config.IgniteProperties;
+import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.TopicManager;
+import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
 import org.apache.ignite.IgniteCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import reactor.core.Disposable;
 
 /**
  * <B>说明：描述</B>
@@ -26,23 +26,23 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 public class IgniteTopicManager implements TopicManager {
 
     @Resource
-    private IgniteCache<String, List<DisposableConnection>> topicDisposableCache;
+    private IgniteCache<String, List<Disposable>> topicDisposableCache;
 
     @Override
-    public List<DisposableConnection> getConnections(String topic) {
+    public List<Disposable> getConnections(String topic) {
         return topicDisposableCache.get(topic);
     }
 
     @Override
-    public void add(String topic, DisposableConnection connection) {
-        List<DisposableConnection> connections = Optional.ofNullable(topicDisposableCache.get(topic))
+    public void add(String topic, Disposable disposable) {
+        List<Disposable> disposables = Optional.ofNullable(topicDisposableCache.get(topic))
             .orElse(Lists.newArrayList());
-        connections.add(connection);
-        topicDisposableCache.put(topic, connections);
+        disposables.add(disposable);
+        topicDisposableCache.put(topic, disposables);
     }
 
     @Override
-    public void remove(String topic, DisposableConnection connection) {
-        Optional.ofNullable(topicDisposableCache.get(topic)).ifPresent(connections -> connections.remove(connection));
+    public void remove(String topic, Disposable disposable) {
+        Optional.ofNullable(topicDisposableCache.get(topic)).ifPresent(connections -> connections.remove(disposable));
     }
 }

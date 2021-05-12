@@ -5,12 +5,12 @@ import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
-import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
 import java.util.Collection;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.Disposable;
 
 
 /**
@@ -28,8 +28,8 @@ public class RedisChannelManager implements ChannelManager {
     private RedisOpsTemplate redisOpsTemplate;
 
     @Override
-    public void add(String identity, DisposableConnection connection) {
-        redisOpsTemplate.sadd(identity, connection);
+    public void add(String identity, Disposable disposable) {
+        redisOpsTemplate.sadd(identity, disposable);
     }
 
     @Override
@@ -38,19 +38,19 @@ public class RedisChannelManager implements ChannelManager {
     }
 
     @Override
-    public DisposableConnection getAndRemove(String identity) {
-        DisposableConnection connection = redisOpsTemplate.get(identity, DisposableConnection.class);
+    public Disposable getAndRemove(String identity) {
+        Disposable disposable = redisOpsTemplate.get(identity, Disposable.class);
         redisOpsTemplate.del(identity);
-        return connection;
+        return disposable;
     }
 
     @Override
     public Boolean containsKey(String identity) {
-        return ObjectUtil.isNull(redisOpsTemplate.get(identity, DisposableConnection.class));
+        return ObjectUtil.isNull(redisOpsTemplate.get(identity, Disposable.class));
     }
 
     @Override
-    public Collection<DisposableConnection> getConnections() {
+    public Collection<Disposable> getConnections() {
         return Collections.emptyList();
     }
 }

@@ -10,9 +10,9 @@ public interface ServerSession extends Disposable {
     /**
      * 获取连接数
      *
-     * @return {@link DisposableConnection}
+     * @return {@link Disposable}
      */
-    Mono<List<DisposableConnection>> getConnections();
+    Mono<List<Disposable>> getConnections();
 
     /**
      * 关闭连接
