@@ -40,7 +40,7 @@ public class ServerSubscribeHandler implements StrategyCapable {
     private CacheManager cacheManager;
 
     @Override
-    @MqttMetric(name = MetricMatterName.TOTAL_RECEIVE_COUNT)
+    @MqttMetric(MetricMatterName.TOTAL_RECEIVE_COUNT)
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server Subscribe message: {}, connection: {}", message, connection);
         MqttFixedHeader header = message.fixedHeader();

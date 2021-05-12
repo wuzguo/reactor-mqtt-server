@@ -6,13 +6,26 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.springframework.core.annotation.AliasFor;
+
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/5/12 9:45
+ */
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface MqttMetric {
 
-    String name() default "";
+    @AliasFor("matter")
+    String value() default "";
+
+    @AliasFor("value")
+    String matter() default "";
 
     /**
      * 操作类型

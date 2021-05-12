@@ -31,15 +31,14 @@ public class MqttMetricAspect {
         return doMetric(joinPoint, metric);
     }
 
-
     private Object doMetric(ProceedingJoinPoint joinPoint, MqttMetric metric) {
         log.info("mqtt metric {}", metric);
         this.proceed(joinPoint);
         // 统计数据
         if (metric.type().equals(MetricType.INCREASE)) {
-            return cacheManager.metric().increase(metric.name());
+            return cacheManager.metric().increase(metric.matter());
         }
-        return cacheManager.metric().decrease(metric.name());
+        return cacheManager.metric().decrease(metric.matter());
     }
 
     /**

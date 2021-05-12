@@ -49,7 +49,7 @@ public class ServerConnectHandler implements StrategyCapable {
     private IAuthService authService;
 
     @Override
-    @MqttMetric(name = MetricMatterName.TOTAL_CONNECTION_COUNT)
+    @MqttMetric(MetricMatterName.TOTAL_CONNECTION_COUNT)
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server connect message: {}, connection: {}", message, connection);
         MqttConnectMessage connectMessage = (MqttConnectMessage) message;

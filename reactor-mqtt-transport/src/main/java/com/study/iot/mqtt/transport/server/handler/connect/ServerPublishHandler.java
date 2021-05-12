@@ -39,7 +39,7 @@ public class ServerPublishHandler implements StrategyCapable {
     private CacheManager cacheManager;
 
     @Override
-    @MqttMetric(name = MetricMatterName.TOTAL_PUBLISH_COUNT)
+    @MqttMetric(MetricMatterName.TOTAL_PUBLISH_COUNT)
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server Publish message: {}, connection: {}", message, connection);
         MqttFixedHeader header = message.fixedHeader();
