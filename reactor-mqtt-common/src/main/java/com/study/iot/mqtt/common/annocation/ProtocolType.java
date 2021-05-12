@@ -24,12 +24,12 @@ public enum ProtocolType {
     /**
      * 类型
      */
-    private Integer code;
+    private Integer value;
 
     /**
      * 描述
      */
-    private String value;
+    private String desc;
 
     /**
      * 类型转换
@@ -37,9 +37,9 @@ public enum ProtocolType {
      * @param code 编码
      * @return {@link ProtocolType}
      */
-    public static ProtocolType valueOf(Integer code) {
+    public static ProtocolType valueOf(Integer value) {
         for (ProtocolType typeEnum : ProtocolType.values()) {
-            if (Objects.equals(code, typeEnum.code)) {
+            if (Objects.equals(value, typeEnum.value)) {
                 return typeEnum;
             }
         }

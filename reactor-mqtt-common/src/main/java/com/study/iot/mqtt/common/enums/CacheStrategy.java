@@ -20,11 +20,11 @@ public enum CacheStrategy {
     IGNITE(1),
     REDIS(2);
 
-    private Integer code;
+    private Integer value;
 
-    public static CacheStrategy valueOf(Integer code) {
+    public static CacheStrategy valueOf(Integer value) {
         for (CacheStrategy strategyEnum : CacheStrategy.values()) {
-            if (Objects.equals(code, strategyEnum.code)) {
+            if (Objects.equals(value, strategyEnum.value)) {
                 return strategyEnum;
             }
         }
