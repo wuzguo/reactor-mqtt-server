@@ -4,6 +4,7 @@ import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.LongAdder;
 import lombok.Setter;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -111,6 +112,15 @@ public class IgniteAutoConfig {
             .setDataRegionName("not-persistence-data-region")
             .setCacheMode(CacheMode.PARTITIONED).setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL)
             .setName("messageIdCache");
+        return ignite().getOrCreateCache(cacheConfiguration);
+    }
+
+    @Bean
+    public IgniteCache<String, LongAdder> metricCache() throws Exception {
+        CacheConfiguration<String, LongAdder> cacheConfiguration = new CacheConfiguration<String, LongAdder>()
+            .setDataRegionName("not-persistence-data-region")
+            .setCacheMode(CacheMode.PARTITIONED).setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL)
+            .setName("metricCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 

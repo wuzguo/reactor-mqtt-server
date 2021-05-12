@@ -15,4 +15,6 @@ public interface CacheGroup {
     String MESSAGE = "cache.message";
 
     String TOPIC = "cache.topic";
+
+    String METRIC = "cache.metric";
 }
