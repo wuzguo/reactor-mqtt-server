@@ -14,10 +14,10 @@ import reactor.core.publisher.Mono;
  */
 
 @Slf4j
-public class DefaultAuthService implements IAuthService {
+public class DefaultConnectAuthentication implements ConnectAuthentication {
 
     @Override
-    public Mono<Boolean> login(String key, String secret) {
+    public Mono<Boolean> authenticate(String key, String secret) {
         log.info("mqtt server auth, key: {}, secret: {}", key, secret);
         String md5Key = DigestUtil.md5Hex(key);
         return Mono.just(StringUtils.equals(md5Key, secret));

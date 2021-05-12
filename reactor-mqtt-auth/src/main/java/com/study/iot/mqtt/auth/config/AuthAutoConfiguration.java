@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.auth.config;
 
-import com.study.iot.mqtt.auth.service.DefaultAuthService;
-import com.study.iot.mqtt.auth.service.IAuthService;
+import com.study.iot.mqtt.auth.service.DefaultConnectAuthentication;
+import com.study.iot.mqtt.auth.service.ConnectAuthentication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +21,7 @@ public class AuthAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public IAuthService authService() {
-        return new DefaultAuthService();
+    public ConnectAuthentication authService() {
+        return new DefaultConnectAuthentication();
     }
 }

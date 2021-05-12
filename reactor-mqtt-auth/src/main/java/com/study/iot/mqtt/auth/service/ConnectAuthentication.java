@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @date 2021/4/30 8:17
  */
 
-public interface IAuthService {
+public interface ConnectAuthentication {
 
     /**
      * 认证验证
@@ -19,5 +19,5 @@ public interface IAuthService {
      * @param secret 密码
      * @return {@link Mono<Boolean>}
      */
-    Mono<Boolean> login(String key, String secret);
+    Mono<Boolean> authenticate(String key, String secret);
 }

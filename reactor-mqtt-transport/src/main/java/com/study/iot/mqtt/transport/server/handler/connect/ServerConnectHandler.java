@@ -1,19 +1,19 @@
 package com.study.iot.mqtt.transport.server.handler.connect;
 
 
-import com.study.iot.mqtt.auth.service.IAuthService;
+import com.study.iot.mqtt.auth.service.ConnectAuthentication;
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.common.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.MessageBuilder;
+import com.study.iot.mqtt.common.message.WillMessage;
+import com.study.iot.mqtt.common.utils.StringUtil;
+import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import com.study.iot.mqtt.common.message.WillMessage;
-import com.study.iot.mqtt.common.utils.StringUtil;
-import com.study.iot.mqtt.protocol.AttributeKeys;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnectMessage;
 import io.netty.handler.codec.mqtt.MqttConnectPayload;
@@ -46,7 +46,7 @@ public class ServerConnectHandler implements StrategyCapable {
     private CacheManager cacheManager;
 
     @Autowired
-    private IAuthService authService;
+    private ConnectAuthentication authentication;
 
     @Override
     @MqttMetric(MetricMatterName.TOTAL_CONNECTION_COUNT)
@@ -99,7 +99,7 @@ public class ServerConnectHandler implements StrategyCapable {
         }
 
         // 验证账号密码
-        authService.login(key, secret).doOnError((throwable) -> {
+        authentication.authenticate(key, secret).doOnError((throwable) -> {
             log.error("auth server check error: {}", throwable.getMessage());
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED, false);
@@ -115,6 +115,7 @@ public class ServerConnectHandler implements StrategyCapable {
             }
             // 连接成功
             acceptConnect(connection, identity, variableHeader.keepAliveTimeSeconds());
+            // 如果有遗嘱消息，这里需要处理
             if (variableHeader.isWillFlag()) {
                 setWillMessage(connection, mqttPayload.willTopic(), variableHeader.isWillRetain(),
                     mqttPayload.willMessageInBytes(), variableHeader.willQos());
