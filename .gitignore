@@ -32,3 +32,5 @@ target/
 .flattened-pom.xml
 
 dump.rdb
+
+ignite
