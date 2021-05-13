@@ -11,6 +11,7 @@ import org.apache.ignite.IgniteMessaging;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
+import org.apache.ignite.cluster.ClusterState;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.DataRegionConfiguration;
 import org.apache.ignite.configuration.DataStorageConfiguration;
@@ -102,14 +103,14 @@ public class IgniteAutoConfig {
         }
         configuration.setDiscoverySpi(tcpDiscoverySpi);
         Ignite ignite = Ignition.start(configuration);
-        ignite.cluster().active(true);
+        ignite.cluster().state(ClusterState.ACTIVE);
         return ignite;
     }
 
     @Bean
     public IgniteCache<Integer, Integer> messageIdCache() throws Exception {
         CacheConfiguration<Integer, Integer> cacheConfiguration = new CacheConfiguration<Integer, Integer>()
-            .setDataRegionName("not-persistence-data-region")
+            .setDataRegionName("not-persistence-data-region").setBackups(2)
             .setCacheMode(CacheMode.PARTITIONED).setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL)
             .setName("messageIdCache");
         return ignite().getOrCreateCache(cacheConfiguration);
@@ -118,7 +119,7 @@ public class IgniteAutoConfig {
     @Bean
     public IgniteCache<String, LongAdder> metricCache() throws Exception {
         CacheConfiguration<String, LongAdder> cacheConfiguration = new CacheConfiguration<String, LongAdder>()
-            .setDataRegionName("not-persistence-data-region")
+            .setDataRegionName("not-persistence-data-region").setBackups(2)
             .setCacheMode(CacheMode.PARTITIONED).setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL)
             .setName("metricCache");
         return ignite().getOrCreateCache(cacheConfiguration);
@@ -127,7 +128,7 @@ public class IgniteAutoConfig {
     @Bean
     public IgniteCache<String, Disposable> disposableCache() throws Exception {
         CacheConfiguration<String, Disposable> cacheConfiguration = new CacheConfiguration<String, Disposable>()
-            .setDataRegionName("persistence-data-region")
+            .setDataRegionName("persistence-data-region").setBackups(2)
             .setCacheMode(CacheMode.PARTITIONED).setName("disposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
@@ -135,7 +136,7 @@ public class IgniteAutoConfig {
     @Bean
     public IgniteCache<String, RetainMessage> messageCache() throws Exception {
         CacheConfiguration<String, RetainMessage> cacheConfiguration = new CacheConfiguration<String, RetainMessage>()
-            .setDataRegionName("persistence-data-region")
+            .setDataRegionName("persistence-data-region").setBackups(2)
             .setCacheMode(CacheMode.PARTITIONED).setName("messageCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
@@ -143,7 +144,7 @@ public class IgniteAutoConfig {
     @Bean
     public IgniteCache<String, List<Disposable>> topicDisposableCache() throws Exception {
         CacheConfiguration<String, List<Disposable>> cacheConfiguration = new CacheConfiguration<String, List<Disposable>>()
-            .setDataRegionName("persistence-data-region")
+            .setDataRegionName("persistence-data-region").setBackups(2)
             .setCacheMode(CacheMode.PARTITIONED).setName("topicDisposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
