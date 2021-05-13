@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class MqttServer implements ApplicationRunner {
+public class MqttServerRunner implements ApplicationRunner {
 
     @Autowired
     private CacheManager cacheManager;
