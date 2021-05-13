@@ -5,6 +5,10 @@ server:
 spring:
   cache:
     mode: ignite
+  akka:
+    system-name: reactorActorSystem
+    config: application.conf
+    actor-bean-class:
   mqtt:
     broker:
       # broker唯一标识
