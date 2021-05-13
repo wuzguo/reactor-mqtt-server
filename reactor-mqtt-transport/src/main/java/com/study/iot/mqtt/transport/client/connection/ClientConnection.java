@@ -3,7 +3,7 @@ package com.study.iot.mqtt.transport.client.connection;
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MessageBuilder;
-import com.study.iot.mqtt.protocol.config.ClientConfiguration;
+import com.study.iot.mqtt.protocol.config.ClientProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
@@ -38,16 +38,16 @@ public class ClientConnection implements ClientSession {
 
     private final List<String> topics = Lists.newArrayList();
 
-    public ClientConnection(DisposableConnection connection, ClientConfiguration configuration,
+    public ClientConnection(DisposableConnection connection, ClientProperties properties,
         ClientMessageRouter messageRouter) {
         this.connection = connection;
         this.clientMessageRouter = messageRouter;
-        this.init(configuration);
+        this.init(properties);
     }
 
     @Override
-    public void init(ClientConfiguration configuration) {
-        ClientConfiguration.Options options = configuration.getOptions();
+    public void init(ClientProperties properties) {
+        ClientProperties.Options options = properties.getOptions();
         Disposable disposable = Mono.fromRunnable(() -> connection.sendMessage(MessageBuilder.buildConnect(
             options.getClientId(),
             options.getWillTopic(),
@@ -58,7 +58,7 @@ public class ClientConnection implements ClientSession {
             options.getHasPassword(),
             options.getHasWillFlag(),
             options.getWillQos().value(),
-            configuration.getHeart()
+            properties.getHeart()
         )).subscribe()).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe();
 
         connection.sendMessage(MessageBuilder.buildConnect(
@@ -71,22 +71,22 @@ public class ClientConnection implements ClientSession {
             options.getHasPassword(),
             options.getHasWillFlag(),
             options.getWillQos().value(),
-            configuration.getHeart()
+            properties.getHeart()
         )).doOnError(throwable -> log.error(throwable.getMessage())).subscribe();
         connection.getConnection().channel().attr(AttributeKeys.closeConnection).set(disposable);
         // 发送心跳
-        connection.getConnection().onWriteIdle(configuration.getHeart(), () -> {
+        connection.getConnection().onWriteIdle(properties.getHeart(), () -> {
             MqttMessage message = new MqttMessage(
                 new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0));
             connection.sendMessage(message).subscribe();
         });
         // 发送心跳
-        connection.getConnection().onReadIdle(configuration.getHeart() * 2L, () -> {
+        connection.getConnection().onReadIdle(properties.getHeart() * 2L, () -> {
             MqttMessage message = new MqttMessage(
                 new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0));
             connection.sendMessage(message).subscribe();
         });
-        connection.getConnection().onDispose(() -> configuration.getOnClose().run());
+        connection.getConnection().onDispose(() -> properties.getOnClose().run());
 
         // 各种策略模式处理
         connection.receive(MqttMessage.class)

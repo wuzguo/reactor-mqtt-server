@@ -1,11 +1,11 @@
 package com.study.iot.mqtt.protocol.ws;
 
 
-import com.study.iot.mqtt.protocol.config.ConnectConfiguration;
-import com.study.iot.mqtt.protocol.config.ServerConfiguration;
+import com.study.iot.mqtt.protocol.config.ConnectProperties;
+import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.ProtocolTransport;
-import com.study.iot.mqtt.protocol.config.ClientConfiguration;
+import com.study.iot.mqtt.protocol.config.ClientProperties;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;
@@ -29,29 +29,29 @@ public class WsTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<? extends DisposableServer> start(ServerConfiguration configuration,
+    public Mono<? extends DisposableServer> start(ServerProperties properties,
         UnicastProcessor<DisposableConnection> processor) {
-        return buildServer(configuration).doOnConnection(connection -> {
+        return buildServer(properties).doOnConnection(connection -> {
             log.info("websocket protocol connection: {}, ", connection.channel());
             protocol.getHandlers().forEach(connection::addHandlerLast);
             processor.onNext(new DisposableConnection(connection));
         }).bind().doOnSuccess(disposableServer -> {
-            log.info("websocket protocol host: {} port: {}", configuration.getHost(), configuration.getPort());
-        }).doOnError(configuration.getThrowable());
+            log.info("websocket protocol host: {} port: {}", properties.getHost(), properties.getPort());
+        }).doOnError(properties.getThrowable());
     }
 
-    private TcpServer buildServer(ServerConfiguration configuration) {
+    private TcpServer buildServer(ServerProperties properties) {
         TcpServer server = TcpServer.create()
-            .port(configuration.getPort())
-            .host(configuration.getHost())
-            .wiretap(configuration.getIsLog())
+            .port(properties.getPort())
+            .host(properties.getHost())
+            .wiretap(properties.getIsLog())
             .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-            .option(ChannelOption.SO_KEEPALIVE, configuration.getKeepAlive())
-            .option(ChannelOption.TCP_NODELAY, configuration.getNoDelay())
-            .option(ChannelOption.SO_BACKLOG, configuration.getBacklog())
-            .option(ChannelOption.SO_RCVBUF, configuration.getRevBufSize())
-            .option(ChannelOption.SO_SNDBUF, configuration.getSendBufSize());
-        return configuration.getIsSsl() ? server
+            .option(ChannelOption.SO_KEEPALIVE, properties.getKeepAlive())
+            .option(ChannelOption.TCP_NODELAY, properties.getNoDelay())
+            .option(ChannelOption.SO_BACKLOG, properties.getBacklog())
+            .option(ChannelOption.SO_RCVBUF, properties.getRevBufSize())
+            .option(ChannelOption.SO_SNDBUF, properties.getSendBufSize());
+        return properties.getIsSsl() ? server
             .secure(sslContextSpec -> sslContextSpec.sslContext(Objects.requireNonNull(buildContext()))) : server;
     }
 
@@ -67,8 +67,8 @@ public class WsTransport extends ProtocolTransport {
     }
 
     @Override
-    public Mono<DisposableConnection> connect(ClientConfiguration configuration) {
-        return Mono.just(buildClient(configuration)
+    public Mono<DisposableConnection> connect(ClientProperties properties) {
+        return Mono.just(buildClient(properties)
             .connectNow())
             .map(connection -> {
                 protocol.getHandlers().forEach(connection::addHandler);
@@ -76,15 +76,15 @@ public class WsTransport extends ProtocolTransport {
             });
     }
 
-    private TcpClient buildClient(ConnectConfiguration configuration) {
+    private TcpClient buildClient(ConnectProperties properties) {
         TcpClient client = TcpClient.create()
-            .port(configuration.getPort())
-            .host(configuration.getHost())
-            .wiretap(configuration.getIsLog());
+            .port(properties.getPort())
+            .host(properties.getHost())
+            .wiretap(properties.getIsLog());
         try {
             SslContext sslClient = SslContextBuilder.forClient()
                 .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-            return configuration.getIsSsl() ? client.secure(sslContextSpec -> sslContextSpec.sslContext(sslClient))
+            return properties.getIsSsl() ? client.secure(sslContextSpec -> sslContextSpec.sslContext(sslClient))
                 : client;
         } catch (Exception e) {
             log.error("ssl error: {}", e.getMessage());

@@ -3,7 +3,7 @@ package com.study.iot.mqtt.transport.server;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.protocol.ProtocolFactory;
-import com.study.iot.mqtt.protocol.config.ServerConfiguration;
+import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ServerSession;
@@ -26,17 +26,17 @@ public class TransportServerFactory {
         unicastProcessor = UnicastProcessor.create();
     }
 
-    public Mono<ServerSession> start(ServerConfiguration config, CacheManager cacheManager,
+    public Mono<ServerSession> start(ServerProperties properties, CacheManager cacheManager,
         ServerMessageRouter messageRouter) {
         // 获取DisposableServer
-        List<Disposable> disposables = config.getProtocols().stream()
+        List<Disposable> disposables = properties.getProtocols().stream()
             .map(protocolType -> protocolFactory.getProtocol(protocolType)
                 .get()
                 .getTransport()
-                .start(config, unicastProcessor).subscribe()).collect(Collectors.toList());
+                .start(properties, unicastProcessor).subscribe()).collect(Collectors.toList());
         // 返回
         return Mono.just(this.wrapper(disposables, cacheManager, messageRouter))
-            .doOnError(config.getThrowable());
+            .doOnError(properties.getThrowable());
     }
 
     private ServerSession wrapper(List<Disposable> disposables, CacheManager cacheManager,

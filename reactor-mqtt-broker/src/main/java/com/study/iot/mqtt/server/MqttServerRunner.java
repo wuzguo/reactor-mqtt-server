@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.protocol.config.ServerConfiguration;
+import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.transport.server.TransportServer;
@@ -36,7 +36,7 @@ public class MqttServerRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 配置文件
-        ServerConfiguration configuration = ServerConfiguration.builder()
+        ServerProperties properties = ServerProperties.builder()
             .host("localhost").port(1884)
             .protocols(Sets.newHashSet(ProtocolType.MQTT))
             .strategy(CacheStrategy.MEMORY)
@@ -51,7 +51,7 @@ public class MqttServerRunner implements ApplicationRunner {
             .throwable(e -> log.error("starting mqtt server exception：{}", e.getMessage()))
             .build();
         // 启动服务
-        ServerSession session = new TransportServer().create(configuration).start(cacheManager, messageRouter).block();
+        ServerSession session = new TransportServer().create(properties).start(cacheManager, messageRouter).block();
         session.getConnections().subscribe(disposables -> disposables.stream()
             .map(disposable -> (DisposableConnection) disposable).forEach(DisposableConnection::destory));
     }

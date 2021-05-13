@@ -2,8 +2,8 @@ package com.study.iot.mqtt.comsumer;
 
 import com.study.iot.mqtt.client.MqttClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.protocol.config.ClientConfiguration;
-import com.study.iot.mqtt.protocol.config.ClientConfiguration.Options;
+import com.study.iot.mqtt.protocol.config.ClientProperties;
+import com.study.iot.mqtt.protocol.config.ClientProperties.Options;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttQoS;
@@ -45,7 +45,7 @@ public class TestComsumer {
             .hasWillFlag(true)
             .build();
 
-        ClientConfiguration configuration = ClientConfiguration.builder()
+        ClientProperties configuration = ClientProperties.builder()
             .host("localhost").port(1884)
             .protocol(ProtocolType.MQTT)
             .heart(10000)

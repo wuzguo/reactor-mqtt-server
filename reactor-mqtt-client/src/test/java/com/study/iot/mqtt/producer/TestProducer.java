@@ -2,8 +2,8 @@ package com.study.iot.mqtt.producer;
 
 import com.study.iot.mqtt.client.MqttClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.protocol.config.ClientConfiguration;
-import com.study.iot.mqtt.protocol.config.ClientConfiguration.Options;
+import com.study.iot.mqtt.protocol.config.ClientProperties;
+import com.study.iot.mqtt.protocol.config.ClientProperties.Options;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttQoS;
@@ -46,7 +46,7 @@ public class TestProducer {
             .willQos(MqttQoS.AT_LEAST_ONCE)
             .build();
 
-        ClientConfiguration configuration = ClientConfiguration.builder()
+        ClientProperties properties = ClientProperties.builder()
             .host("localhost").port(1884)
             .protocol(ProtocolType.MQTT)
             .heart(10000)
@@ -62,7 +62,7 @@ public class TestProducer {
             .throwable(e -> log.error("starting mqtt client exception：{}", e.getMessage()))
             .build();
         CountDownLatch latch = new CountDownLatch(1);
-        ClientSession connect = new MqttClient(configuration).connect(messageRouter).block();
+        ClientSession connect = new MqttClient(properties).connect(messageRouter).block();
         Thread.sleep(2000);
         connect.pub("/session/123456", "Hello, EveryOne".getBytes(StandardCharsets.UTF_8)).subscribe();
         latch.await();

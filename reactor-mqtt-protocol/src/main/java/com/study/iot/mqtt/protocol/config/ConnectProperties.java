@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
-public class ConnectConfiguration {
+public class ConnectProperties {
 
     /**
      * IP地址

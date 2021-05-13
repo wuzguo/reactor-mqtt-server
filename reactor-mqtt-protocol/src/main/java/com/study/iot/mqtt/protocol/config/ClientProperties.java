@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class ClientConfiguration extends ConnectConfiguration {
+public class ClientProperties extends ConnectProperties {
 
     /**
      * 发送缓冲区大小 默认 32k

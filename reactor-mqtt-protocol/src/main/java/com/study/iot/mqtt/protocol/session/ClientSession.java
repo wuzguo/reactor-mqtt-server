@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.protocol.session;
 
-import com.study.iot.mqtt.protocol.config.ClientConfiguration;
+import com.study.iot.mqtt.protocol.config.ClientProperties;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import java.util.List;
 import reactor.core.Disposable;
@@ -23,5 +23,5 @@ public interface ClientSession extends Disposable {
 
     Mono<Void> unsub();
 
-    void init(ClientConfiguration configuration);
+    void init(ClientProperties properties);
 }

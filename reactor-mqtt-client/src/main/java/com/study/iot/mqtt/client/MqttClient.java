@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.client;
 
-import com.study.iot.mqtt.protocol.config.ClientConfiguration;
+import com.study.iot.mqtt.protocol.config.ClientProperties;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.TransportClient;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
@@ -20,8 +20,8 @@ public class MqttClient {
 
     private final TransportClient transportClient;
 
-    public MqttClient(ClientConfiguration configuration) {
-        this.transportClient = new TransportClient().create(configuration);
+    public MqttClient(ClientProperties properties) {
+        this.transportClient = new TransportClient().create(properties);
     }
 
     public Mono<ClientSession> connect(ClientMessageRouter messageRouter) {
