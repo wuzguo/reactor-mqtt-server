@@ -63,10 +63,7 @@ public class SpringExtension extends AbstractExtensionId<SpringExtension.SpringE
          */
         public Props create(String actorBeanName, Object... args) {
             return (args != null && args.length > 0) ? Props.create(SpringActorProducer.class, applicationContext,
-                actorBeanName,
-                args) : Props.create(SpringActorProducer.class,
-                applicationContext,
-                actorBeanName);
+                actorBeanName, args) : Props.create(SpringActorProducer.class, applicationContext, actorBeanName);
         }
 
         /**
@@ -79,10 +76,7 @@ public class SpringExtension extends AbstractExtensionId<SpringExtension.SpringE
          */
         public Props create(Class<?> requiredType, Object... args) {
             return (args != null && args.length > 0) ? Props.create(SpringActorProducer.class, applicationContext,
-                requiredType,
-                args) : Props.create(SpringActorProducer.class,
-                applicationContext,
-                requiredType);
+                requiredType, args) : Props.create(SpringActorProducer.class, applicationContext, requiredType);
         }
 
         /**

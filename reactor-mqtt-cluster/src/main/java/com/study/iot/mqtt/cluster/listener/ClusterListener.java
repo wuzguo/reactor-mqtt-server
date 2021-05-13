@@ -1,15 +1,15 @@
 package com.study.iot.mqtt.cluster.listener;
 
 import akka.actor.AbstractActor;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
 import akka.cluster.Cluster;
-import akka.cluster.ClusterEvent;
 import akka.cluster.ClusterEvent.MemberEvent;
 import akka.cluster.ClusterEvent.MemberRemoved;
 import akka.cluster.ClusterEvent.MemberUp;
 import akka.cluster.ClusterEvent.UnreachableMember;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
 import com.study.iot.mqtt.cluster.annotation.ActorBean;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <B>说明：描述</B>
@@ -20,19 +20,29 @@ import com.study.iot.mqtt.cluster.annotation.ActorBean;
  */
 
 @ActorBean
+@Slf4j
 public class ClusterListener extends AbstractActor {
 
-    private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
+    private final Cluster cluster;
+
+    private ClusterListener(ActorSystem actorSystem) {
+        this.cluster = Cluster.get(actorSystem);
+    }
+
+    static Props props(ActorSystem actorSystem) {
+        // You need to specify the actual type of the returned actor
+        // since Java 8 lambdas have some runtime type information erased
+        return Props.create(ClusterListener.class, () -> new ClusterListener(actorSystem));
+    }
 
     @Override
     public void preStart() throws Exception, Exception {
-        Cluster.get(getContext().system()).subscribe(getSelf(), ClusterEvent.initialStateAsEvents(),
-            MemberEvent.class, UnreachableMember.class);
+        cluster.subscribe(self(), MemberEvent.class, UnreachableMember.class);
     }
 
     @Override
     public void postStop() throws Exception, Exception {
-        Cluster.get(getContext().system()).unsubscribe(getSelf());
+        cluster.unsubscribe(getSelf());
     }
 
     @Override
@@ -49,7 +59,6 @@ public class ClusterListener extends AbstractActor {
             })
             .match(MemberEvent.class, message -> {
                 // ignore
-            })
-            .build();
+            }).build();
     }
 }

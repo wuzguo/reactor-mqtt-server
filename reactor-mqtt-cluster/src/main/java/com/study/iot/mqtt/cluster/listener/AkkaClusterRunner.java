@@ -25,7 +25,7 @@ public class AkkaClusterRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         // Create an actor that handles cluster domain events
         actorSystem.actorOf(SpringProps.create(actorSystem, ClusterListener.class)
-            .withDispatcher("processor-dispatcher")
+            .withDispatcher("cluster-dispatcher")
             .withRouter(new RoundRobinPool(10)), "clusterListener");
     }
 }

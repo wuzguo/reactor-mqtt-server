@@ -25,7 +25,7 @@ public class AkkaAutoConfiguration {
     @Autowired
     private AkkaProperties akkaProperties;
 
-    @Bean
+    @Bean(destroyMethod = "terminate")
     @ConditionalOnMissingBean
     public ActorSystem actorSystem(ApplicationContext applicationContext) {
         ActorSystem actorSystem = ActorSystem.create(akkaProperties.getSystemName(), akkaProperties.getConfig());
