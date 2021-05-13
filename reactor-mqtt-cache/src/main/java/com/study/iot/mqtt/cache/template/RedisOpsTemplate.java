@@ -1,30 +1,18 @@
 package com.study.iot.mqtt.cache.template;
 
-import com.study.iot.mqtt.common.utils.CollectionUtil;
-import com.study.iot.mqtt.common.utils.ObjectUtil;
-import com.study.iot.mqtt.common.utils.StringPool;
+import com.google.common.collect.Maps;
 import com.study.iot.mqtt.common.exception.FrameworkException;
-import com.study.iot.mqtt.common.utils.JsonUtil;
-import com.study.iot.mqtt.common.utils.StringUtil;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.study.iot.mqtt.common.utils.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.*;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.stereotype.Component;
 
 /**
  * <B>说明：描述</B>
@@ -254,7 +242,7 @@ public class RedisOpsTemplate {
      * @param loader       加载器
      */
     public <T> List<T> getList(String cacheName, String cacheKey, long seconds, Class<T> elementClazz,
-        Supplier<List<T>> loader) {
+                               Supplier<List<T>> loader) {
         String fullKey = getFullKey(cacheName, cacheKey);
         return getList(fullKey, seconds, elementClazz, loader);
     }
@@ -295,6 +283,44 @@ public class RedisOpsTemplate {
     public long incrBy(String cacheName, String cacheKey, long delta) {
         String fullKey = getFullKey(cacheName, cacheKey);
         return this.incrBy(fullKey, delta);
+    }
+
+    /**
+     * 将 key 中储存的数字值减一。(原子操作，适合分布式计数器业务) 如果value不存在，则设置为0,在自增 如果value不是数字类型，会报错
+     */
+    public long decr(String key) {
+        assertTrue(verifyKeys(key), "key is not exist");
+        return opsForValue().decrement(key);
+    }
+
+    /**
+     * 将 key 中储存的数字值减一。(原子操作，适合分布式计数器业务) 如果value不存在，则设置为0,在自增 如果value不是数字类型，会报错
+     *
+     * @param cacheName 缓存空间
+     * @param cacheKey  缓存key
+     */
+    public long decr(String cacheName, String cacheKey) {
+        String fullKey = getFullKey(cacheName, cacheKey);
+        return this.decr(fullKey);
+    }
+
+    /**
+     * 将 key 中储存的数字值减指定的数量。(原子操作，适合分布式计数器业务) 如果value不存在，则设置为0,在自增 如果value不是数字类型，会报错
+     */
+    public long decrBy(String key, long delta) {
+        assertTrue(verifyKeys(key), "key is not exist");
+        return opsForValue().decrement(key, delta);
+    }
+
+    /**
+     * 将key中存储的数字减去指定的数量
+     *
+     * @param cacheName 缓存空间
+     * @param cacheKey  缓存key
+     */
+    public long decrBy(String cacheName, String cacheKey, long delta) {
+        String fullKey = getFullKey(cacheName, cacheKey);
+        return this.decrBy(fullKey, delta);
     }
 
     /**
@@ -394,8 +420,8 @@ public class RedisOpsTemplate {
             return 0L;
         }
         Set<String> keySet = Stream.of(keys)
-            .map(key -> cacheName.concat(StringPool.COLON).concat(key))
-            .collect(Collectors.toSet());
+                .map(key -> cacheName.concat(StringPool.COLON).concat(key))
+                .collect(Collectors.toSet());
         return del0(keySet);
     }
 
@@ -417,8 +443,8 @@ public class RedisOpsTemplate {
             return 0L;
         }
         Set<String> keySet = keys.stream()
-            .map(key -> cacheName.concat(StringPool.COLON).concat(key))
-            .collect(Collectors.toSet());
+                .map(key -> cacheName.concat(StringPool.COLON).concat(key))
+                .collect(Collectors.toSet());
         return del0(keySet);
     }
 
@@ -515,7 +541,7 @@ public class RedisOpsTemplate {
         assertTrue(verifyKeys(key) && verifyKeys(fields), "keys & fields is not exist");
 
         List<String> values = opsForHash().multiGet(key, Arrays.asList(fields));
-        Map<String, T> result = new HashMap<>();
+        Map<String, T> result = Maps.newHashMap();
         for (int i = 0; i < fields.length; i++) {
             if (StringUtil.isNotBlank(values.get(i))) {
                 result.put(fields[i], redisStrToValue(values.get(i), clazz));
@@ -532,7 +558,7 @@ public class RedisOpsTemplate {
         List<String> values = opsForHash().multiGet(key, Arrays.asList(fields));
         // 如果为空利用加载器加载
         if (StringUtil.isAnyNotBlank(values)) {
-            Map<String, T> result = new HashMap<>();
+            Map<String, T> result = Maps.newHashMap();
             for (int i = 0; i < fields.length; i++) {
                 String value = values.get(i);
                 if (StringUtil.isNotBlank(value)) {
@@ -591,7 +617,7 @@ public class RedisOpsTemplate {
     /**
      * 返回集合中的所有成员,字符串
      */
-    public Set<String> smembersStr(String key) {
+    public Set<String> smembers(String key) {
         return smembers(key, String.class);
     }
 

@@ -4,14 +4,16 @@ import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.config.IgniteProperties;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.MetricManager;
-import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
-import java.util.Map;
-import java.util.concurrent.atomic.LongAdder;
-import javax.annotation.Resource;
+import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.cache.query.ScanQuery;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import reactor.core.publisher.Mono;
+
+import javax.annotation.Resource;
+import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * <B>说明：描述</B>
@@ -61,6 +63,11 @@ public class IgniteMetricManager implements MetricManager {
 
     @Override
     public Mono<Map<String, LongAdder>> loadAll() {
-        return Mono.just(Maps.newHashMap());
+        Map<String, LongAdder> mapAdder = Maps.newHashMap();
+        metricCache.query(new ScanQuery<String, LongAdder>())
+                .getAll()
+                .stream()
+                .map(adderEntry -> mapAdder.put(adderEntry.getKey(), adderEntry.getValue()));
+        return Mono.just(mapAdder);
     }
 }

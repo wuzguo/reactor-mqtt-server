@@ -3,14 +3,17 @@ package com.study.iot.mqtt.cache.service.ignite;
 import com.study.iot.mqtt.cache.config.IgniteProperties;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.ChannelManager;
-import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
-import java.util.Collection;
-import java.util.Collections;
-import javax.annotation.Resource;
+import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.cache.query.ScanQuery;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import reactor.core.Disposable;
+
+import javax.annotation.Resource;
+import javax.cache.Cache;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * <B>说明：描述</B>
@@ -49,6 +52,10 @@ public class IgniteChannelManager implements ChannelManager {
 
     @Override
     public Collection<Disposable> getConnections() {
-        return Collections.emptyList();
+        return disposableCache.query(new ScanQuery<String, Disposable>())
+                .getAll()
+                .stream()
+                .map(Cache.Entry::getValue)
+                .collect(Collectors.toList());
     }
 }
