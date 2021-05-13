@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * @date 2021/5/13 16:20
  */
 @Component
-public class ClusterApplicationRunner implements ApplicationRunner {
+public class AkkaClusterRunner implements ApplicationRunner {
 
     @Autowired
     private ActorSystem actorSystem;
