@@ -2,16 +2,18 @@ package com.study.iot.mqtt.server;
 
 import com.google.common.collect.Sets;
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
+import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ServerConfiguration;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.transport.server.TransportServer;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 
 /**
  * <B>说明：描述</B>
@@ -22,16 +24,14 @@ import org.springframework.boot.ApplicationRunner;
  */
 
 @Slf4j
+@Component
 public class MqttServer implements ApplicationRunner {
 
-    private final CacheManager cacheManager;
+    @Autowired
+    private CacheManager cacheManager;
 
-    private final ServerMessageRouter messageRouter;
-
-    public MqttServer(CacheManager cacheManager, ServerMessageRouter messageRouter) {
-        this.cacheManager = cacheManager;
-        this.messageRouter = messageRouter;
-    }
+    @Autowired
+    private ServerMessageRouter messageRouter;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

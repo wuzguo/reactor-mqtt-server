@@ -11,11 +11,11 @@ import org.springframework.context.ApplicationContext;
 public class SpringExtension extends AbstractExtensionId<SpringExtension.SpringExt> {
 
     private SpringExtension() {
+
     }
 
     // thread safety is needed
     private static class Holder {
-
         static final SpringExtension INSTANCE = new SpringExtension();
     }
 

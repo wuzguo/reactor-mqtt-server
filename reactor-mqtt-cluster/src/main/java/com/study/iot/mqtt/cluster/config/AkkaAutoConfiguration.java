@@ -1,6 +1,7 @@
 package com.study.iot.mqtt.cluster.config;
 
 import akka.actor.ActorSystem;
+import akka.cluster.Cluster;
 import com.study.iot.mqtt.cluster.spring.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,8 +28,14 @@ public class AkkaAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ActorSystem actorSystem(ApplicationContext applicationContext) {
-        ActorSystem system = ActorSystem.create(akkaProperties.getSystemName(), akkaProperties.getConfig());
-        SpringExtension.instance().get(system).setApplicationContext(applicationContext);
-        return system;
+        ActorSystem actorSystem = ActorSystem.create(akkaProperties.getSystemName(), akkaProperties.getConfig());
+        SpringExtension.instance().get(actorSystem).setApplicationContext(applicationContext);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                Cluster cluster = Cluster.get(actorSystem);
+                cluster.leave(cluster.selfAddress());
+            })
+        );
+        return actorSystem;
     }
 }
