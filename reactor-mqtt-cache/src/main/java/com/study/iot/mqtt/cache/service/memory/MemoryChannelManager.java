@@ -4,13 +4,12 @@ package com.study.iot.mqtt.cache.service.memory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
+import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
+import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.cache.service.ChannelManager;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import reactor.core.Disposable;
 
 
 /**
@@ -24,10 +23,10 @@ import reactor.core.Disposable;
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.MEMORY)
 public class MemoryChannelManager implements ChannelManager {
 
-    private final Map<String, Disposable> mapDisposable = Maps.newConcurrentMap();
+    private final Map<String, SerializerDisposable> mapDisposable = Maps.newConcurrentMap();
 
     @Override
-    public void add(String identity, Disposable disposable) {
+    public void add(String identity, SerializerDisposable disposable) {
         mapDisposable.put(identity, disposable);
     }
 
@@ -37,7 +36,7 @@ public class MemoryChannelManager implements ChannelManager {
     }
 
     @Override
-    public Disposable getAndRemove(String identity) {
+    public SerializerDisposable getAndRemove(String identity) {
         return mapDisposable.remove(identity);
     }
 
@@ -47,7 +46,7 @@ public class MemoryChannelManager implements ChannelManager {
     }
 
     @Override
-    public List<Disposable> getConnections() {
+    public List<SerializerDisposable> getConnections() {
         return Lists.newArrayList(mapDisposable.values());
     }
 }

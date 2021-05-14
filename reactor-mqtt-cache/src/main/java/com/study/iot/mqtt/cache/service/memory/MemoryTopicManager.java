@@ -3,6 +3,7 @@ package com.study.iot.mqtt.cache.service.memory;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
+import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.cache.service.path.CacheTopicManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
@@ -24,17 +25,17 @@ public class MemoryTopicManager implements TopicManager {
     private final CacheTopicManager topicManager = new CacheTopicManager();
 
     @Override
-    public List<Disposable> getConnections(String topic) {
+    public List<SerializerDisposable> getConnections(String topic) {
         return topicManager.getConnections(topic).orElse(Lists.newArrayList());
     }
 
     @Override
-    public void add(String topic, Disposable disposable) {
+    public void add(String topic, SerializerDisposable disposable) {
         topicManager.addConnection(topic, disposable);
     }
 
     @Override
-    public void remove(String topic, Disposable disposable) {
+    public void remove(String topic, SerializerDisposable disposable) {
         topicManager.deleteConnection(topic, disposable);
     }
 }

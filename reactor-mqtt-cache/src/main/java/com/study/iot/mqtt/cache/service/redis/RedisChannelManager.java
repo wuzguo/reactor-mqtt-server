@@ -2,12 +2,12 @@ package com.study.iot.mqtt.cache.service.redis;
 
 
 import com.study.iot.mqtt.cache.constant.CacheGroup;
+import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.cache.service.ChannelManager;
+import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
-import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class RedisChannelManager implements ChannelManager {
     private RedisOpsTemplate redisOpsTemplate;
 
     @Override
-    public void add(String identity, Disposable disposable) {
+    public void add(String identity, SerializerDisposable disposable) {
         redisOpsTemplate.sadd(identity, disposable);
     }
 
@@ -39,8 +39,8 @@ public class RedisChannelManager implements ChannelManager {
     }
 
     @Override
-    public Disposable getAndRemove(String identity) {
-        Disposable disposable = redisOpsTemplate.get(identity, Disposable.class);
+    public SerializerDisposable getAndRemove(String identity) {
+        SerializerDisposable disposable = redisOpsTemplate.get(identity, SerializerDisposable.class);
         redisOpsTemplate.del(identity);
         return disposable;
     }
@@ -51,7 +51,7 @@ public class RedisChannelManager implements ChannelManager {
     }
 
     @Override
-    public List<Disposable> getConnections() {
+    public List<SerializerDisposable> getConnections() {
         return Collections.emptyList();
     }
 }

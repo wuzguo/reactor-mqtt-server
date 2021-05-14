@@ -2,9 +2,9 @@ package com.study.iot.mqtt.protocol.connection;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.common.message.TransportMessage;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ import reactor.netty.NettyOutbound;
 
 @Slf4j
 @Data
-public class DisposableConnection implements Disposable, Serializable {
+public class DisposableConnection implements SerializerDisposable {
 
     private NettyInbound inbound;
 

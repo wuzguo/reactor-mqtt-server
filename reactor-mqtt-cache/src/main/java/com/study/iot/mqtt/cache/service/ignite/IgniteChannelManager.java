@@ -2,19 +2,17 @@ package com.study.iot.mqtt.cache.service.ignite;
 
 import com.study.iot.mqtt.cache.config.IgniteProperties;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
+import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import javax.cache.Cache;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import reactor.core.Disposable;
-
-import javax.annotation.Resource;
-import javax.cache.Cache;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * <B>说明：描述</B>
@@ -29,10 +27,10 @@ import java.util.stream.Collectors;
 public class IgniteChannelManager implements ChannelManager {
 
     @Resource
-    private IgniteCache<String, Disposable> disposableCache;
+    private IgniteCache<String, SerializerDisposable> disposableCache;
 
     @Override
-    public void add(String identity, Disposable disposable) {
+    public void add(String identity, SerializerDisposable disposable) {
         disposableCache.put(identity, disposable);
     }
 
@@ -42,7 +40,7 @@ public class IgniteChannelManager implements ChannelManager {
     }
 
     @Override
-    public Disposable getAndRemove(String identity) {
+    public SerializerDisposable getAndRemove(String identity) {
         return disposableCache.getAndRemove(identity);
     }
 
@@ -52,11 +50,11 @@ public class IgniteChannelManager implements ChannelManager {
     }
 
     @Override
-    public List<Disposable> getConnections() {
-        return disposableCache.query(new ScanQuery<String, Disposable>())
-                .getAll()
-                .stream()
-                .map(Cache.Entry::getValue)
-                .collect(Collectors.toList());
+    public List<SerializerDisposable> getConnections() {
+        return disposableCache.query(new ScanQuery<String, SerializerDisposable>())
+            .getAll()
+            .stream()
+            .map(Cache.Entry::getValue)
+            .collect(Collectors.toList());
     }
 }

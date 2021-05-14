@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.cache.service;
 
+import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.cache.strategy.CacheCapable;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,7 @@ public interface ChannelManager extends CacheCapable {
      * @param identity   设备标识
      * @param disposable 连接
      */
-    void add(String identity, Disposable disposable);
+    void add(String identity, SerializerDisposable disposable);
 
     /**
      * 移除通道
@@ -28,7 +29,7 @@ public interface ChannelManager extends CacheCapable {
      * @param identity 设备ID
      * @return {@link Disposable}
      */
-    Disposable getAndRemove(String identity);
+    SerializerDisposable getAndRemove(String identity);
 
     /**
      * 检查
@@ -43,5 +44,5 @@ public interface ChannelManager extends CacheCapable {
      *
      * @return {@link Disposable}
      */
-    List<Disposable> getConnections();
+    List<SerializerDisposable> getConnections();
 }
