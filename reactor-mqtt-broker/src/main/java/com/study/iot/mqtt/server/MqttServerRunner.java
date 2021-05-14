@@ -37,7 +37,7 @@ public class MqttServerRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         // 配置文件
         ServerProperties properties = ServerProperties.builder()
-            .host("localhost").port(1884)
+            .host("localhost").port(1886)
             .protocols(Sets.newHashSet(ProtocolType.MQTT))
             .strategy(CacheStrategy.MEMORY)
             .heart(100000)

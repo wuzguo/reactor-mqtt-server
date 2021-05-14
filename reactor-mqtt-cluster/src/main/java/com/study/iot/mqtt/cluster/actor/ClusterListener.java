@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.cluster.listener;
+package com.study.iot.mqtt.cluster.actor;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorSystem;
@@ -19,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2021/5/13 15:51
  */
 
-@ActorBean
 @Slf4j
+@ActorBean
 public class ClusterListener extends AbstractActor {
 
     private final Cluster cluster;

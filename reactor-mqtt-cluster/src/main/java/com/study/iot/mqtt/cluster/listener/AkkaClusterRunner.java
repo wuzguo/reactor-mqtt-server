@@ -2,6 +2,7 @@ package com.study.iot.mqtt.cluster.listener;
 
 import akka.actor.ActorSystem;
 import akka.routing.RoundRobinPool;
+import com.study.iot.mqtt.cluster.actor.ClusterListener;
 import com.study.iot.mqtt.cluster.spring.SpringProps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
