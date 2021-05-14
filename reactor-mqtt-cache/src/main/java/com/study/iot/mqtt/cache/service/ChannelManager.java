@@ -2,6 +2,7 @@ package com.study.iot.mqtt.cache.service;
 
 import com.study.iot.mqtt.cache.strategy.CacheCapable;
 import java.util.Collection;
+import java.util.List;
 import reactor.core.Disposable;
 
 public interface ChannelManager extends CacheCapable {
@@ -42,5 +43,5 @@ public interface ChannelManager extends CacheCapable {
      *
      * @return {@link Disposable}
      */
-    Collection<Disposable> getConnections();
+    List<Disposable> getConnections();
 }

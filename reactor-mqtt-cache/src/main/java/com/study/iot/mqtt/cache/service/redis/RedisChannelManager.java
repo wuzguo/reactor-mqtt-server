@@ -9,6 +9,7 @@ import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.Disposable;
 
@@ -50,7 +51,7 @@ public class RedisChannelManager implements ChannelManager {
     }
 
     @Override
-    public Collection<Disposable> getConnections() {
+    public List<Disposable> getConnections() {
         return Collections.emptyList();
     }
 }

@@ -5,6 +5,7 @@ import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
+import java.util.List;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -51,7 +52,7 @@ public class IgniteChannelManager implements ChannelManager {
     }
 
     @Override
-    public Collection<Disposable> getConnections() {
+    public List<Disposable> getConnections() {
         return disposableCache.query(new ScanQuery<String, Disposable>())
                 .getAll()
                 .stream()

@@ -1,12 +1,14 @@
 package com.study.iot.mqtt.cache.service.memory;
 
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import reactor.core.Disposable;
 
@@ -45,7 +47,7 @@ public class MemoryChannelManager implements ChannelManager {
     }
 
     @Override
-    public Collection<Disposable> getConnections() {
-        return mapDisposable.values();
+    public List<Disposable> getConnections() {
+        return Lists.newArrayList(mapDisposable.values());
     }
 }

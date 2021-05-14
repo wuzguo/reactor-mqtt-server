@@ -1,10 +1,8 @@
 package com.study.iot.mqtt.transport.server.connection;
 
-import com.google.common.collect.Lists;
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import com.study.iot.mqtt.common.utils.CollectionUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
@@ -13,7 +11,6 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.Attribute;
 import java.time.Duration;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import reactor.core.Disposable;
@@ -61,8 +58,8 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public Mono<List<Disposable>> getConnections() {
-        Collection<Disposable> collection = cacheManager.channel().getConnections();
-        return CollectionUtil.isEmpty(collection) ? Mono.empty() : Mono.just(Lists.newArrayList(collection));
+        List<Disposable> disposables = cacheManager.channel().getConnections();
+        return Mono.just(disposables);
     }
 
     @Override
