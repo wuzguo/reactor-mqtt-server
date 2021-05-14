@@ -26,18 +26,18 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientPubRelHandler implements StrategyCapable {
 
     @Override
-    public void handle(DisposableConnection connection, MqttMessage message) {
-        log.info("client PubRel message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("client PubRel message: {}, connection: {}", message, disposableConnection);
 
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
         int messageId = variableHeader.messageId();
         // cancel replay rec
-        connection.cancelDisposable(messageId);
+        disposableConnection.cancelDisposable(messageId);
         MqttPubAckMessage mqttPubRecMessage = MessageBuilder.buildPubComp(messageId);
         //  send comp
-        connection.sendMessage(mqttPubRecMessage).subscribe();
+        disposableConnection.sendMessage(mqttPubRecMessage).subscribe();
         // 移除消息
-        connection.getAndRemoveQos2Message(messageId).ifPresent(
+        disposableConnection.getAndRemoveQos2Message(messageId).ifPresent(
             msg -> log.info("client publish topic: {}, message: {}", msg.getTopic(), new String(msg.getCopyByteBuf(),
                 CharsetUtil.UTF_8)));
     }

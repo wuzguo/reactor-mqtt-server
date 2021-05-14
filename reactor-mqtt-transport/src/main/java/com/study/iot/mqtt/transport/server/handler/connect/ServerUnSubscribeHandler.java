@@ -2,11 +2,11 @@ package com.study.iot.mqtt.transport.server.handler.connect;
 
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
+import com.study.iot.mqtt.protocol.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import com.study.iot.mqtt.protocol.MessageBuilder;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttUnsubAckMessage;
@@ -31,14 +31,14 @@ public class ServerUnSubscribeHandler implements StrategyCapable {
     private CacheManager cacheManager;
 
     @Override
-    public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server UnSubscribe message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("server UnSubscribe message: {}, connection: {}", message, disposableConnection);
 
         MqttUnsubscribeMessage unsubscribeMessage = (MqttUnsubscribeMessage) message;
         MqttUnsubAckMessage mqttUnsubAckMessage =
             MessageBuilder.buildUnsubAck(unsubscribeMessage.variableHeader().messageId());
-        connection.sendMessage(mqttUnsubAckMessage).subscribe();
+        disposableConnection.sendMessage(mqttUnsubAckMessage).subscribe();
         Optional.ofNullable(unsubscribeMessage.payload().topics())
-            .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().remove(topic, connection)));
+            .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().remove(topic, disposableConnection)));
     }
 }

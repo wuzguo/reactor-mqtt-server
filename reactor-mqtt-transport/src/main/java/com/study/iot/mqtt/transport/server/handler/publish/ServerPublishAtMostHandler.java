@@ -31,13 +31,13 @@ public class ServerPublishAtMostHandler implements PublishStrategyCapable {
     private CacheManager cacheManager;
 
     @Override
-    public void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes) {
+    public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
         MqttPublishVariableHeader variableHeader = message.variableHeader();
         MqttFixedHeader header = message.fixedHeader();
         // 过滤掉本身 已经关闭的dispose
         cacheManager.topic().getConnections(variableHeader.topicName())
             .stream().map(disposable -> (DisposableConnection) disposable)
-            .filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
+            .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
                 MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),
                     IdUtil.messageId(), variableHeader.topicName(), bytes);

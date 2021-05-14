@@ -40,8 +40,8 @@ public class ServerSubscribeHandler implements StrategyCapable {
 
     @Override
     @MqttMetric(MetricMatterName.TOTAL_RECEIVE_COUNT)
-    public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server Subscribe message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("server Subscribe message: {}, connection: {}", message, disposableConnection);
         MqttFixedHeader header = message.fixedHeader();
         MqttSubscribeMessage subscribeMessage = (MqttSubscribeMessage) message;
 
@@ -50,22 +50,22 @@ public class ServerSubscribeHandler implements StrategyCapable {
         // 消息ID
         int messageId = subscribeMessage.variableHeader().messageId();
         MqttSubAckMessage mqttSubAckMessage = MessageBuilder.buildSubAck(messageId, qosLevels);
-        connection.sendMessage(mqttSubAckMessage).subscribe();
+        disposableConnection.sendMessage(mqttSubAckMessage).subscribe();
         subscribeMessage.payload().topicSubscriptions().forEach(topicSubscription -> {
             String topicName = topicSubscription.topicName();
-            cacheManager.topic().add(topicName, connection);
+            cacheManager.topic().add(topicName, disposableConnection);
             Optional.ofNullable(cacheManager.message().getRetain(topicName)).ifPresent(retainMessage -> {
                 if (retainMessage.getQos() == 0) {
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),
                         MqttQoS.valueOf(retainMessage.getQos()), retainMessage.getIsRetain(), 1,
                         retainMessage.getTopic(), retainMessage.getCopyByteBuf());
-                    connection.sendMessage(mqttMessage).subscribe();
+                    disposableConnection.sendMessage(mqttMessage).subscribe();
                 } else {
                     int connMessageId = IdUtil.messageId();
                     // retry
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(true, header.qosLevel(),
                         header.isRetain(), connMessageId, retainMessage.getTopic(), retainMessage.getCopyByteBuf());
-                    connection.sendMessageRetry(connMessageId, mqttMessage);
+                    disposableConnection.sendMessageRetry(connMessageId, mqttMessage);
                 }
             });
         });

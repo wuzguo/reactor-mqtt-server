@@ -83,7 +83,7 @@ public class ServerConnection implements ServerSession {
                         Optional.ofNullable(
                             messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
                             .ifPresent(capable -> ((WillCapable) capable)
-                                .handle(qoS, (DisposableConnection) disposable, willMessage));
+                                .handle((DisposableConnection) disposable, qoS, willMessage));
                     })));
     }
 

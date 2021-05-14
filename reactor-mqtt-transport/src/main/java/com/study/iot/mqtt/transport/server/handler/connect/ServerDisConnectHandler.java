@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerDisConnectHandler implements StrategyCapable {
 
     @Override
-    public void handle(MqttMessage message, DisposableConnection disposableConnection) {
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
         log.info("server DisConnect message: {}, connection: {}", message, disposableConnection);
         disposableConnection.dispose();
     }

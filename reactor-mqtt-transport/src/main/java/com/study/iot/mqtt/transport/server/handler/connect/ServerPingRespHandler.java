@@ -1,9 +1,9 @@
 package com.study.iot.mqtt.transport.server.handler.connect;
 
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerPingRespHandler implements StrategyCapable {
 
     @Override
-    public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server PingResp message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("server PingResp message: {}, connection: {}", message, disposableConnection);
     }
 }

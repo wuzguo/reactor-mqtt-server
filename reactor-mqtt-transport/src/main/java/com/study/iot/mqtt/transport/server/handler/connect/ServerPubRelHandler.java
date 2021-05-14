@@ -34,20 +34,20 @@ public class ServerPubRelHandler implements StrategyCapable {
     private CacheManager cacheManager;
 
     @Override
-    public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server PubRel message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("server PubRel message: {}, connection: {}", message, disposableConnection);
         MqttFixedHeader header = message.fixedHeader();
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
         int messageId = variableHeader.messageId();
         // cancel replay rec
-        connection.cancelDisposable(messageId);
+        disposableConnection.cancelDisposable(messageId);
         MqttPubAckMessage mqttPubRecMessage = MessageBuilder.buildPubComp(messageId);
         // send comp
-        connection.sendMessage(mqttPubRecMessage).subscribe();
-        connection.getAndRemoveQos2Message(messageId)
+        disposableConnection.sendMessage(mqttPubRecMessage).subscribe();
+        disposableConnection.getAndRemoveQos2Message(messageId)
             .ifPresent(transportMessage -> cacheManager.topic().getConnections(transportMessage.getTopic())
                 .stream().map(disposable -> (DisposableConnection) disposable)
-                .filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
+                .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
                 .forEach(disposable -> {
                     int connMessageId = IdUtil.messageId();
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false,

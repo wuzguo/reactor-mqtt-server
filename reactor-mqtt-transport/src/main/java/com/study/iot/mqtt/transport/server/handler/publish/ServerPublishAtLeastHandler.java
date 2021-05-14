@@ -32,16 +32,16 @@ public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
     private CacheManager cacheManager;
 
     @Override
-    public void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes) {
+    public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
         MqttPublishVariableHeader variableHeader = message.variableHeader();
         MqttFixedHeader header = message.fixedHeader();
         // back
         MqttPubAckMessage mqttPubAckMessage = MessageBuilder.buildPubAck(header.isDup(), header.qosLevel(),
             header.isRetain(), variableHeader.packetId());
-        connection.sendMessage(mqttPubAckMessage).subscribe();
+        disposableConnection.sendMessage(mqttPubAckMessage).subscribe();
         cacheManager.topic().getConnections(variableHeader.topicName())
             .stream().map(disposable -> (DisposableConnection) disposable)
-            .filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
+            .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
                 int messageId = IdUtil.messageId();
                 MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),

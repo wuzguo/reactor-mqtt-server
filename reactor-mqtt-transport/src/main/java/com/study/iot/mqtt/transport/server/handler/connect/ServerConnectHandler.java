@@ -51,7 +51,7 @@ public class ServerConnectHandler implements StrategyCapable {
 
     @Override
     @MqttMetric(MetricMatterName.TOTAL_CONNECTION_COUNT)
-    public void handle(MqttMessage message, DisposableConnection connection) {
+    public void handle( DisposableConnection connection, MqttMessage message) {
         log.info("server connect message: {}, connection: {}", message, connection);
         MqttConnectMessage connectMessage = (MqttConnectMessage) message;
 

@@ -1,6 +1,7 @@
 package com.study.iot.mqtt.transport.server.handler.connect;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
+import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
@@ -9,7 +10,6 @@ import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyContainer;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import com.study.iot.mqtt.common.message.RetainMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -40,8 +40,8 @@ public class ServerPublishHandler implements StrategyCapable {
 
     @Override
     @MqttMetric(MetricMatterName.TOTAL_PUBLISH_COUNT)
-    public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server Publish message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("server Publish message: {}, connection: {}", message, disposableConnection);
         MqttFixedHeader fixedHeader = message.fixedHeader();
         MqttPublishMessage mqttMessage = (MqttPublishMessage) message;
         MqttPublishVariableHeader variableHeader = mqttMessage.variableHeader();
@@ -56,7 +56,7 @@ public class ServerPublishHandler implements StrategyCapable {
 
         // 又来一个策略模式
         Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH, fixedHeader.qosLevel()))
-            .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(mqttMessage, connection, bytes));
+            .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(disposableConnection, mqttMessage, bytes));
     }
 
     private byte[] copyByteBuf(ByteBuf byteBuf) {

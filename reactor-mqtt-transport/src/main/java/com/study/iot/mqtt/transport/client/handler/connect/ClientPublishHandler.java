@@ -31,14 +31,14 @@ public class ClientPublishHandler implements StrategyCapable {
     private PublishStrategyContainer strategyContainer;
 
     @Override
-    public void handle(DisposableConnection connection, MqttMessage message) {
-        log.info("client Publish message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("client Publish message: {}, connection: {}", message, disposableConnection);
         MqttPublishMessage mqttMessage = (MqttPublishMessage) message;
         MqttFixedHeader header = message.fixedHeader();
         byte[] bytes = copyByteBuf(mqttMessage.payload());
         // 又来一个策略模式
         Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.CLIENT_PUBLISH, header.qosLevel()))
-            .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(connection, mqttMessage, bytes));
+            .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(disposableConnection, mqttMessage, bytes));
     }
 
     private byte[] copyByteBuf(ByteBuf byteBuf) {

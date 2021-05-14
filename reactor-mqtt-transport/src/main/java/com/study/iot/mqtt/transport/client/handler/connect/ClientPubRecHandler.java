@@ -23,13 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientPubRecHandler implements StrategyCapable {
 
     @Override
-    public void handle(DisposableConnection connection, MqttMessage message) {
-        log.info("client PubRec message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("client PubRec message: {}, connection: {}", message, disposableConnection);
 
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
         int messageId = variableHeader.messageId();
         // retry
-        connection.cancelDisposable(messageId);
-        connection.sendMessageRetry(messageId, MessageBuilder.buildPubRel(messageId));
+        disposableConnection.cancelDisposable(messageId);
+        disposableConnection.sendMessageRetry(messageId, MessageBuilder.buildPubRel(messageId));
     }
 }

@@ -22,9 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerPubCompHandler implements StrategyCapable {
 
     @Override
-    public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server PubComp message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("server PubComp message: {}, connection: {}", message, disposableConnection);
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
-        connection.cancelDisposable(variableHeader.messageId());
+        disposableConnection.cancelDisposable(variableHeader.messageId());
     }
 }

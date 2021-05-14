@@ -1,12 +1,12 @@
 package com.study.iot.mqtt.transport.server.handler.will;
 
+import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.protocol.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
 import com.study.iot.mqtt.transport.strategy.WillStrategyService;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import com.study.iot.mqtt.protocol.MessageBuilder;
-import com.study.iot.mqtt.common.message.WillMessage;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 
@@ -22,10 +22,10 @@ import io.netty.handler.codec.mqtt.MqttQoS;
 public class ServerWillExactlyHandler implements WillCapable {
 
     @Override
-    public void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
+    public void handle(DisposableConnection disposableConnection, MqttQoS qoS, WillMessage willMessage) {
         int messageId = IdUtil.messageId();
         MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getIsRetain(), messageId,
             willMessage.getTopic(), willMessage.getCopyByteBuf());
-        connection.sendMessageRetry(messageId, message).subscribe();
+        disposableConnection.sendMessageRetry(messageId, message).subscribe();
     }
 }

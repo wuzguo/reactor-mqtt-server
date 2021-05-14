@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.strategy;
 
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.common.message.WillMessage;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttQoS;
 
 /**
@@ -18,8 +18,8 @@ public interface WillCapable {
      * 处理消息
      *
      * @param qoS         {@link MqttQoS}
-     * @param connection  {@link DisposableConnection}
+     * @param disposableConnection  {@link DisposableConnection}
      * @param willMessage {@link WillMessage}
      */
-    void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage);
+    void handle(DisposableConnection disposableConnection, MqttQoS qoS, WillMessage willMessage);
 }

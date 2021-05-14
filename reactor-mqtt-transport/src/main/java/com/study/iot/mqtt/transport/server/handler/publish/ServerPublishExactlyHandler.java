@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.transport.server.handler.publish;
 
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.common.message.TransportMessage;
+import com.study.iot.mqtt.protocol.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
@@ -24,20 +24,20 @@ import io.netty.handler.codec.mqtt.MqttQoS;
 public class ServerPublishExactlyHandler implements PublishStrategyCapable {
 
     @Override
-    public void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes) {
+    public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
         MqttFixedHeader header = message.fixedHeader();
         MqttPublishVariableHeader variableHeader = message.variableHeader();
 
         //  send rec
         int messageId = variableHeader.packetId();
         MqttMessage mqttMessage = MessageBuilder.buildPubRec(messageId);
-        connection.sendMessageRetry(messageId, mqttMessage);
+        disposableConnection.sendMessageRetry(messageId, mqttMessage);
 
         TransportMessage transportMessage = TransportMessage.builder().isRetain(header.isRetain())
             .isDup(false).topic(variableHeader.topicName())
             .copyByteBuf(bytes)
             .qos(header.qosLevel().value())
             .build();
-        connection.saveQos2Message(messageId, transportMessage);
+        disposableConnection.saveQos2Message(messageId, transportMessage);
     }
 }

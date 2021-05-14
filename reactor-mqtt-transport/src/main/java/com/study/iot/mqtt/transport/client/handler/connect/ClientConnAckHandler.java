@@ -1,10 +1,10 @@
 package com.study.iot.mqtt.transport.client.handler.connect;
 
+import com.study.iot.mqtt.protocol.AttributeKeys;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import com.study.iot.mqtt.protocol.AttributeKeys;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
@@ -25,13 +25,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientConnAckHandler implements StrategyCapable {
 
     @Override
-    public void handle(DisposableConnection connection, MqttMessage message) {
-        log.info("client ConnAck message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("client ConnAck message: {}, connection: {}", message, disposableConnection);
         MqttConnAckMessage mqttConnAckMessage = (MqttConnAckMessage) message;
         MqttConnAckVariableHeader variableHeader = mqttConnAckMessage.variableHeader();
         // 取消重发
         if (variableHeader.connectReturnCode().equals(MqttConnectReturnCode.CONNECTION_ACCEPTED)) {
-            connection.getConnection().channel().attr(AttributeKeys.closeConnection).get().dispose();
+            disposableConnection.getConnection().channel().attr(AttributeKeys.closeConnection).get().dispose();
             return;
         }
 

@@ -22,9 +22,9 @@ import io.netty.handler.codec.mqtt.MqttQoS;
 public class ServerWillAtLeastHandler implements WillCapable {
 
     @Override
-    public void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
+    public void handle(DisposableConnection disposableConnection, MqttQoS qoS, WillMessage willMessage) {
         MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getIsRetain(), IdUtil.messageId(),
             willMessage.getTopic(), willMessage.getCopyByteBuf());
-        connection.sendMessage(message).subscribe();
+        disposableConnection.sendMessage(message).subscribe();
     }
 }

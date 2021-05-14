@@ -23,10 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerPingReqHandler implements StrategyCapable {
 
     @Override
-    public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server PingReq message: {}, connection: {}", message, connection);
+    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
+        log.info("server PingReq message: {}, connection: {}", message, disposableConnection);
         MqttMessage mqttMessage = MessageBuilder.buildPing(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE,
             false, 0);
-        connection.sendMessage(mqttMessage);
+        disposableConnection.sendMessage(mqttMessage);
     }
 }
