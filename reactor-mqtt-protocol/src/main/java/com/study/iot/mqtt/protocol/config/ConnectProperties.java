@@ -40,5 +40,5 @@ public class ConnectProperties {
     /**
      * 异常处理
      */
-    private Consumer<Throwable> throwable = throwable -> { };
+    private Consumer<Throwable> throwable;
 }

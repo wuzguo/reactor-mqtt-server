@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.config.ClientProperties;
+import com.study.iot.mqtt.protocol.config.ClientProperties.ConnectOptions;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
@@ -47,30 +48,30 @@ public class ClientConnection implements ClientSession {
 
     @Override
     public void init(ClientProperties properties) {
-        ClientProperties.Options options = properties.getOptions();
+        ConnectOptions connectOptions = properties.getOptions();
         Disposable disposable = Mono.fromRunnable(() -> connection.sendMessage(MessageBuilder.buildConnect(
-            options.getClientId(),
-            options.getWillTopic(),
-            options.getWillMessage(),
-            options.getUserName(),
-            options.getPassword(),
-            options.getHasUserName(),
-            options.getHasPassword(),
-            options.getHasWillFlag(),
-            options.getWillQos().value(),
+            connectOptions.getClientId(),
+            connectOptions.getWillTopic(),
+            connectOptions.getWillMessage(),
+            connectOptions.getUserName(),
+            connectOptions.getPassword(),
+            connectOptions.getHasUserName(),
+            connectOptions.getHasPassword(),
+            connectOptions.getHasWillFlag(),
+            connectOptions.getWillQos().value(),
             properties.getKeepAliveSeconds()
         )).subscribe()).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe();
 
         connection.sendMessage(MessageBuilder.buildConnect(
-            options.getClientId(),
-            options.getWillTopic(),
-            options.getWillMessage(),
-            options.getUserName(),
-            options.getPassword(),
-            options.getHasUserName(),
-            options.getHasPassword(),
-            options.getHasWillFlag(),
-            options.getWillQos().value(),
+            connectOptions.getClientId(),
+            connectOptions.getWillTopic(),
+            connectOptions.getWillMessage(),
+            connectOptions.getUserName(),
+            connectOptions.getPassword(),
+            connectOptions.getHasUserName(),
+            connectOptions.getHasPassword(),
+            connectOptions.getHasWillFlag(),
+            connectOptions.getWillQos().value(),
             properties.getKeepAliveSeconds()
         )).doOnError(throwable -> log.error(throwable.getMessage())).subscribe();
         connection.getConnection().channel().attr(AttributeKeys.closeConnection).set(disposable);

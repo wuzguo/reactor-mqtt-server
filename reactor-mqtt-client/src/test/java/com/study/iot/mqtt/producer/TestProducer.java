@@ -3,7 +3,7 @@ package com.study.iot.mqtt.producer;
 import com.study.iot.mqtt.client.MqttClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ClientProperties;
-import com.study.iot.mqtt.protocol.config.ClientProperties.Options;
+import com.study.iot.mqtt.protocol.config.ClientProperties.ConnectOptions;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttQoS;
@@ -34,16 +34,14 @@ public class TestProducer {
 
     @Test
     public void testProducer1() throws InterruptedException {
-        Options options = Options.builder()
+        ConnectOptions connectOptions = ConnectOptions.builder()
             .clientId("345a0cc95adb4030bb183a2e0535381b")
             .userName("123456")
             .password("e10adc3949ba59abbe56e057f20f883e")
-            .hasUserName(true)
-            .hasPassword(true)
             .willMessage("hello，I'm producer")
-            .hasWillFlag(true)
             .willTopic("/session/will/producer")
             .willQos(MqttQoS.AT_LEAST_ONCE)
+            .hasCleanSession(true)
             .build();
 
         ClientProperties properties = ClientProperties.builder()
@@ -52,8 +50,9 @@ public class TestProducer {
             .keepAliveSeconds(10000)
             .isSsl(false)
             .isLog(true)
-            .onClose(() -> { })
-            .options(options)
+            .onClose(() -> {
+            })
+            .options(connectOptions)
             .throwable(e -> log.error("starting mqtt client exception：{}", e.getMessage()))
             .build();
         CountDownLatch latch = new CountDownLatch(1);

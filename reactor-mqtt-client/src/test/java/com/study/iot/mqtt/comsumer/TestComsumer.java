@@ -3,7 +3,7 @@ package com.study.iot.mqtt.comsumer;
 import com.study.iot.mqtt.client.MqttClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ClientProperties;
-import com.study.iot.mqtt.protocol.config.ClientProperties.Options;
+import com.study.iot.mqtt.protocol.config.ClientProperties.ConnectOptions;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttQoS;
@@ -33,16 +33,15 @@ public class TestComsumer {
 
     @Test
     public void testComsumer1() throws InterruptedException {
-        Options options = Options.builder()
+        ConnectOptions options = ConnectOptions.builder()
             .clientId("329a0cc95adb4030bb183a2e0535280b")
             .userName("123456")
             .password("e10adc3949ba59abbe56e057f20f883e")
-            .hasUserName(true)
-            .hasPassword(true)
             .willMessage("hello，I'm consumer")
             .willTopic("/session/will/consumer")
             .willQos(MqttQoS.AT_LEAST_ONCE)
             .hasWillFlag(true)
+            .hasCleanSession(true)
             .build();
 
         ClientProperties configuration = ClientProperties.builder()

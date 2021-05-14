@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -21,6 +22,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class ClientProperties extends ConnectProperties {
+
     /**
      * 心跳
      */
@@ -29,7 +31,7 @@ public class ClientProperties extends ConnectProperties {
     /**
      * 配置项目
      */
-    private Options options;
+    private ConnectOptions options;
 
     /**
      * 异常处理
@@ -46,30 +48,109 @@ public class ClientProperties extends ConnectProperties {
      */
     private Runnable onClose;
 
-    @Data
+    @Getter
     @Builder
-    public static class Options {
+    public static class ConnectOptions {
 
+        /**
+         * 客户端ID
+         */
         private String clientId;
 
+        /**
+         * 遗嘱Topic
+         */
         private String willTopic;
 
+
+        /**
+         * 遗嘱消息
+         */
         private String willMessage;
 
+        /**
+         * 用户名称
+         */
         private String userName;
 
+        /**
+         * 密码
+         */
         private String password;
 
+        /**
+         * 是否有用户名
+         */
         private Boolean hasUserName;
 
+        /**
+         * 是否有密码
+         */
         private Boolean hasPassword;
+
 
         private Boolean hasWillRetain;
 
+        /**
+         * 遗嘱消息质量
+         */
         private MqttQoS willQos;
 
+        /**
+         * 是否有遗嘱
+         */
         private Boolean hasWillFlag;
 
+        /**
+         * CleanSession 标识
+         */
         private Boolean hasCleanSession;
+
+
+        public ConnectOptions setClientId(String clientId) {
+            this.clientId = clientId;
+            return this;
+        }
+
+        public ConnectOptions setWillQos(MqttQoS willQos) {
+            this.willQos = willQos;
+            return this;
+        }
+
+        public ConnectOptions setHasCleanSession(Boolean hasCleanSession) {
+            this.hasCleanSession = hasCleanSession;
+            return this;
+        }
+
+        public ConnectOptions setHasWillRetain(Boolean hasWillRetain) {
+            this.hasWillRetain = hasWillRetain;
+            return this;
+        }
+
+
+        public ConnectOptions setWillTopic(String willTopic) {
+            this.willTopic = willTopic;
+            this.hasWillFlag = true;
+            return this;
+        }
+
+
+        public ConnectOptions setWillMessage(String willMessage) {
+            this.willMessage = willMessage;
+            this.hasWillFlag = true;
+            return this;
+        }
+
+        public ConnectOptions setUserName(String userName) {
+            this.userName = userName;
+            this.hasUserName = true;
+            return this;
+        }
+
+        public ConnectOptions setPassword(String password) {
+            this.password = password;
+            this.hasPassword = true;
+            return this;
+        }
     }
 }

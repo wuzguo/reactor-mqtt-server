@@ -103,9 +103,8 @@ public class MqttTransport extends ProtocolTransport {
     }
 
     private TcpClient buildClient(ConnectProperties properties) {
-        TcpClient client = TcpClient.create()
+        TcpClient client = TcpClient.create().host(properties.getHost())
             .port(properties.getPort())
-            .host(properties.getHost())
             .wiretap(properties.getIsLog());
         try {
             SslContext sslClient = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE)
