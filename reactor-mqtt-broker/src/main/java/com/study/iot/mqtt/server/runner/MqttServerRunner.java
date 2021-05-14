@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.server;
+package com.study.iot.mqtt.server.runner;
 
 import com.google.common.collect.Sets;
 import com.study.iot.mqtt.cache.manager.CacheManager;
@@ -7,6 +7,7 @@ import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ServerSession;
+import com.study.iot.mqtt.server.config.MqttProperties;
 import com.study.iot.mqtt.transport.server.TransportServer;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
 import lombok.extern.slf4j.Slf4j;
@@ -33,26 +34,32 @@ public class MqttServerRunner implements ApplicationRunner {
     @Autowired
     private ServerMessageRouter messageRouter;
 
+    @Autowired
+    private MqttProperties properties;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 配置文件
-        ServerProperties properties = ServerProperties.builder()
-            .host("localhost").port(1884)
+        ServerProperties serverProperties = ServerProperties.builder()
+            .host(properties.getHost()).port(properties.getPort())
             .protocols(Sets.newHashSet(ProtocolType.MQTT))
-            .strategy(CacheStrategy.MEMORY)
-            .heart(100000)
+            .strategy(properties.getStrategy())
+            .heart(properties.getHeart())
             .sendBufSize(32 * 1024)
             .revBufSize(32 * 1024)
-            .backlog(128)
-            .keepAlive(false)
+            .backlog(properties.getBacklog())
+            .keepAlive(properties.getKeepAlive())
             .noDelay(true)
-            .isSsl(false)
-            .isLog(true)
+            .isSsl(properties.getEnableSsl())
+            .isLog(properties.getEnableLog())
             .throwable(e -> log.error("starting mqtt server exception：{}", e.getMessage()))
             .build();
         // 启动服务
-        ServerSession session = new TransportServer().create(properties).start(cacheManager, messageRouter).block();
+        ServerSession session = new TransportServer().create(serverProperties)
+            .start(cacheManager, messageRouter)
+            .block();
         session.getConnections().subscribe(disposables -> disposables.stream()
-            .map(disposable -> (DisposableConnection) disposable).forEach(DisposableConnection::destory));
+            .map(disposable -> (DisposableConnection) disposable)
+            .forEach(DisposableConnection::destory));
     }
 }

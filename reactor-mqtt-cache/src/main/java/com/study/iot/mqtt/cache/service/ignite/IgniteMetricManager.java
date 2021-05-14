@@ -6,14 +6,14 @@ import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.MetricManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.LongAdder;
+import javax.annotation.Resource;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import reactor.core.publisher.Mono;
-
-import javax.annotation.Resource;
-import java.util.Map;
-import java.util.concurrent.atomic.LongAdder;
 
 /**
  * <B>说明：描述</B>
@@ -32,21 +32,37 @@ public class IgniteMetricManager implements MetricManager {
 
     @Override
     public Mono<Void> increase(String key) {
+        LongAdder adder = Optional.ofNullable(metricCache.get(key)).orElse(new LongAdder());
+        adder.add(1);
+        metricCache.put(key, adder);
         return Mono.empty();
     }
 
     @Override
-    public Mono<Void> increase(String key, LongAdder count) {
+    public Mono<Void> increase(String key, Long count) {
+        LongAdder adder = Optional.ofNullable(metricCache.get(key)).orElse(new LongAdder());
+        adder.add(count);
+        metricCache.put(key, adder);
         return Mono.empty();
     }
 
     @Override
     public Mono<Void> decrease(String key) {
+        LongAdder adder = Optional.ofNullable(metricCache.get(key)).orElse(new LongAdder());
+        if (adder.longValue() > 1) {
+            adder.increment();
+        }
+        metricCache.put(key, adder);
         return Mono.empty();
     }
 
     @Override
-    public Mono<Void> decrease(String key, LongAdder count) {
+    public Mono<Void> decrease(String key, Long count) {
+        LongAdder adder = Optional.ofNullable(metricCache.get(key)).orElse(new LongAdder());
+        if (adder.longValue() > count) {
+            adder.add(-count);
+        }
+        metricCache.put(key, adder);
         return Mono.empty();
     }
 
@@ -65,9 +81,9 @@ public class IgniteMetricManager implements MetricManager {
     public Mono<Map<String, LongAdder>> loadAll() {
         Map<String, LongAdder> mapAdder = Maps.newHashMap();
         metricCache.query(new ScanQuery<String, LongAdder>())
-                .getAll()
-                .stream()
-                .map(adderEntry -> mapAdder.put(adderEntry.getKey(), adderEntry.getValue()));
+            .getAll()
+            .stream()
+            .map(adderEntry -> mapAdder.put(adderEntry.getKey(), adderEntry.getValue()));
         return Mono.just(mapAdder);
     }
 }

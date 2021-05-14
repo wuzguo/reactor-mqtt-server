@@ -26,9 +26,9 @@ public interface MetricManager extends CacheCapable {
      * 新增1
      *
      * @param key   标识
-     * @param count {@link LongAdder}
+     * @param count {@link Integer}
      */
-    Mono<Void> increase(String key, LongAdder count);
+    Mono<Void> increase(String key, Long count);
 
     /**
      * 减少
@@ -43,7 +43,7 @@ public interface MetricManager extends CacheCapable {
      * @param key   标识
      * @param count {@link LongAdder}
      */
-    Mono<Void> decrease(String key, LongAdder count);
+    Mono<Void> decrease(String key, Long count);
 
     /**
      * 移除标识

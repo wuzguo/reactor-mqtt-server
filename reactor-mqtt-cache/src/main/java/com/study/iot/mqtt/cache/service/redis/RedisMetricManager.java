@@ -34,8 +34,8 @@ public class RedisMetricManager implements MetricManager {
     }
 
     @Override
-    public Mono<Void> increase(String key, LongAdder count) {
-        redisOpsTemplate.incrBy(CacheGroup.METRIC, key, count.longValue());
+    public Mono<Void> increase(String key, Long count) {
+        redisOpsTemplate.incrBy(CacheGroup.METRIC, key, count);
         return Mono.empty();
     }
 
@@ -46,8 +46,8 @@ public class RedisMetricManager implements MetricManager {
     }
 
     @Override
-    public Mono<Void> decrease(String key, LongAdder count) {
-        redisOpsTemplate.decrBy(CacheGroup.METRIC, key, count.longValue());
+    public Mono<Void> decrease(String key, Long count) {
+        redisOpsTemplate.decrBy(CacheGroup.METRIC, key, count);
         return Mono.empty();
     }
 

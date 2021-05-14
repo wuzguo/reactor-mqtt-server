@@ -3,8 +3,8 @@ package com.study.iot.mqtt.cache.service.memory;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.MetricManager;
-import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
+import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.LongAdder;
@@ -32,9 +32,9 @@ public class MemoryMetricManager implements MetricManager {
     }
 
     @Override
-    public Mono<Void> increase(String key, LongAdder count) {
+    public Mono<Void> increase(String key, Long count) {
         LongAdder total = Optional.ofNullable(mapMetric.get(key)).orElse(new LongAdder());
-        total.add(count.longValue());
+        total.add(count);
         mapMetric.put(key, total);
         return Mono.empty();
     }
@@ -48,9 +48,9 @@ public class MemoryMetricManager implements MetricManager {
     }
 
     @Override
-    public Mono<Void> decrease(String key, LongAdder count) {
+    public Mono<Void> decrease(String key, Long count) {
         LongAdder total = Optional.ofNullable(mapMetric.get(key)).orElse(new LongAdder());
-        total.add(-count.longValue());
+        total.add(-count);
         mapMetric.put(key, total);
         return Mono.empty();
     }

@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.cache.strategy;
 
+import com.study.iot.mqtt.common.utils.StringUtil;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,15 +17,17 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CacheStrategy {
 
-    MEMORY(0),
-    IGNITE(1),
-    REDIS(2);
+    MEMORY(0, "memory"),
+    IGNITE(1, "ignite"),
+    REDIS(2, "redis");
 
     private Integer value;
 
-    public static CacheStrategy valueOf(Integer value) {
+    private String name;
+
+    public static CacheStrategy fromName(String name) {
         for (CacheStrategy strategyEnum : CacheStrategy.values()) {
-            if (Objects.equals(value, strategyEnum.value)) {
+            if (StringUtil.equalsIgnoreCase(name, strategyEnum.name)) {
                 return strategyEnum;
             }
         }

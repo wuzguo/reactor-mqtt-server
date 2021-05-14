@@ -3,48 +3,53 @@ server:
 
 # 开发环境配置
 spring:
-  cache:
-    mode: ignite
   akka:
     system-name: reactorActorSystem
     config: application.conf
+  cache:
+    mode: ignite
   mqtt:
     broker:
-      # broker唯一标识
-      instance-name: mqtt-broker-1
-      # SSL端口
-      ssl-port: 8885
-      # SSL密钥文件密码
-      ssl-password: 123456
-      # websocket端口
-      websocket-ssl-port: 9995
-      # websocket path 值
-      websocket-path: /mqtt
+      # 主机地址
+      host: localhost
+      # 端口
+      port: 1884
       # 心跳时间(秒)
-      keep-alive: 60
+      heart: 100000
+      #开启日志
+      enable-log: true
+      #开启SSL
+      enable-ssl: false
+      #队列长度
+      back-log: 128
+      # 连接保活
+      keep-alive: false
       # 开启Epoll模式, linux下建议开启
       use-epoll: false
-      # 开启组播方式集群
-      enable-multicast-group: false
-      # 组播地址
-      multicast-group: 239.255.255.255
-      #IP地址
-      static-ip-addresses: 127.0.0.1:47500..47509
-      cache:
-        # 持久化缓存内存初始化大小(MB)
-        persistence-initial-size: 64
-        # 持久化缓存占用内存最大值(MB)
-        persistence-max-size: 128
-        # 非持久化缓存内存初始化大小(MB)
-        not-persistence-initial-size: 64
-        # 非持久化缓存占用内存最大值(MB)
-        not-persistence-max-size: 128
-        # 持久化磁盘存储路径
-        persistence-store-path: ./mqtt-broker/persistence
+  ignite:
+    # broker唯一标识
+    instance-name: reactor-mqtt-broker
+    # 开启组播方式集群
+    enable-multicast-group: false
+    # 组播地址
+    multicast-group: 239.255.255.255
+    #IP地址
+    static-ip-addresses: 127.0.0.1:47500..47509
+    # 持久化缓存内存初始化大小(MB)
+    persistence-initial-size: 64
+    # 持久化缓存占用内存最大值(MB)
+    persistence-max-size: 128
+    # 非持久化缓存内存初始化大小(MB)
+    not-persistence-initial-size: 64
+    # 非持久化缓存占用内存最大值(MB)
+    not-persistence-max-size: 128
+    # 持久化磁盘存储路径
+    persistence-store-path: ./mqtt-broker/persistence
   redis:
     host: 10.20.1.182
     port: 6379
     database: 0
+
 logging:
   level:
     root: info

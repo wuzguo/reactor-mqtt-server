@@ -4,7 +4,6 @@ import com.study.iot.mqtt.common.message.RetainMessage;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
-import lombok.Setter;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteMessaging;
@@ -24,41 +23,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 import reactor.core.Disposable;
 
 /**
  * 自动配置apache ignite
  */
 
-@Setter
 @Configuration
-@ConfigurationProperties(prefix = "spring.mqtt.broker", ignoreInvalidFields = true)
 @ConditionalOnBean(value = IgniteProperties.class)
 public class IgniteAutoConfig {
-
-    /**
-     * 实例ID
-     */
-    private String instanceName;
-
-    /**
-     * 是否启动多播组
-     */
-    private boolean enableMulticastGroup = true;
-
-    /**
-     * 多播组
-     */
-    private String multicastGroup = "239.255.255.255";
-
-    /**
-     * 静态IP地址
-     */
-    private String[] staticIpAddresses = new String[0];
 
     @Autowired
     private IgniteProperties igniteProperties;
@@ -67,7 +42,7 @@ public class IgniteAutoConfig {
     public Ignite ignite() throws Exception {
         IgniteConfiguration configuration = new IgniteConfiguration();
         // Ignite实例名称
-        configuration.setIgniteInstanceName(instanceName);
+        configuration.setIgniteInstanceName(igniteProperties.getInstanceName());
         // Ignite日志
         Logger logger = LoggerFactory.getLogger("org.apache.ignite");
         configuration.setGridLogger(new Slf4jLogger(logger));
@@ -83,22 +58,19 @@ public class IgniteAutoConfig {
         DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration()
             .setDefaultDataRegionConfiguration(notPersistence)
             .setDataRegionConfigurations(persistence)
-            .setWalArchivePath(!StringUtils.isEmpty(igniteProperties.getPersistenceStorePath()) ? igniteProperties
-                .getPersistenceStorePath() : null)
-            .setWalPath(!StringUtils.isEmpty(igniteProperties.getPersistenceStorePath()) ? igniteProperties
-                .getPersistenceStorePath() : null)
-            .setStoragePath(!StringUtils.isEmpty(igniteProperties.getPersistenceStorePath()) ? igniteProperties
-                .getPersistenceStorePath() : null);
+            .setWalArchivePath(igniteProperties.getPersistenceStorePath())
+            .setWalPath(igniteProperties.getPersistenceStorePath())
+            .setStoragePath(igniteProperties.getPersistenceStorePath());
         configuration.setDataStorageConfiguration(dataStorageConfiguration);
         // 集群, 基于组播或静态IP配置
         TcpDiscoverySpi tcpDiscoverySpi = new TcpDiscoverySpi();
-        if (this.enableMulticastGroup) {
+        if (igniteProperties.isEnableMulticastGroup()) {
             TcpDiscoveryMulticastIpFinder tcpDiscoveryMulticastIpFinder = new TcpDiscoveryMulticastIpFinder();
-            tcpDiscoveryMulticastIpFinder.setMulticastGroup(multicastGroup);
+            tcpDiscoveryMulticastIpFinder.setMulticastGroup(igniteProperties.getMulticastGroup());
             tcpDiscoverySpi.setIpFinder(tcpDiscoveryMulticastIpFinder);
         } else {
             TcpDiscoveryVmIpFinder tcpDiscoveryVmIpFinder = new TcpDiscoveryVmIpFinder();
-            tcpDiscoveryVmIpFinder.setAddresses(Arrays.asList(staticIpAddresses));
+            tcpDiscoveryVmIpFinder.setAddresses(Arrays.asList(igniteProperties.getStaticIpAddresses()));
             tcpDiscoverySpi.setIpFinder(tcpDiscoveryVmIpFinder);
         }
         configuration.setDiscoverySpi(tcpDiscoverySpi);
