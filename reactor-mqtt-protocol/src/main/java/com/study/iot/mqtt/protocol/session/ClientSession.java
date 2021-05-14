@@ -23,5 +23,10 @@ public interface ClientSession extends Disposable {
 
     Mono<Void> unsub();
 
-    void init(ClientProperties properties);
+    /**
+     * 连接操作
+     *
+     * @param properties {@link ClientProperties}
+     */
+    void doConnect(ClientProperties properties);
 }

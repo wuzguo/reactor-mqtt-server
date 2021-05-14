@@ -47,11 +47,11 @@ public class ClientConnection implements ClientSession {
         ClientMessageRouter messageRouter) {
         this.disposableConnection = disposableConnection;
         this.clientMessageRouter = messageRouter;
-        this.init(properties);
+        this.doConnect(properties);
     }
 
     @Override
-    public void init(ClientProperties properties) {
+    public void doConnect(ClientProperties properties) {
         // 构造消息
         ConnectOptions connectOptions = properties.getOptions();
         MqttConnectMessage connectMessage = MessageBuilder.buildConnect(

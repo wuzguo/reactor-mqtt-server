@@ -97,7 +97,7 @@ public class MqttTransport extends ProtocolTransport {
                     disposableConnection.setConnection(connection);
                     disposableConnection.setInbound(connection.inbound());
                     disposableConnection.setOutbound(connection.outbound());
-                    clientSession.init(properties);
+                    clientSession.doConnect(properties);
                 });
             });
     }
