@@ -54,7 +54,7 @@ public class TestProducer {
         CountDownLatch latch = new CountDownLatch(1);
         ClientSession connect = new MqttClient(properties).connect(messageRouter).block();
         Thread.sleep(2000);
-        connect.pub("/session/123456", "Hello, EveryOne".getBytes(StandardCharsets.UTF_8)).subscribe();
+        connect.publish("/session/123456", "Hello, EveryOne".getBytes(StandardCharsets.UTF_8)).subscribe();
         latch.await();
     }
 }

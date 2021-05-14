@@ -52,7 +52,7 @@ public class TestConsumer {
         CountDownLatch latch = new CountDownLatch(1);
         ClientSession connect = new MqttClient(configuration).connect(messageRouter).block();
         Thread.sleep(1000);
-        connect.sub("/session/123456").subscribe();
+        connect.subscribe("/session/123456").subscribe();
         latch.await();
     }
 }

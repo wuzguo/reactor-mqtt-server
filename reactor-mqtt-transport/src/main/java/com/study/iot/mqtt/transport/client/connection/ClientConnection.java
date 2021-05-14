@@ -106,7 +106,7 @@ public class ClientConnection implements ClientSession {
     }
 
     @Override
-    public Mono<Void> pub(String topic, byte[] message, boolean retained, MqttQoS mqttQoS) {
+    public Mono<Void> publish(String topic, byte[] message, boolean retained, MqttQoS mqttQoS) {
         switch (mqttQoS) {
             case AT_MOST_ONCE:
                 return disposableConnection.sendMessage(
@@ -122,24 +122,24 @@ public class ClientConnection implements ClientSession {
     }
 
     @Override
-    public Mono<Void> pub(String topic, byte[] message) {
-        return pub(topic, message, false, MqttQoS.AT_MOST_ONCE);
+    public Mono<Void> publish(String topic, byte[] message) {
+        return publish(topic, message, false, MqttQoS.AT_MOST_ONCE);
     }
 
     @Override
-    public Mono<Void> pub(String topic, byte[] message, MqttQoS mqttQoS) {
-        return pub(topic, message, false, mqttQoS);
+    public Mono<Void> publish(String topic, byte[] message, MqttQoS mqttQoS) {
+        return publish(topic, message, false, mqttQoS);
     }
 
     @Override
-    public Mono<Void> pub(String topic, byte[] message, boolean retained) {
-        return pub(topic, message, retained, MqttQoS.AT_MOST_ONCE);
+    public Mono<Void> publish(String topic, byte[] message, boolean retained) {
+        return publish(topic, message, retained, MqttQoS.AT_MOST_ONCE);
     }
 
     @Override
-    public Mono<Void> sub(String... subMessages) {
-        topics.addAll(Arrays.asList(subMessages));
-        List<MqttTopicSubscription> topicSubscriptions = Arrays.stream(subMessages)
+    public Mono<Void> subscribe(String... topicNames) {
+        topics.addAll(Arrays.asList(topicNames));
+        List<MqttTopicSubscription> topicSubscriptions = Arrays.stream(topicNames)
             .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE))
             .collect(Collectors.toList());
         // retry
@@ -148,16 +148,26 @@ public class ClientConnection implements ClientSession {
     }
 
     @Override
-    public Mono<Void> unsub(List<String> topics) {
-        this.topics.removeAll(topics);
+    public Mono<Void> unSubscribe(String... topicNames) {
+        return unSubscribe(Arrays.asList(topicNames));
+    }
+
+    /**
+     * 取消订阅
+     *
+     * @param topicNames TOPIC名称
+     * @return {@link Mono}
+     */
+    private Mono<Void> unSubscribe(List<String> topicNames) {
+        this.topics.removeAll(topicNames);
         // retry
         int messageId = IdUtil.messageId();
-        return disposableConnection.sendMessageRetry(messageId, MessageBuilder.buildUnSub(messageId, topics));
+        return disposableConnection.sendMessageRetry(messageId, MessageBuilder.buildUnSub(messageId, topicNames));
     }
 
     @Override
-    public Mono<Void> unsub() {
-        return unsub(this.topics);
+    public Mono<Void> unSubscribe() {
+        return unSubscribe(this.topics);
     }
 
     @Override
