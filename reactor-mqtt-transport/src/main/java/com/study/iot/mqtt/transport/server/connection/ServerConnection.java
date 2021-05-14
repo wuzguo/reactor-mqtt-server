@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.transport.server.connection;
 
+import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -57,8 +58,8 @@ public class ServerConnection implements ServerSession {
     }
 
     @Override
-    public Mono<List<Disposable>> getConnections() {
-        List<Disposable> disposables = cacheManager.channel().getConnections();
+    public Mono<List<SerializerDisposable>> getConnections() {
+        List<SerializerDisposable> disposables = cacheManager.channel().getConnections();
         return Mono.just(disposables);
     }
 
@@ -103,7 +104,7 @@ public class ServerConnection implements ServerSession {
             connection.channel().attr(AttributeKeys.disposableConnection).set(null);
             // 删除topic订阅
             Optional.ofNullable(disposableConnection.getTopics())
-                .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().remove(topic, connection)));
+                .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().remove(topic, disposableConnection)));
             // 清空各种缓存
             disposableConnection.destroy();
         });

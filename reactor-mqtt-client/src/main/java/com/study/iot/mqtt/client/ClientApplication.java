@@ -1,4 +1,4 @@
-package com.study.iot.mqtt;
+package com.study.iot.mqtt.client;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2021/5/11 15:25
  */
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.study.iot.mqtt.*")
 public class ClientApplication {
 
     public static void main(String[] args) {

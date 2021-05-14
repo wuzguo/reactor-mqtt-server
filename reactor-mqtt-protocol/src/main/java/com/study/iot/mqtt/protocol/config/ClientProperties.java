@@ -4,7 +4,6 @@ package com.study.iot.mqtt.protocol.config;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import java.util.function.Consumer;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -49,7 +48,6 @@ public class ClientProperties extends ConnectProperties {
     private Runnable onClose;
 
     @Getter
-    @Builder
     public static class ConnectOptions {
 
         /**
@@ -71,22 +69,22 @@ public class ClientProperties extends ConnectProperties {
         /**
          * 用户名称
          */
-        private String userName;
+        private final String userName;
 
         /**
          * 密码
          */
-        private String password;
+        private final String password;
 
         /**
          * 是否有用户名
          */
-        private Boolean hasUserName;
+        private final Boolean hasUserName;
 
         /**
          * 是否有密码
          */
-        private Boolean hasPassword;
+        private final Boolean hasPassword;
 
 
         private Boolean hasWillRetain;
@@ -106,6 +104,12 @@ public class ClientProperties extends ConnectProperties {
          */
         private Boolean hasCleanSession;
 
+        public ConnectOptions(String userName, String password) {
+            this.userName = userName;
+            this.hasUserName = true;
+            this.password = password;
+            this.hasPassword = true;
+        }
 
         public ConnectOptions setClientId(String clientId) {
             this.clientId = clientId;
@@ -138,18 +142,6 @@ public class ClientProperties extends ConnectProperties {
         public ConnectOptions setWillMessage(String willMessage) {
             this.willMessage = willMessage;
             this.hasWillFlag = true;
-            return this;
-        }
-
-        public ConnectOptions setUserName(String userName) {
-            this.userName = userName;
-            this.hasUserName = true;
-            return this;
-        }
-
-        public ConnectOptions setPassword(String password) {
-            this.password = password;
-            this.hasPassword = true;
             return this;
         }
     }

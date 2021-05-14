@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.client;
+package com.study.iot.mqtt.client.connect;
 
 import com.study.iot.mqtt.protocol.config.ClientProperties;
 import com.study.iot.mqtt.protocol.session.ClientSession;

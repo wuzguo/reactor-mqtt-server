@@ -77,7 +77,7 @@ public class MqttTransport extends ProtocolTransport {
             protocol.getHandlers().forEach(connect::addHandler);
             DisposableConnection disposableConnection = new DisposableConnection(connection);
             connection.onDispose(() -> retryConnect(properties, disposableConnection));
-            log.info("connected successes !");
+            log.info("connected successes");
             return disposableConnection;
         });
     }

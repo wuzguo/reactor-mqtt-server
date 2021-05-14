@@ -1,13 +1,12 @@
-package com.study.iot.mqtt.producer;
+package com.study.iot.mqtt.client.comsumer;
 
-import com.study.iot.mqtt.client.MqttClient;
+import com.study.iot.mqtt.client.connect.MqttClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ClientProperties;
 import com.study.iot.mqtt.protocol.config.ClientProperties.ConnectOptions;
 import com.study.iot.mqtt.protocol.session.ClientSession;
 import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttQoS;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -21,44 +20,39 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/5/11 13:40
+ * @date 2021/5/11 11:39
  */
 
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class TestProducer {
+public class TestConsumer {
 
     @Autowired
     private ClientMessageRouter messageRouter;
 
     @Test
-    public void testProducer1() throws InterruptedException {
-        ConnectOptions connectOptions = ConnectOptions.builder()
-            .clientId("345a0cc95adb4030bb183a2e0535381b")
-            .userName("123456")
-            .password("e10adc3949ba59abbe56e057f20f883e")
-            .willMessage("hello，I'm producer")
-            .willTopic("/session/will/producer")
-            .willQos(MqttQoS.AT_LEAST_ONCE)
-            .hasCleanSession(true)
-            .build();
+    public void testConsumer() throws InterruptedException {
+        ConnectOptions options = new ConnectOptions("123456", "e10adc3949ba59abbe56e057f20f883e")
+            .setClientId("329a0cc95adb4030bb183a2e0535280b")
+            .setWillMessage("hello，I'm consumer")
+            .setWillTopic("/session/will/consumer")
+            .setWillQos(MqttQoS.AT_LEAST_ONCE)
+            .setHasCleanSession(true);
 
-        ClientProperties properties = ClientProperties.builder()
+        ClientProperties configuration = ClientProperties.builder()
             .host("localhost").port(1884)
             .protocol(ProtocolType.MQTT)
-            .keepAliveSeconds(10000)
-            .isSsl(false)
+            .keepAliveSeconds(60)
             .isLog(true)
-            .onClose(() -> {
-            })
-            .options(connectOptions)
+            .onClose(() -> { })
+            .options(options)
             .throwable(e -> log.error("starting mqtt client exception：{}", e.getMessage()))
             .build();
         CountDownLatch latch = new CountDownLatch(1);
-        ClientSession connect = new MqttClient(properties).connect(messageRouter).block();
-        Thread.sleep(2000);
-        connect.pub("/session/123456", "Hello, EveryOne".getBytes(StandardCharsets.UTF_8)).subscribe();
+        ClientSession connect = new MqttClient(configuration).connect(messageRouter).block();
+        Thread.sleep(1000);
+        connect.sub("/session/123456").subscribe();
         latch.await();
     }
 }

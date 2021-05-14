@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.cache.config;
 
+import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import reactor.core.Disposable;
 
 /**
  * 自动配置apache ignite
@@ -98,8 +98,8 @@ public class IgniteAutoConfig {
     }
 
     @Bean
-    public IgniteCache<String, Disposable> disposableCache() throws Exception {
-        CacheConfiguration<String, Disposable> cacheConfiguration = new CacheConfiguration<String, Disposable>()
+    public IgniteCache<String, SerializerDisposable> disposableCache() throws Exception {
+        CacheConfiguration<String, SerializerDisposable> cacheConfiguration = new CacheConfiguration<String, SerializerDisposable>()
             .setDataRegionName("persistence-data-region").setBackups(2)
             .setCacheMode(CacheMode.PARTITIONED).setName("disposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);
@@ -114,10 +114,10 @@ public class IgniteAutoConfig {
     }
 
     @Bean
-    public IgniteCache<String, List<Disposable>> topicDisposableCache() throws Exception {
-        CacheConfiguration<String, List<Disposable>> cacheConfiguration = new CacheConfiguration<String, List<Disposable>>()
+    public IgniteCache<String, List<SerializerDisposable>> topicSerializerDisposableCache() throws Exception {
+        CacheConfiguration<String, List<SerializerDisposable>> cacheConfiguration = new CacheConfiguration<String, List<SerializerDisposable>>()
             .setDataRegionName("persistence-data-region").setBackups(2)
-            .setCacheMode(CacheMode.PARTITIONED).setName("topicDisposableCache");
+            .setCacheMode(CacheMode.PARTITIONED).setName("topicSerializerDisposableCache");
         return ignite().getOrCreateCache(cacheConfiguration);
     }
 
