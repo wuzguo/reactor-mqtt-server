@@ -37,9 +37,9 @@ public class DisposableConnection implements Disposable, Serializable {
 
     private Connection connection;
 
-    private Map<Integer, Disposable> mapDisposable = Maps.newHashMap();
+    private Map<Integer, Disposable> mapDisposables = Maps.newHashMap();
 
-    private Map<Integer, TransportMessage> mapQosMessage = Maps.newHashMap();
+    private Map<Integer, TransportMessage> mapQosMessages = Maps.newHashMap();
 
     private List<String> topics = Lists.newCopyOnWriteArrayList();
 
@@ -92,28 +92,28 @@ public class DisposableConnection implements Disposable, Serializable {
     }
 
     public void saveQos2Message(Integer messageId, TransportMessage message) {
-        mapQosMessage.put(messageId, message);
+        mapQosMessages.put(messageId, message);
     }
 
 
     public Optional<TransportMessage> getAndRemoveQos2Message(Integer messageId) {
-        TransportMessage message = mapQosMessage.get(messageId);
-        mapQosMessage.remove(messageId);
+        TransportMessage message = mapQosMessages.get(messageId);
+        mapQosMessages.remove(messageId);
         return Optional.ofNullable(message);
     }
 
     public boolean containQos2Message(Integer messageId) {
-        return mapQosMessage.containsKey(messageId);
+        return mapQosMessages.containsKey(messageId);
     }
 
     private void addDisposable(Integer messageId, Disposable disposable) {
-        mapDisposable.put(messageId, disposable);
+        mapDisposables.put(messageId, disposable);
     }
 
 
     public void cancelDisposable(Integer messageId) {
-        Optional.ofNullable(mapDisposable.get(messageId)).ifPresent(Disposable::dispose);
-        mapDisposable.remove(messageId);
+        Optional.ofNullable(mapDisposables.get(messageId)).ifPresent(Disposable::dispose);
+        mapDisposables.remove(messageId);
     }
 
     @Override
@@ -125,10 +125,10 @@ public class DisposableConnection implements Disposable, Serializable {
         return connection.isDisposed();
     }
 
-    public void destory() {
-        mapDisposable.values().forEach(Disposable::dispose);
-        mapDisposable.clear();
-        mapQosMessage.clear();
+    public void destroy() {
+        mapDisposables.values().forEach(Disposable::dispose);
+        mapDisposables.clear();
+        mapQosMessages.clear();
         topics.clear();
     }
 }

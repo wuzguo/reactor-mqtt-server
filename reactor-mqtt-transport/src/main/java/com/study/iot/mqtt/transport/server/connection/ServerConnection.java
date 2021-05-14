@@ -105,7 +105,7 @@ public class ServerConnection implements ServerSession {
             Optional.ofNullable(disposableConnection.getTopics())
                 .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().remove(topic, connection)));
             // 清空各种缓存
-            disposableConnection.destory();
+            disposableConnection.destroy();
         });
     }
 

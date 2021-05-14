@@ -42,20 +42,20 @@ public class ServerPublishHandler implements StrategyCapable {
     @MqttMetric(MetricMatterName.TOTAL_PUBLISH_COUNT)
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server Publish message: {}, connection: {}", message, connection);
-        MqttFixedHeader header = message.fixedHeader();
+        MqttFixedHeader fixedHeader = message.fixedHeader();
         MqttPublishMessage mqttMessage = (MqttPublishMessage) message;
         MqttPublishVariableHeader variableHeader = mqttMessage.variableHeader();
-        ByteBuf byteBuf = mqttMessage.payload();
-        byte[] bytes = copyByteBuf(byteBuf);
+        byte[] bytes = copyByteBuf(mqttMessage.payload());
         //保留消息
-        if (header.isRetain()) {
+        if (fixedHeader.isRetain()) {
             RetainMessage retainMessage = RetainMessage.builder().topic(variableHeader.topicName())
-                .isRetain(header.isRetain()).isDup(header.isDup()).qos(header.qosLevel().value())
+                .isRetain(fixedHeader.isRetain()).isDup(fixedHeader.isDup()).qos(fixedHeader.qosLevel().value())
                 .copyByteBuf(bytes).build();
             cacheManager.message().saveRetain(retainMessage);
         }
+
         // 又来一个策略模式
-        Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH, header.qosLevel()))
+        Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH, fixedHeader.qosLevel()))
             .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(mqttMessage, connection, bytes));
     }
 

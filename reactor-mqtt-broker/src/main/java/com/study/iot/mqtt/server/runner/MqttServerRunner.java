@@ -59,6 +59,6 @@ public class MqttServerRunner implements ApplicationRunner {
         Optional.ofNullable(serverSession)
             .ifPresent(session -> session.getConnections().subscribe(disposables -> disposables.stream()
                 .map(disposable -> (DisposableConnection) disposable)
-                .forEach(DisposableConnection::destory)));
+                .forEach(DisposableConnection::destroy)));
     }
 }
