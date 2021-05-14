@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientConnAckHandler implements StrategyCapable {
 
     @Override
-    public void handle(MqttMessage message, DisposableConnection connection) {
+    public void handle(DisposableConnection connection, MqttMessage message) {
         log.info("client ConnAck message: {}, connection: {}", message, connection);
         MqttConnAckMessage mqttConnAckMessage = (MqttConnAckMessage) message;
         MqttConnAckVariableHeader variableHeader = mqttConnAckMessage.variableHeader();

@@ -1,11 +1,11 @@
 package com.study.iot.mqtt.transport.client.handler.connect;
 
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyContainer;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -31,14 +31,14 @@ public class ClientPublishHandler implements StrategyCapable {
     private PublishStrategyContainer strategyContainer;
 
     @Override
-    public void handle(MqttMessage message, DisposableConnection connection) {
+    public void handle(DisposableConnection connection, MqttMessage message) {
         log.info("client Publish message: {}, connection: {}", message, connection);
         MqttPublishMessage mqttMessage = (MqttPublishMessage) message;
         MqttFixedHeader header = message.fixedHeader();
         byte[] bytes = copyByteBuf(mqttMessage.payload());
         // 又来一个策略模式
         Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.CLIENT_PUBLISH, header.qosLevel()))
-            .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(mqttMessage, connection, bytes));
+            .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(connection, mqttMessage, bytes));
     }
 
     private byte[] copyByteBuf(ByteBuf byteBuf) {

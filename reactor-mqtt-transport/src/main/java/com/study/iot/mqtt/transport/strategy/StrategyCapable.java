@@ -17,8 +17,8 @@ public interface StrategyCapable {
     /**
      * 处理消息
      *
-     * @param message       {@link MqttMessage}
-     * @param connection    {@link DisposableConnection}
+     * @param connection {@link DisposableConnection}
+     * @param message    {@link MqttMessage}
      */
-    void handle(MqttMessage message, DisposableConnection connection);
+    void handle(DisposableConnection connection, MqttMessage message);
 }

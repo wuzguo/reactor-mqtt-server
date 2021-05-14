@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientPublishAtMostHandler implements PublishStrategyCapable {
 
     @Override
-    public void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes) {
+    public void handle(DisposableConnection connection, MqttPublishMessage message, byte[] bytes) {
         MqttPublishVariableHeader variableHeader = message.variableHeader();
         log.info("client publish topic: {}, message: {}", variableHeader.topicName(), new String(bytes,
             CharsetUtil.UTF_8));

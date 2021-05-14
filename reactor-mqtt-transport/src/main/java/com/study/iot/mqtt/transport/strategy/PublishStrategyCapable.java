@@ -21,5 +21,5 @@ public interface PublishStrategyCapable {
      * @param connection {@link DisposableConnection}
      * @param bytes      {@link Byte}
      */
-    void handle(MqttPublishMessage message, DisposableConnection connection, byte[] bytes);
+    void handle(DisposableConnection connection, MqttPublishMessage message, byte[] bytes);
 }
