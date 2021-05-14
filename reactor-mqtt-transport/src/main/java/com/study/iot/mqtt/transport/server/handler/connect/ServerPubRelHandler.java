@@ -2,6 +2,7 @@ package com.study.iot.mqtt.transport.server.handler.connect;
 
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
+import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -48,11 +49,11 @@ public class ServerPubRelHandler implements StrategyCapable {
                 .stream().map(disposable -> (DisposableConnection) disposable)
                 .filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
                 .forEach(disposable -> {
-                    int id = connection.messageId();
+                    int connMessageId = IdUtil.messageId();
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false,
-                        MqttQoS.valueOf(transportMessage.getQos()), header.isRetain(), id,
+                        MqttQoS.valueOf(transportMessage.getQos()), header.isRetain(), connMessageId,
                         transportMessage.getTopic(), transportMessage.getCopyByteBuf());
-                    disposable.sendMessageRetry(id, mqttMessage).subscribe();
+                    disposable.sendMessageRetry(connMessageId, mqttMessage).subscribe();
                 }));
     }
 }

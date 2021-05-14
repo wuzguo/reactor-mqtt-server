@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.transport.server.handler.will;
 
+import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -22,7 +23,7 @@ public class ServerWillAtLeastHandler implements WillCapable {
 
     @Override
     public void handle(MqttQoS qoS, DisposableConnection connection, WillMessage willMessage) {
-        MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getIsRetain(), connection.messageId(),
+        MqttMessage message = MessageBuilder.buildPub(false, qoS, willMessage.getIsRetain(), IdUtil.messageId(),
             willMessage.getTopic(), willMessage.getCopyByteBuf());
         connection.sendMessage(message).subscribe();
     }

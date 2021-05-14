@@ -1,6 +1,7 @@
 package com.study.iot.mqtt.transport.client.connection;
 
 import com.google.common.collect.Lists;
+import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.config.ClientProperties;
@@ -99,7 +100,7 @@ public class ClientConnection implements ClientSession {
             .collect(Collectors.toList());
 
         if (mqttTopicSubscriptions.size() > 0) {
-            int messageId = connection.messageId();
+            int messageId = IdUtil.messageId();
             MqttSubscribeMessage mqttMessage = MessageBuilder.buildSub(messageId, mqttTopicSubscriptions);
             connection.sendMessageRetry(messageId, mqttMessage);
         }
@@ -113,8 +114,9 @@ public class ClientConnection implements ClientSession {
                     MessageBuilder.buildPub(false, MqttQoS.AT_MOST_ONCE, retained, 1, topic, message));
             case EXACTLY_ONCE:
             case AT_LEAST_ONCE:
-                return connection.sendMessageRetry(connection.messageId(),
-                    MessageBuilder.buildPub(false, mqttQoS, retained, connection.messageId(), topic, message));
+                int messageId = IdUtil.messageId();
+                return connection.sendMessageRetry(messageId,
+                    MessageBuilder.buildPub(false, mqttQoS, retained, messageId, topic, message));
             default:
                 return Mono.empty();
         }
@@ -142,7 +144,7 @@ public class ClientConnection implements ClientSession {
             .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE))
             .collect(Collectors.toList());
         // retry
-        int messageId = connection.messageId();
+        int messageId = IdUtil.messageId();
         return connection.sendMessageRetry(messageId, MessageBuilder.buildSub(messageId, topicSubscriptions));
     }
 
@@ -150,7 +152,7 @@ public class ClientConnection implements ClientSession {
     public Mono<Void> unsub(List<String> topics) {
         this.topics.removeAll(topics);
         // retry
-        int messageId = connection.messageId();
+        int messageId = IdUtil.messageId();
         return connection.sendMessageRetry(messageId, MessageBuilder.buildUnSub(messageId, topics));
     }
 

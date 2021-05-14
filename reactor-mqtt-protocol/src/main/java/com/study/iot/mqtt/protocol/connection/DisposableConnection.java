@@ -9,7 +9,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.LongAdder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
@@ -43,8 +42,6 @@ public class DisposableConnection implements Disposable, Serializable {
 
     private List<String> topics = Lists.newCopyOnWriteArrayList();
 
-    private LongAdder longAdder = new LongAdder();
-
     public DisposableConnection(Connection connection) {
         this.connection = connection;
         this.inbound = connection.inbound();
@@ -53,22 +50,6 @@ public class DisposableConnection implements Disposable, Serializable {
 
     public <T> Flux<T> receive(Class<T> cls) {
         return inbound.receiveObject().cast(cls);
-    }
-
-    /**
-     * 生成消息 ID
-     *
-     * @return {@link Integer}
-     */
-    public int messageId() {
-        longAdder.increment();
-        int value = longAdder.intValue();
-        if (value == Integer.MAX_VALUE) {
-            longAdder.reset();
-            longAdder.increment();
-            return longAdder.intValue();
-        }
-        return value;
     }
 
     public void addTopic(String topic) {

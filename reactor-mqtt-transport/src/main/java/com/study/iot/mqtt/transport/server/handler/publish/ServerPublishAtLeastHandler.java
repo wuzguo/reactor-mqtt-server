@@ -1,8 +1,9 @@
 package com.study.iot.mqtt.transport.server.handler.publish;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
@@ -42,9 +43,9 @@ public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !connection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
-                int messageId = connection.messageId();
+                int messageId = IdUtil.messageId();
                 MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),
-                    connection.messageId(), variableHeader.topicName(), bytes);
+                    messageId, variableHeader.topicName(), bytes);
                 disposable.sendMessageRetry(messageId, mqttMessage).subscribe();
             });
     }

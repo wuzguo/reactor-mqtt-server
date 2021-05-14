@@ -2,8 +2,9 @@ package com.study.iot.mqtt.transport.server.handler.connect;
 
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -56,16 +57,15 @@ public class ServerSubscribeHandler implements StrategyCapable {
             Optional.ofNullable(cacheManager.message().getRetain(topicName)).ifPresent(retainMessage -> {
                 if (retainMessage.getQos() == 0) {
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),
-                        MqttQoS.valueOf(retainMessage.getQos()),
-                        retainMessage.getIsRetain(), 1, retainMessage.getTopic(), retainMessage.getCopyByteBuf());
+                        MqttQoS.valueOf(retainMessage.getQos()), retainMessage.getIsRetain(), 1,
+                        retainMessage.getTopic(), retainMessage.getCopyByteBuf());
                     connection.sendMessage(mqttMessage).subscribe();
                 } else {
-                    int connMessageId = connection.messageId();
+                    int connMessageId = IdUtil.messageId();
                     // retry
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(true, header.qosLevel(),
-                        header.isRetain(), connMessageId, retainMessage.getTopic(),
-                        retainMessage.getCopyByteBuf());
-                    connection.sendMessageRetry(messageId, mqttMessage);
+                        header.isRetain(), connMessageId, retainMessage.getTopic(), retainMessage.getCopyByteBuf());
+                    connection.sendMessageRetry(connMessageId, mqttMessage);
                 }
             });
         });
