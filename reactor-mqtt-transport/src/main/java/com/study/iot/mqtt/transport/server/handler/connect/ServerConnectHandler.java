@@ -147,16 +147,15 @@ public class ServerConnectHandler implements StrategyCapable {
      *
      * @param disposableConnection {@link DisposableConnection}
      * @param identity             设备标识
-     * @param keepAliveTimeSeconds 超时时间
+     * @param keepAliveSeconds 超时时间
      */
-    private void acceptConnect(DisposableConnection disposableConnection, String identity,
-        Integer keepAliveTimeSeconds) {
+    private void acceptConnect(DisposableConnection disposableConnection, String identity, Integer keepAliveSeconds) {
         // 连接信息
         Connection connection = disposableConnection.getConnection();
         // 心跳超时关闭
-        connection.onReadIdle(keepAliveTimeSeconds * 1000L, connection::dispose);
+        connection.onReadIdle(keepAliveSeconds * 1000L, connection::dispose);
         // 设置连接保持时间
-        connection.channel().attr(AttributeKeys.keepalived).set(keepAliveTimeSeconds);
+        connection.channel().attr(AttributeKeys.keepalived).set(keepAliveSeconds);
         // 设置设备标识
         connection.channel().attr(AttributeKeys.identity).set(identity);
         // 设置 connection

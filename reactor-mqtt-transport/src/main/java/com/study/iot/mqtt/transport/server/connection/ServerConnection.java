@@ -68,28 +68,43 @@ public class ServerConnection implements ServerSession {
             .ifPresent(Disposable::dispose));
     }
 
+    /**
+     * 发送遗嘱消息
+     *
+     * @param connection {@link Connection}
+     */
+    private void sendWillMessage(Connection connection) {
+        Optional.ofNullable(connection.channel().attr(AttributeKeys.willMessage)).map(Attribute::get)
+            .ifPresent(
+                willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopic()))
+                    .ifPresent(disposables -> disposables.forEach(disposable -> {
+                        MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
+                        Optional.ofNullable(
+                            messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
+                            .ifPresent(capable -> ((WillCapable) capable)
+                                .handle(qoS, (DisposableConnection) disposable, willMessage));
+                    })));
+    }
+
     @Override
     public void onDispose(DisposableConnection disposableConnection) {
         Connection connection = disposableConnection.getConnection();
         // 自己超时关闭的时候会走这段代码，要清除缓存中的连接信息
         connection.onDispose(() -> {
             // 发送遗嘱消息
-            Optional.ofNullable(connection.channel().attr(AttributeKeys.willMessage)).map(Attribute::get)
-                .ifPresent(
-                    willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopic()))
-                        .ifPresent(disposables -> disposables.forEach(disposable -> {
-                            MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                            Optional.ofNullable(
-                                messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
-                                .ifPresent(capable -> ((WillCapable) capable)
-                                    .handle(qoS, (DisposableConnection) disposable, willMessage));
-                        })));
-            // 删除缓存
+            this.sendWillMessage(connection);
+            // 删除设备标识
             Optional.ofNullable(connection.channel().attr(AttributeKeys.identity)).map(Attribute::get)
-                .ifPresent(cacheManager.channel()::remove);
+                .ifPresent(identity -> {
+                    cacheManager.channel().remove(identity);
+                    connection.channel().attr(AttributeKeys.identity).set(null);
+                });
+            // 删除连接
+            connection.channel().attr(AttributeKeys.disposableConnection).set(null);
             // 删除topic订阅
-            Optional.ofNullable(disposableConnection.getTopics()).ifPresent(topics -> topics
-                .forEach(topic -> cacheManager.topic().remove(topic, disposableConnection)));
+            Optional.ofNullable(disposableConnection.getTopics())
+                .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().remove(topic, connection)));
+            // 清空各种缓存
             disposableConnection.destory();
         });
     }
