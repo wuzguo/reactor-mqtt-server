@@ -61,7 +61,7 @@ public class DisposableConnection implements SerializerDisposable {
     }
 
     public Mono<Void> sendMessage(MqttMessage message) {
-        return outbound.sendObject(message).then().doOnError(Throwable::printStackTrace);
+        return outbound.sendObject(message).then().doOnError(throwable -> log.error(throwable.getMessage()));
     }
 
     public Mono<Void> sendMessageRetry(Integer messageId, MqttMessage message) {
@@ -91,6 +91,9 @@ public class DisposableConnection implements SerializerDisposable {
         mapDisposables.put(messageId, disposable);
     }
 
+    private Disposable getDisposable(Integer messageId) {
+        return mapDisposables.get(messageId);
+    }
 
     public void cancelDisposable(Integer messageId) {
         Optional.ofNullable(mapDisposables.get(messageId)).ifPresent(Disposable::dispose);

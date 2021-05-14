@@ -24,7 +24,7 @@ public class ServerPingReqHandler implements StrategyCapable {
 
     @Override
     public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server PingResp message: {}, connection: {}", message, connection);
+        log.info("server PingReq message: {}, connection: {}", message, connection);
         MqttMessage mqttMessage = MessageBuilder.buildPing(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE,
             false, 0);
         connection.sendMessage(mqttMessage);
