@@ -50,7 +50,7 @@ public class ServerConnection implements ServerSession {
         // 设置 close
         connection.channel().attr(AttributeKeys.closeConnection).set(closeConnection);
         // 关闭连接时处理的逻辑
-        this.onDispose(disposableConnection);
+        this.setDisposeDeal(disposableConnection);
         // 订阅各种消息
         disposableConnection.receive(MqttMessage.class)
             .subscribe(message -> messageRouter.handle(message, disposableConnection));
@@ -87,7 +87,7 @@ public class ServerConnection implements ServerSession {
     }
 
     @Override
-    public void onDispose(DisposableConnection disposableConnection) {
+    public void setDisposeDeal(DisposableConnection disposableConnection) {
         Connection connection = disposableConnection.getConnection();
         // 自己超时关闭的时候会走这段代码，要清除缓存中的连接信息
         connection.onDispose(() -> {

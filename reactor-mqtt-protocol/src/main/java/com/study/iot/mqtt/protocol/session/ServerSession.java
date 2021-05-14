@@ -27,5 +27,5 @@ public interface ServerSession extends Disposable {
      *
      * @param disposableConnection {@link DisposableConnection}
      */
-    void onDispose(DisposableConnection disposableConnection);
+    void setDisposeDeal(DisposableConnection disposableConnection);
 }

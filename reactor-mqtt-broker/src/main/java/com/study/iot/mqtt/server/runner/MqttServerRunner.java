@@ -2,7 +2,6 @@ package com.study.iot.mqtt.server.runner;
 
 import com.google.common.collect.Sets;
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -10,6 +9,7 @@ import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.server.config.MqttProperties;
 import com.study.iot.mqtt.transport.server.TransportServer;
 import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -54,11 +54,11 @@ public class MqttServerRunner implements ApplicationRunner {
             .throwable(e -> log.error("starting mqtt server exception：{}", e.getMessage()))
             .build();
         // 启动服务
-        ServerSession session = new TransportServer().create(serverProperties)
-            .start(cacheManager, messageRouter)
-            .block();
-        session.getConnections().subscribe(disposables -> disposables.stream()
-            .map(disposable -> (DisposableConnection) disposable)
-            .forEach(DisposableConnection::destory));
+        ServerSession serverSession = new TransportServer().create(serverProperties)
+            .start(cacheManager, messageRouter).block();
+        Optional.ofNullable(serverSession)
+            .ifPresent(session -> session.getConnections().subscribe(disposables -> disposables.stream()
+                .map(disposable -> (DisposableConnection) disposable)
+                .forEach(DisposableConnection::destory)));
     }
 }

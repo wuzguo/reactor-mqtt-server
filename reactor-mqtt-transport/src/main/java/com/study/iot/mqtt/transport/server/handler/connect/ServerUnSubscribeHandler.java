@@ -34,11 +34,11 @@ public class ServerUnSubscribeHandler implements StrategyCapable {
     public void handle(MqttMessage message, DisposableConnection connection) {
         log.info("server UnSubscribe message: {}, connection: {}", message, connection);
 
-        MqttUnsubscribeMessage mqttUnsubscribeMessage = (MqttUnsubscribeMessage) message;
+        MqttUnsubscribeMessage unsubscribeMessage = (MqttUnsubscribeMessage) message;
         MqttUnsubAckMessage mqttUnsubAckMessage =
-            MessageBuilder.buildUnsubAck(mqttUnsubscribeMessage.variableHeader().messageId());
+            MessageBuilder.buildUnsubAck(unsubscribeMessage.variableHeader().messageId());
         connection.sendMessage(mqttUnsubAckMessage).subscribe();
-        Optional.ofNullable(mqttUnsubscribeMessage.payload().topics())
+        Optional.ofNullable(unsubscribeMessage.payload().topics())
             .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().remove(topic, connection)));
     }
 }
