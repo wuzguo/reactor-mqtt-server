@@ -1,10 +1,10 @@
 package com.study.iot.mqtt.transport.client.router;
 
 
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import java.util.Optional;
 import lombok.Getter;
@@ -20,8 +20,8 @@ public class ClientMessageRouter {
         this.container = container;
     }
 
-    public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("accept message channel {}，message {}", connection.getConnection().channel(), message);
+    public void handle(MqttMessage message, DisposableConnection disposableConnection) {
+        log.info("accept message channel {}，message {}", disposableConnection.getConnection().channel(), message);
 
         if (!message.decoderResult().isSuccess()) {
             log.error("accept message  error {}", message.decoderResult());
@@ -30,6 +30,6 @@ public class ClientMessageRouter {
 
         // 策略分发
         Optional.ofNullable(container.findStrategy(StrategyGroup.CLIENT, message.fixedHeader().messageType()))
-            .ifPresent(capable -> ((StrategyCapable) capable).handle(message, connection));
+            .ifPresent(capable -> ((StrategyCapable) capable).handle(disposableConnection, message));
     }
 }
