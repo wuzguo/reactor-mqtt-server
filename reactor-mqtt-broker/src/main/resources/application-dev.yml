@@ -1,5 +1,5 @@
 server:
-  port: 8810
+  port: 8800
 
 # 开发环境配置
 spring:

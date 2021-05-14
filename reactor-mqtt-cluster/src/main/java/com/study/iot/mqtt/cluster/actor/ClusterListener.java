@@ -37,7 +37,8 @@ public class ClusterListener extends AbstractActor {
 
     @Override
     public void preStart() throws Exception, Exception {
-        cluster.subscribe(self(), MemberEvent.class, UnreachableMember.class);
+        cluster.join(cluster.selfAddress());
+        cluster.registerOnMemberUp(() -> cluster.subscribe(getSelf(), MemberEvent.class, UnreachableMember.class));
     }
 
     @Override
