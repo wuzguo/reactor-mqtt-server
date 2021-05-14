@@ -28,11 +28,6 @@ public class ConnectProperties {
     private Integer port;
 
     /**
-     * 心跳
-     */
-    private Integer heart = 60;
-
-    /**
      * 开启日志
      */
     private Boolean isLog;

@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.transport.server.handler.connect;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.AttributeKeys;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
@@ -12,6 +12,7 @@ import io.netty.util.Attribute;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.netty.Connection;
 
 /**
  * <B>说明：描述</B>
@@ -29,15 +30,23 @@ public class ServerDisConnectHandler implements StrategyCapable {
     private CacheManager cacheManager;
 
     @Override
-    public void handle(MqttMessage message, DisposableConnection connection) {
-        log.info("server DisConnect message: {}, connection: {}", message, connection);
+    public void handle(MqttMessage message, DisposableConnection disposableConnection) {
+        log.info("server DisConnect message: {}, connection: {}", message, disposableConnection);
+        // 获取连接
+        Connection connection = disposableConnection.getConnection();
         // 删除设备标识
-        Optional.ofNullable(connection.getConnection().channel().attr(AttributeKeys.identity))
-            .map(Attribute::get)
-            .ifPresent(cacheManager.channel()::remove);
+        Optional.ofNullable(connection.channel().attr(AttributeKeys.identity)).map(Attribute::get)
+            .ifPresent(identity -> {
+                cacheManager.channel().remove(identity);
+                connection.channel().attr(AttributeKeys.identity).set(null);
+            });
+        // 删除连接
+        connection.channel().attr(AttributeKeys.disposableConnection).set(null);
+
         // 删除topic订阅
-        Optional.ofNullable(connection.getTopics())
+        Optional.ofNullable(disposableConnection.getTopics())
             .ifPresent(topics -> topics.forEach(topic -> cacheManager.topic().remove(topic, connection)));
-        connection.dispose();
+
+        disposableConnection.dispose();
     }
 }

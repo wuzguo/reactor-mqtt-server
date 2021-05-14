@@ -30,11 +30,6 @@ public class MqttProperties {
     private Integer port;
 
     /**
-     * 心跳
-     */
-    private Integer heart;
-
-    /**
      * 开启日志
      */
     private Boolean enableLog;

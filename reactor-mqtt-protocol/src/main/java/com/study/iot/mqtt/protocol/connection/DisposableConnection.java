@@ -91,7 +91,6 @@ public class DisposableConnection implements Disposable, Serializable {
         return this.sendMessage(message);
     }
 
-
     public void saveQos2Message(Integer messageId, TransportMessage message) {
         mapQosMessage.put(messageId, message);
     }
@@ -107,7 +106,6 @@ public class DisposableConnection implements Disposable, Serializable {
         return mapQosMessage.containsKey(messageId);
     }
 
-
     private void addDisposable(Integer messageId, Disposable disposable) {
         mapDisposable.put(messageId, disposable);
     }
@@ -117,7 +115,6 @@ public class DisposableConnection implements Disposable, Serializable {
         Optional.ofNullable(mapDisposable.get(messageId)).ifPresent(Disposable::dispose);
         mapDisposable.remove(messageId);
     }
-
 
     @Override
     public void dispose() {

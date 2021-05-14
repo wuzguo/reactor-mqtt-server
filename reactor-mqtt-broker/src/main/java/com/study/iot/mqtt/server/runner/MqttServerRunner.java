@@ -44,7 +44,6 @@ public class MqttServerRunner implements ApplicationRunner {
             .host(properties.getHost()).port(properties.getPort())
             .protocols(Sets.newHashSet(ProtocolType.MQTT))
             .strategy(properties.getStrategy())
-            .heart(properties.getHeart())
             .sendBufSize(32 * 1024)
             .revBufSize(32 * 1024)
             .backlog(properties.getBacklog())

@@ -4,11 +4,11 @@ package com.study.iot.mqtt.transport.server.handler.connect;
 import com.study.iot.mqtt.auth.service.ConnectAuthentication;
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.cache.service.ChannelManager;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.common.utils.StringUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;
+import com.study.iot.mqtt.protocol.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -29,6 +29,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.Disposable;
+import reactor.netty.Connection;
 
 /**
  * <B>说明：描述</B>
@@ -113,7 +114,7 @@ public class ServerConnectHandler implements StrategyCapable {
                 connection.dispose();
                 return;
             }
-            // 连接成功
+            // 连接成功，超时时间来自客户端的设置
             acceptConnect(connection, identity, variableHeader.keepAliveTimeSeconds());
             // 如果有遗嘱消息，这里需要处理
             if (variableHeader.isWillFlag()) {
@@ -144,24 +145,29 @@ public class ServerConnectHandler implements StrategyCapable {
     /**
      * 连接成功
      *
-     * @param connection {@link DisposableConnection}
-     * @param identity   设备标识
-     * @param keepalive  超时时间
+     * @param disposableConnection {@link DisposableConnection}
+     * @param identity             设备标识
+     * @param keepAliveTimeSeconds 超时时间
      */
-    private void acceptConnect(DisposableConnection connection, String identity, int keepalive) {
+    private void acceptConnect(DisposableConnection disposableConnection, String identity,
+        Integer keepAliveTimeSeconds) {
+        // 连接信息
+        Connection connection = disposableConnection.getConnection();
         // 心跳超时关闭
-        connection.getConnection().onReadIdle(keepalive * 2000L, () -> connection.getConnection().dispose());
+        connection.onReadIdle(keepAliveTimeSeconds * 1000L, connection::dispose);
         // 设置连接保持时间
-        connection.getConnection().channel().attr(AttributeKeys.keepalived).set(keepalive);
+        connection.channel().attr(AttributeKeys.keepalived).set(keepAliveTimeSeconds);
         // 设置设备标识
-        connection.getConnection().channel().attr(AttributeKeys.identity).set(identity);
+        connection.channel().attr(AttributeKeys.identity).set(identity);
+        // 设置 connection
+        connection.channel().attr(AttributeKeys.disposableConnection).set(disposableConnection);
         // 保持标识和连接的关系
-        cacheManager.channel().add(identity, connection);
+        cacheManager.channel().add(identity, disposableConnection);
         // 取消关闭连接
-        Optional.ofNullable(connection.getConnection().channel().attr(AttributeKeys.closeConnection))
-            .map(Attribute::get)
-            .ifPresent(Disposable::dispose);
-        // 连接成功
-        connection.sendMessage(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED)).subscribe();
+        Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.closeConnection))
+            .map(Attribute::get).ifPresent(Disposable::dispose);
+        // 发送连接成功的消息
+        disposableConnection.sendMessage(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED))
+            .subscribe();
     }
 }

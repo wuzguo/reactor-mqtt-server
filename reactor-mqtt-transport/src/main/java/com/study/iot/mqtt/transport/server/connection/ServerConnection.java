@@ -49,12 +49,9 @@ public class ServerConnection implements ServerSession {
         Connection connection = disposableConnection.getConnection();
         // 定时关闭
         Disposable closeConnection = Mono.fromRunnable(connection::dispose)
-            .delaySubscription(Duration.ofSeconds(10))
-            .subscribe();
+            .delaySubscription(Duration.ofSeconds(10)).subscribe();
         // 设置 close
         connection.channel().attr(AttributeKeys.closeConnection).set(closeConnection);
-        // 设置 connection
-        connection.channel().attr(AttributeKeys.disposableConnection).set(disposableConnection);
         // 关闭连接时处理的逻辑
         this.onDispose(disposableConnection);
         // 订阅各种消息
@@ -77,7 +74,9 @@ public class ServerConnection implements ServerSession {
     @Override
     public void onDispose(DisposableConnection disposableConnection) {
         Connection connection = disposableConnection.getConnection();
+        // 自己超时关闭的时候会走这段代码，要清除缓存中的连接信息
         connection.onDispose(() -> {
+            // 发送遗嘱消息
             Optional.ofNullable(connection.channel().attr(AttributeKeys.willMessage)).map(Attribute::get)
                 .ifPresent(
                     willMessage -> Optional.ofNullable(cacheManager.topic().getConnections(willMessage.getTopic()))
@@ -88,8 +87,7 @@ public class ServerConnection implements ServerSession {
                                 .ifPresent(capable -> ((WillCapable) capable)
                                     .handle(qoS, (DisposableConnection) disposable, willMessage));
                         })));
-            // 自己超时关闭的时候会走这段代码，要清除缓存中的连接信息
-            // 删除设备标识
+            // 删除缓存
             Optional.ofNullable(connection.channel().attr(AttributeKeys.identity)).map(Attribute::get)
                 .ifPresent(cacheManager.channel()::remove);
             // 删除topic订阅

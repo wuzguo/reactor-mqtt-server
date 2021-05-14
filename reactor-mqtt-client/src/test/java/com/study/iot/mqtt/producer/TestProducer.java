@@ -49,15 +49,10 @@ public class TestProducer {
         ClientProperties properties = ClientProperties.builder()
             .host("localhost").port(1884)
             .protocol(ProtocolType.MQTT)
-            .heart(10000)
-            .sendBufSize(32 * 1024)
-            .revBufSize(32 * 1024)
-            .backlog(128)
-            .noDelay(true)
+            .keepAliveSeconds(10000)
             .isSsl(false)
             .isLog(true)
-            .onClose(() -> {
-            })
+            .onClose(() -> { })
             .options(options)
             .throwable(e -> log.error("starting mqtt client exception：{}", e.getMessage()))
             .build();

@@ -128,10 +128,10 @@ public class MessageBuilder {
 
     public static MqttConnectMessage buildConnect(String identity, String willTopic, String willMessage,
         String username, String password, boolean isUsername, boolean isPassword, boolean isWill, int willQos,
-        int heart) {
+        int keepAliveTimeSeconds) {
         MqttConnectVariableHeader mqttConnectVariableHeader = new MqttConnectVariableHeader(
             MqttVersion.MQTT_3_1_1.protocolName(), MqttVersion.MQTT_3_1_1.protocolLevel(), isUsername, isPassword,
-            false, willQos, isWill, false, heart);
+            false, willQos, isWill, false, keepAliveTimeSeconds);
         MqttConnectPayload mqttConnectPayload = new MqttConnectPayload(identity, willTopic,
             isWill ? willMessage.getBytes() : null, username, isPassword ? password.getBytes() : null);
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT, false, MqttQoS.AT_MOST_ONCE,

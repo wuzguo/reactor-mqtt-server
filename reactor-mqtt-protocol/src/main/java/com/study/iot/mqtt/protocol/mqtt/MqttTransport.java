@@ -46,9 +46,9 @@ public class MqttTransport extends ProtocolTransport {
 
     private TcpServer buildServer(ServerProperties properties) {
         TcpServer server = TcpServer.create()
+            .host(properties.getHost())
             .port(properties.getPort())
             .wiretap(properties.getIsLog())
-            .host(properties.getHost())
             .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
             .option(ChannelOption.SO_KEEPALIVE, properties.getKeepAlive())
             .option(ChannelOption.TCP_NODELAY, properties.getNoDelay())

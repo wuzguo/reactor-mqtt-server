@@ -7,7 +7,7 @@ spring:
     system-name: reactorActorSystem
     config: application.conf
   cache:
-    mode: ignite
+    mode: memory
   mqtt:
     broker:
       # 主机地址

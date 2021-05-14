@@ -58,7 +58,7 @@ public class ClientConnection implements ClientSession {
             options.getHasPassword(),
             options.getHasWillFlag(),
             options.getWillQos().value(),
-            properties.getHeart()
+            properties.getKeepAliveSeconds()
         )).subscribe()).delaySubscription(Duration.ofSeconds(10)).repeat().subscribe();
 
         connection.sendMessage(MessageBuilder.buildConnect(
@@ -71,17 +71,17 @@ public class ClientConnection implements ClientSession {
             options.getHasPassword(),
             options.getHasWillFlag(),
             options.getWillQos().value(),
-            properties.getHeart()
+            properties.getKeepAliveSeconds()
         )).doOnError(throwable -> log.error(throwable.getMessage())).subscribe();
         connection.getConnection().channel().attr(AttributeKeys.closeConnection).set(disposable);
         // 发送心跳
-        connection.getConnection().onWriteIdle(properties.getHeart(), () -> {
+        connection.getConnection().onWriteIdle(properties.getKeepAliveSeconds(), () -> {
             MqttMessage message = new MqttMessage(
                 new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0));
             connection.sendMessage(message).subscribe();
         });
         // 发送心跳
-        connection.getConnection().onReadIdle(properties.getHeart() * 2L, () -> {
+        connection.getConnection().onReadIdle(properties.getKeepAliveSeconds() * 2L, () -> {
             MqttMessage message = new MqttMessage(
                 new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0));
             connection.sendMessage(message).subscribe();
