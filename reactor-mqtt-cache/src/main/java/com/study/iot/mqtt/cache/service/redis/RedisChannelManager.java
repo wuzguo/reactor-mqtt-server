@@ -1,14 +1,14 @@
 package com.study.iot.mqtt.cache.service.redis;
 
 
+import com.google.common.collect.Lists;
 import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.cache.service.ChannelManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
+import com.study.iot.mqtt.cache.template.RedisTemplate;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
-import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.Disposable;
@@ -26,32 +26,32 @@ import reactor.core.Disposable;
 public class RedisChannelManager implements ChannelManager {
 
     @Autowired
-    private RedisOpsTemplate redisOpsTemplate;
+    private RedisTemplate redisTemplate;
 
     @Override
     public void add(String identity, SerializerDisposable disposable) {
-        redisOpsTemplate.sadd(identity, disposable);
+        redisTemplate.hset(CacheGroup.CHANNEL, identity, disposable);
     }
 
     @Override
     public void remove(String identity) {
-        redisOpsTemplate.del(identity);
+        redisTemplate.hdel(CacheGroup.CHANNEL, identity);
     }
 
     @Override
     public SerializerDisposable getAndRemove(String identity) {
-        SerializerDisposable disposable = redisOpsTemplate.get(identity, SerializerDisposable.class);
-        redisOpsTemplate.del(identity);
+        SerializerDisposable disposable = redisTemplate.hget(CacheGroup.CHANNEL, identity, SerializerDisposable.class);
+        redisTemplate.hdel(CacheGroup.CHANNEL, identity);
         return disposable;
     }
 
     @Override
     public Boolean containsKey(String identity) {
-        return ObjectUtil.isNull(redisOpsTemplate.get(identity, Disposable.class));
+        return ObjectUtil.isNull(redisTemplate.hget(CacheGroup.CHANNEL, identity, Disposable.class));
     }
 
     @Override
     public List<SerializerDisposable> getConnections() {
-        return Collections.emptyList();
+        return Lists.newArrayList(redisTemplate.hmget(CacheGroup.CHANNEL, SerializerDisposable.class).values());
     }
 }

@@ -1,10 +1,10 @@
 package com.study.iot.mqtt.cache.service.redis;
 
 import com.study.iot.mqtt.cache.constant.CacheGroup;
-import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
 import com.study.iot.mqtt.cache.service.MessageManager;
-import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
+import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
+import com.study.iot.mqtt.cache.template.RedisTemplate;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,15 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RedisMessageManager implements MessageManager {
 
     @Autowired
-    private RedisOpsTemplate redisOpsTemplate;
+    private RedisTemplate redisTemplate;
 
     @Override
     public void saveRetain(RetainMessage message) {
-        redisOpsTemplate.sadd(message.getTopic(), message);
+        redisTemplate.hset(CacheGroup.MESSAGE, message.getTopic(), message);
     }
 
     @Override
     public RetainMessage getRetain(String topicName) {
-        return redisOpsTemplate.get(topicName, RetainMessage.class);
+        return redisTemplate.hget(CacheGroup.MESSAGE, topicName, RetainMessage.class);
     }
 }

@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Component
-public class RedisOpsTemplate {
+public class CacheOpsTemplate {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -41,7 +41,7 @@ public class RedisOpsTemplate {
         if (obj == null) {
             return null;
         } else if (obj instanceof String) {
-            return (String) obj;//
+            return (String) obj;
         } else {
             return JsonUtil.toString(obj);
         }
@@ -595,7 +595,7 @@ public class RedisOpsTemplate {
      */
     public Long sadd(String key, Object... values) {
         assertTrue(verifyKeys(key) && verifyValues(values), "keys & fields is not exist");
-        return opsForSet().add(key, Stream.of(values).map(RedisOpsTemplate::valueToRedisStr).toArray(String[]::new));
+        return opsForSet().add(key, Stream.of(values).map(CacheOpsTemplate::valueToRedisStr).toArray(String[]::new));
     }
 
     /**
@@ -603,7 +603,7 @@ public class RedisOpsTemplate {
      */
     public Long srem(String key, Object... values) {
         assertTrue(verifyKeys(key) && verifyValues(values), "keys & fields is not exist");
-        return opsForSet().remove(key, Stream.of(values).map(RedisOpsTemplate::valueToRedisStr).toArray());
+        return opsForSet().remove(key, Stream.of(values).map(CacheOpsTemplate::valueToRedisStr).toArray());
     }
 
     /**

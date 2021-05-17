@@ -7,8 +7,9 @@ import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.cache.template.RedisOpsTemplate;
+import com.study.iot.mqtt.cache.template.RedisTemplate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,21 +25,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RedisTopicManager implements TopicManager {
 
     @Autowired
-    private RedisOpsTemplate redisOpsTemplate;
+    private RedisTemplate redisTemplate;
 
     @Override
     public List<SerializerDisposable> getConnections(String topic) {
-        return Optional.ofNullable(redisOpsTemplate.getList(topic, SerializerDisposable.class))
+        return (List<SerializerDisposable>) Optional
+            .ofNullable(redisTemplate.hmget(CacheGroup.TOPIC, SerializerDisposable.class, topic)).map(Map::values)
             .orElse(Lists.newArrayList());
     }
 
     @Override
     public void add(String topic, SerializerDisposable disposable) {
-        redisOpsTemplate.sadd(topic, disposable);
+        redisTemplate.hset(CacheGroup.TOPIC, topic, disposable);
     }
 
     @Override
     public void remove(String topic, SerializerDisposable disposable) {
-        redisOpsTemplate.del(topic);
+        redisTemplate.hdel(CacheGroup.TOPIC, topic);
     }
 }
