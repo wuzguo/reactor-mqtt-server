@@ -28,8 +28,8 @@ public class Sequence {
      */
     private final long workerIdBits = 5L;
     private final long datacenterIdBits = 5L;
-    private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
-    private final long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
+    private final long maxWorkerId = ~(-1L << workerIdBits);
+    private final long maxDatacenterId = ~(-1L << datacenterIdBits);
     /**
      * 毫秒内自增位
      */
@@ -40,7 +40,7 @@ public class Sequence {
      * 时间戳左移动位
      */
     private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-    private final long sequenceMask = -1L ^ (-1L << sequenceBits);
+    private final long sequenceMask = ~(-1L << sequenceBits);
 
     private final long workerId;
 
@@ -85,14 +85,11 @@ public class Sequence {
         mpid.append(datacenterId);
         String name = ManagementFactory.getRuntimeMXBean().getName();
         if (StringUtil.isNoneBlank(name)) {
-            /*
-             * GET jvmPid
-             */
+            // GET jvmPid
             mpid.append(name.split(StringPool.AT)[0]);
         }
-        /*
-         * MAC + PID 的 hashcode 获取16个低位
-         */
+
+        // MAC + PID 的 hashcode 获取16个低位
         return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
     }
 
@@ -100,25 +97,22 @@ public class Sequence {
      * 数据标识id部分
      */
     protected static long getDatacenterId(long maxDatacenterId) {
-        long id = 0L;
         try {
             InetAddress ip = InetAddress.getLocalHost();
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
             if (network == null) {
-                id = 1L;
-            } else {
-                byte[] mac = network.getHardwareAddress();
-                if (null != mac) {
-                    id =
-                        ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8)))
-                            >> 6;
-                    id = id % (maxDatacenterId + 1);
-                }
+                return 1L;
+            }
+
+            byte[] mac = network.getHardwareAddress();
+            if (null != mac) {
+                long id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+                return id % (maxDatacenterId + 1);
             }
         } catch (Exception e) {
             log.warn(" getDatacenterId: " + e.getMessage());
         }
-        return id;
+        return 0L;
     }
 
     /**
