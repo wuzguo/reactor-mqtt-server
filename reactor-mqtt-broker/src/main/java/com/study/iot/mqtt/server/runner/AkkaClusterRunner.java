@@ -7,6 +7,7 @@ import com.study.iot.mqtt.server.cluster.ClusterListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
  * @version 1.0.0
  * @date 2021/5/13 16:20
  */
+
+@Order(2)
 @Component
 public class AkkaClusterRunner implements ApplicationRunner {
 

@@ -1,10 +1,12 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
 
+import com.study.iot.mqtt.akka.event.SubscribeEvent;
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.session.service.EventService;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -38,12 +40,21 @@ public class ServerSubscribeHandler implements StrategyCapable {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private EventService eventService;
+
     @Override
     @MqttMetric(MetricMatterName.TOTAL_RECEIVE_COUNT)
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
         log.info("server Subscribe message: {}, connection: {}", message, disposableConnection);
         MqttFixedHeader header = message.fixedHeader();
         MqttSubscribeMessage subscribeMessage = (MqttSubscribeMessage) message;
+
+        SubscribeEvent event = new SubscribeEvent(this, IdUtil.idGen());
+        event.setTopic("/session/123456");
+        event.setInstanceId("123456");
+        event.setClientIdentity("Identity");
+        eventService.pubEvent(event);
 
         List<Integer> qosLevels = subscribeMessage.payload().topicSubscriptions().stream()
             .map(topicSubscription -> topicSubscription.qualityOfService().value()).collect(Collectors.toList());

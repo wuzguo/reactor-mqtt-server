@@ -38,4 +38,18 @@ public class AkkaAutoConfiguration {
         );
         return actorSystem;
     }
+
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public ActorRef subscriber(ActorSystem actorSystem) {
+//        // Create an actor that handles cluster domain events
+//        return actorSystem.actorOf(SpringProps.create(actorSystem, Subscriber.class), "subscriber");
+//    }
+//
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public ActorRef publisher(ActorSystem actorSystem) {
+//        // Create an actor that handles cluster domain events
+//        return actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
+//    }
 }

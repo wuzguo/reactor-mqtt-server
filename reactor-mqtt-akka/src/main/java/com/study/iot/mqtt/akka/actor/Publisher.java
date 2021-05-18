@@ -2,10 +2,11 @@ package com.study.iot.mqtt.akka.actor;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 import akka.cluster.pubsub.DistributedPubSub;
 import akka.cluster.pubsub.DistributedPubSubMediator;
 import com.study.iot.mqtt.akka.annotation.ActorBean;
+import com.study.iot.mqtt.akka.event.BaseEvent;
+import com.study.iot.mqtt.akka.topic.AkkaTopic;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -22,8 +23,8 @@ public class Publisher extends AbstractActor {
 
     private final ActorRef mediator;
 
-    public Publisher(ActorSystem actorSystem) {
-        this.mediator = DistributedPubSub.get(actorSystem).mediator();
+    public Publisher() {
+        this.mediator = DistributedPubSub.get(getContext().getSystem()).mediator();
     }
 
     /**
@@ -40,6 +41,12 @@ public class Publisher extends AbstractActor {
     public Receive createReceive() {
         return receiveBuilder()
             .match(String.class, message -> log.info("publisher receive message: {}", message))
+            .match(BaseEvent.class, this::processEvent)
             .build();
+    }
+
+    private void processEvent(BaseEvent event) {
+        log.info("receive event message: {}", event);
+        mediator.tell(new DistributedPubSubMediator.Publish(AkkaTopic.SUB_EVENT, event), getSelf());
     }
 }

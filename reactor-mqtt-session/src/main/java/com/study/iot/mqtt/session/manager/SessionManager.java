@@ -21,4 +21,11 @@ public interface SessionManager {
      * @return {@link ConnectSession}
      */
     ConnectSession create(String instanceId, String clientIdentity, Boolean isCleanSession);
+
+    /**
+     * 订阅消息
+     *
+     * @param topic TOPIC
+     */
+    void subscribe(String topic);
 }
