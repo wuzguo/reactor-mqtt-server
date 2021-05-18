@@ -40,7 +40,7 @@
         <module>reactor-mqtt-common</module>
         <module>reactor-mqtt-protocol</module>
         <module>reactor-mqtt-auth</module>
-        <module>reactor-mqtt-cache</module>
+        <module>reactor-mqtt-store</module>
         <module>reactor-mqtt-transport</module>
         <module>reactor-mqtt-client</module>
         <module>reactor-mqtt-api</module>

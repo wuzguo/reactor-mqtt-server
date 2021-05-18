@@ -8,7 +8,7 @@
 
 - reactor-mqtt-auth： 认证模块。
 - reactor-mqtt-broker：Broker模块。
-- reactor-mqtt-cache： 缓存或持久化模块。
+- reactor-mqtt-store： 缓存或持久化模块。
 - reactor-mqtt-common： 基础模块。
 - reactor-mqtt-protocol： 协议模块。
 - reactor-mqtt-transport：消息处理模块。

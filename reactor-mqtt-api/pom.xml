@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>com.study.iot.mqtt</groupId>
-            <artifactId>reactor-mqtt-cache</artifactId>
+            <artifactId>reactor-mqtt-store</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
