@@ -1,11 +1,11 @@
 package com.study.iot.mqtt.client.comsumer;
 
-import com.study.iot.mqtt.client.connect.MqttClient;
+import com.study.iot.mqtt.client.router.ClientMessageRouter;
+import com.study.iot.mqtt.client.transport.TransportClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ClientProperties;
 import com.study.iot.mqtt.protocol.config.ClientProperties.ConnectOptions;
 import com.study.iot.mqtt.protocol.session.ClientSession;
-import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import java.util.concurrent.CountDownLatch;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class TestConsumer {
             .setWillQos(MqttQoS.AT_LEAST_ONCE)
             .setHasCleanSession(true);
 
-        ClientProperties configuration = ClientProperties.builder()
+        ClientProperties properties = ClientProperties.builder()
             .host("localhost").port(1884)
             .protocol(ProtocolType.MQTT)
             .keepAliveSeconds(60)
@@ -50,7 +50,7 @@ public class TestConsumer {
             .throwable(e -> log.error("starting mqtt client exception：{}", e.getMessage()))
             .build();
         CountDownLatch latch = new CountDownLatch(1);
-        ClientSession connect = new MqttClient(configuration).connect(messageRouter).block();
+        ClientSession connect = new TransportClient().create(properties).connect(messageRouter).block();
         Thread.sleep(1000);
         connect.subscribe("/session/123456").subscribe();
         latch.await();

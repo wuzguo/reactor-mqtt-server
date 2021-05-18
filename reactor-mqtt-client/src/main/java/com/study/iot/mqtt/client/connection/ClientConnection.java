@@ -1,6 +1,7 @@
-package com.study.iot.mqtt.transport.client.connection;
+package com.study.iot.mqtt.client.connection;
 
 import com.google.common.collect.Lists;
+import com.study.iot.mqtt.client.router.ClientMessageRouter;
 import com.study.iot.mqtt.common.utils.CollectionUtil;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;
@@ -9,7 +10,6 @@ import com.study.iot.mqtt.protocol.config.ClientProperties;
 import com.study.iot.mqtt.protocol.config.ClientProperties.ConnectOptions;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ClientSession;
-import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttConnectMessage;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;

@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.client.handler.publish;
+package com.study.iot.mqtt.client.handler.publish;
 
 import com.study.iot.mqtt.common.message.TransportMessage;
 import com.study.iot.mqtt.protocol.MessageBuilder;

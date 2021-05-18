@@ -1,9 +1,10 @@
-package com.study.iot.mqtt.transport.client.handler.connect;
+package com.study.iot.mqtt.client.handler.connect;
 
+import com.study.iot.mqtt.protocol.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
@@ -18,13 +19,17 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.CLIENT, type = MqttMessageType.PUBCOMP)
-public class ClientPubCompHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.CLIENT, type = MqttMessageType.PUBREC)
+public class ClientPubRecHandler implements StrategyCapable {
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
-        log.info("client PubComp message: {}, connection: {}", message, disposableConnection);
+        log.info("client PubRec message: {}, connection: {}", message, disposableConnection);
+
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
-        disposableConnection.cancelDisposable(variableHeader.messageId());
+        int messageId = variableHeader.messageId();
+        // retry
+        disposableConnection.cancelDisposable(messageId);
+        disposableConnection.sendMessageRetry(messageId, MessageBuilder.buildPubRel(messageId));
     }
 }

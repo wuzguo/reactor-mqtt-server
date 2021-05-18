@@ -1,11 +1,12 @@
 package com.study.iot.mqtt.client.producer;
 
 import com.study.iot.mqtt.client.connect.MqttClient;
+import com.study.iot.mqtt.client.router.ClientMessageRouter;
+import com.study.iot.mqtt.client.transport.TransportClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ClientProperties;
 import com.study.iot.mqtt.protocol.config.ClientProperties.ConnectOptions;
 import com.study.iot.mqtt.protocol.session.ClientSession;
-import com.study.iot.mqtt.transport.client.router.ClientMessageRouter;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
@@ -52,7 +53,7 @@ public class TestProducer {
             .throwable(e -> log.error("starting mqtt client exception：{}", e.getMessage()))
             .build();
         CountDownLatch latch = new CountDownLatch(1);
-        ClientSession connect = new MqttClient(properties).connect(messageRouter).block();
+        ClientSession connect = new TransportClient().create(properties).connect(messageRouter).block();
         Thread.sleep(2000);
         connect.publish("/session/123456", "Hello, EveryOne".getBytes(StandardCharsets.UTF_8)).subscribe();
         latch.await();
