@@ -7,7 +7,7 @@ import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.cache.service.TopicManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.cache.template.RedisTemplate;
+import com.study.iot.mqtt.cache.template.RedisCacheTemplate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RedisTopicManager implements TopicManager {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisCacheTemplate redisTemplate;
 
     @Override
     public List<SerializerDisposable> getConnections(String topic) {

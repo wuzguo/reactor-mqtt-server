@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class RedisTemplate {
+public class RedisCacheTemplate {
 
     @Autowired
     private CacheOpsTemplate cacheOpsTemplate;

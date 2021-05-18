@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.client.producer;
 
-import com.study.iot.mqtt.client.connect.MqttClient;
 import com.study.iot.mqtt.client.router.ClientMessageRouter;
 import com.study.iot.mqtt.client.transport.TransportClient;
 import com.study.iot.mqtt.common.annocation.ProtocolType;

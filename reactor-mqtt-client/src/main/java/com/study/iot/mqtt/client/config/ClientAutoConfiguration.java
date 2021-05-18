@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
-public class TransportAutoConfiguration {
+public class ClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean

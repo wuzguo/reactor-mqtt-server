@@ -4,7 +4,7 @@ import com.study.iot.mqtt.cache.constant.CacheGroup;
 import com.study.iot.mqtt.cache.service.MetricManager;
 import com.study.iot.mqtt.cache.strategy.CacheStrategy;
 import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
-import com.study.iot.mqtt.cache.template.RedisTemplate;
+import com.study.iot.mqtt.cache.template.RedisCacheTemplate;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 public class RedisMetricManager implements MetricManager {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisCacheTemplate redisTemplate;
 
     @Override
     public Mono<Void> increase(String key) {
