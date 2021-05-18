@@ -1,10 +1,8 @@
 package com.study.iot.mqtt.cache.hbase;
 
+import java.util.List;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Scan;
-
-import java.util.List;
-import org.apache.zookeeper.Op.Delete;
 
 /**
  * <B>说明：描述</B>
@@ -15,155 +13,107 @@ import org.apache.zookeeper.Op.Delete;
  */
 
 public interface HbaseOperations {
-    /**
-     * 创建一张表
-     *
-     * @param tableName  表名
-     * @param familyName 列族名
-     */
-    void createTable(final String tableName, final String... familyName);
 
     /**
-     * 创建带有分区的表
+     * Executes the given action against the specified table handling resource management.
+     * <p>
+     * Application exceptions thrown by the action object get propagated to the caller (can only be unchecked). Allows
+     * for returning a result object (typically a domain object or collection of domain objects).
      *
-     * @param tableName
-     * @param familyName
-     * @param splitkeys
+     * @param tableName the target table
+     * @param <T>       action type
+     * @return the result object of the callback action, or null
      */
-    void createTable(String tableName, List<String> familyName, byte[][] splitkeys);
+    <T> T execute(String tableName, TableCallback<T> mapper);
 
     /**
-     * 通过表名和rowKey获取数据
+     * Scans the target table, using the given column family. The content is processed row by row by the given action,
+     * returning a list of domain objects.
      *
-     * @param tableName 表名
-     * @param rowKeyVar rowKey 泛型 可支持多种类型{String,Long,Double}
-     * @return Result 类型
+     * @param tableName target table
+     * @param family    column family
+     * @param <T>       action type
+     * @return a list of objects mapping the scanned rows
      */
-    <T> Result queryByTableNameAndRowKey(String tableName, T rowKeyVar);
+    <T> List<T> find(String tableName, String family, final RowMapper<T> mapper);
 
     /**
-     * 自定义查询
+     * Scans the target table, using the given column family. The content is processed row by row by the given action,
+     * returning a list of domain objects.
      *
-     * @param tableName 表名
-     * @param getList   请求体
-     * @return Result类型
+     * @param tableName target table
+     * @param family    column family
+     * @param qualifier column qualifier
+     * @param <T>       action type
+     * @return a list of objects mapping the scanned rows
      */
-    Result[] query(String tableName, List<Get> getList);
+    <T> List<T> find(String tableName, String family, String qualifier, final RowMapper<T> mapper);
 
     /**
-     * 判断表名是否存在
+     * Scans the target table using the given {@link Scan} object. Suitable for maximum control over the scanning
+     * process. The content is processed row by row by the given action, returning a list of domain objects.
      *
-     * @param tableName 表名 String ,注意这里区分大小写
-     * @return
+     * @param tableName target table
+     * @param scan      table scanner
+     * @param <T>       action type
+     * @return a list of objects mapping the scanned rows
      */
-    boolean tableExists(String tableName);
+    <T> List<T> find(String tableName, final Scan scan, final RowMapper<T> mapper);
 
     /**
-     * 新增一条数据
+     * Gets an individual row from the given table. The content is mapped by the given action.
      *
-     * @param tableName  目标数据表
-     * @param rowName    rowKey
-     * @param familyName 列族名
-     * @param qualifier  列名
-     * @param data       字节数组类型的数据
+     * @param tableName target table
+     * @param rowName   row name
+     * @param mapper    row mapper
+     * @param <T>       mapper type
+     * @return object mapping the target row
      */
-    void put(final String tableName, final String rowName, final String familyName, final String qualifier, final byte[] data);
+    <T> T get(String tableName, String rowName, final RowMapper<T> mapper);
 
     /**
-     * 批量插入数据
+     * Gets an individual row from the given table. The content is mapped by the given action.
      *
-     * @param tableName 表名
-     * @param putList   put集合
-     * @throws IOException
+     * @param tableName  target table
+     * @param rowName    row name
+     * @param familyName column family
+     * @param mapper     row mapper
+     * @param <T>        mapper type
+     * @return object mapping the target row
      */
-    void putBatch(final String tableName, List<Put> putList) throws IOException;
+    <T> T get(String tableName, String rowName, String familyName, final RowMapper<T> mapper);
 
     /**
-     * 删除一个列族下的数据
+     * Gets an individual row from the given table. The content is mapped by the given action.
      *
      * @param tableName  target table
      * @param rowName    row name
      * @param familyName family
+     * @param qualifier  column qualifier
+     * @param mapper     row mapper
+     * @param <T>        mapper type
+     * @return object mapping the target row
      */
-    void delete(final String tableName, final String rowName, final String familyName);
+    <T> T get(String tableName, final String rowName, final String familyName, final String qualifier,
+        final RowMapper<T> mapper);
 
     /**
-     * 删除某个列下的数据
-     *
-     * @param tableName  目标数据表
-     * @param rowName    rowKey
-     * @param familyName 列族名
-     * @param qualifier  列名
-     */
-    void delete(final String tableName, final String rowName, final String familyName, final String qualifier);
-
-    /**
-     * 批量删除数据
-     *
-     * @param tableName  表名
-     * @param deleteList 需要删除的数据
-     */
-    void deleteBatch(final String tableName, List<Delete> deleteList);
-
-    /**
-     * 通过scan查询数据
-     *
-     * @param tableName 表名
-     * @param scan      scan
-     * @return 返回 ResultScanner
-     */
-    ResultScanner queryByScan(final String tableName, Scan scan);
-
-    /**
-     * 删除表
-     *
-     * @param tableName 表名
-     */
-    void dropTable(String tableName);
-
-    /**
-     * 批量删除表
-     *
-     * @param tableNames
-     */
-    void dropTable(List<String> tableNames);
-
-    /**
-     * 清空表数据
+     * 执行put update or delete
      *
      * @param tableName
-     * @throws IOException
+     * @param action
      */
-    void truncateTable(String tableName) throws IOException;
+    void execute(String tableName, MutatorCallback action);
 
     /**
-     * 删除指定行指定列
-     *
      * @param tableName
-     * @param family
-     * @param rowKey
-     * @param column
-     * @return
-     * @throws IOException
+     * @param mutation
      */
-    boolean deleteColumn(String tableName, String family, String rowKey, String column) throws IOException;
+    void saveOrUpdate(String tableName, Mutation mutation);
 
     /**
-     * 删除列簇下的某一列
-     *
      * @param tableName
-     * @param family
-     * @param rowKey
-     * @param columns
-     * @return
-     * @throws IOException
+     * @param mutations
      */
-    boolean deleteColumn(String tableName, String family, String rowKey, List<String> columns) throws IOException;
-
-    /**
-     * 获取连接对象
-     *
-     * @return
-     */
-    Connection getConnection();
+    void saveOrUpdates(String tableName, List<Mutation> mutations);
 }
