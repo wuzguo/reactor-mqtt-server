@@ -2,7 +2,51 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <groupId>org.springframework.boot</groupId>
+        <version>2.3.2.RELEASE</version>
+    </parent>
+
+    <groupId>com.study.iot.mqtt</groupId>
     <artifactId>reactor-mqtt-server</artifactId>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${spring-boot.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>reactor-mqtt-broker</module>
+        <module>reactor-mqtt-common</module>
+        <module>reactor-mqtt-protocol</module>
+        <module>reactor-mqtt-auth</module>
+        <module>reactor-mqtt-cache</module>
+        <module>reactor-mqtt-transport</module>
+        <module>reactor-mqtt-client</module>
+        <module>reactor-mqtt-api</module>
+        <module>reactor-mqtt-akka</module>
+        <module>reactor-mqtt-session</module>
+    </modules>
 
     <build>
         <!--插件-->
@@ -33,58 +77,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <artifactId>guava</artifactId>
-            <groupId>com.google.guava</groupId>
-            <version>29.0-jre</version>
-        </dependency>
-    </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <groupId>org.springframework.boot</groupId>
-                <scope>import</scope>
-                <type>pom</type>
-                <version>${spring-boot.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    <groupId>com.study.iot.mqtt</groupId>
-    <modelVersion>4.0.0</modelVersion>
-    <modules>
-        <module>reactor-mqtt-broker</module>
-        <module>reactor-mqtt-common</module>
-        <module>reactor-mqtt-protocol</module>
-        <module>reactor-mqtt-auth</module>
-        <module>reactor-mqtt-cache</module>
-        <module>reactor-mqtt-transport</module>
-        <module>reactor-mqtt-client</module>
-        <module>reactor-mqtt-api</module>
-        <module>reactor-mqtt-akka</module>
-        <module>reactor-mqtt-session</module>
-    </modules>
-
-    <packaging>pom</packaging>
-
-    <parent>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <groupId>org.springframework.boot</groupId>
-        <version>2.3.2.RELEASE</version>
-    </parent>
-
-    <!--依赖管理-->
-    <properties>
-        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
-        <maven.compiler.compilerVersion>8</maven.compiler.compilerVersion>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-    <!--构建-->
-    <version>0.0.1-SNAPSHOT</version>
 </project>
