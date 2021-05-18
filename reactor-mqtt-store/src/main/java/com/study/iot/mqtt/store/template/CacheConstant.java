@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.cache.template;
+package com.study.iot.mqtt.store.template;
 
 /**
  * <B>说明：描述</B>

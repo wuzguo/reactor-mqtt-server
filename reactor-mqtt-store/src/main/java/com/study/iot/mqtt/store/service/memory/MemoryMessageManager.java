@@ -1,10 +1,10 @@
-package com.study.iot.mqtt.cache.service.memory;
+package com.study.iot.mqtt.store.service.memory;
 
 import com.google.common.collect.Maps;
-import com.study.iot.mqtt.cache.constant.CacheGroup;
-import com.study.iot.mqtt.cache.service.MessageManager;
-import com.study.iot.mqtt.cache.strategy.CacheStrategy;
-import com.study.iot.mqtt.cache.strategy.CacheStrategyService;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.service.MessageManager;
+import com.study.iot.mqtt.store.strategy.CacheStrategy;
+import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import java.util.Map;
 

@@ -1,7 +1,7 @@
-package com.study.iot.mqtt.cache.config;
+package com.study.iot.mqtt.store.config;
 
-import com.study.iot.mqtt.cache.manager.DefaultCacheManager;
-import com.study.iot.mqtt.cache.strategy.CacheStrategyContainer;
+import com.study.iot.mqtt.store.manager.DefaultCacheManager;
+import com.study.iot.mqtt.store.strategy.CacheStrategyContainer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;

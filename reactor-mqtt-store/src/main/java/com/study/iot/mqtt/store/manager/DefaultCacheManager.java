@@ -1,12 +1,12 @@
-package com.study.iot.mqtt.cache.manager;
+package com.study.iot.mqtt.store.manager;
 
-import com.study.iot.mqtt.cache.constant.CacheGroup;
-import com.study.iot.mqtt.cache.service.ChannelManager;
-import com.study.iot.mqtt.cache.service.MessageManager;
-import com.study.iot.mqtt.cache.service.MetricManager;
-import com.study.iot.mqtt.cache.service.TopicManager;
-import com.study.iot.mqtt.cache.strategy.CacheStrategyContainer;
-import com.study.iot.mqtt.cache.strategy.CacheStrategy;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.service.ChannelManager;
+import com.study.iot.mqtt.store.service.MessageManager;
+import com.study.iot.mqtt.store.service.MetricManager;
+import com.study.iot.mqtt.store.service.TopicManager;
+import com.study.iot.mqtt.store.strategy.CacheStrategyContainer;
+import com.study.iot.mqtt.store.strategy.CacheStrategy;
 
 /**
  * <B>说明：描述</B>

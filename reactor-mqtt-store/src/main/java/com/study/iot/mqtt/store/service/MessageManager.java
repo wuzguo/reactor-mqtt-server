@@ -1,6 +1,6 @@
-package com.study.iot.mqtt.cache.service;
+package com.study.iot.mqtt.store.service;
 
-import com.study.iot.mqtt.cache.strategy.CacheCapable;
+import com.study.iot.mqtt.store.strategy.CacheCapable;
 import com.study.iot.mqtt.common.message.RetainMessage;
 
 public interface MessageManager extends CacheCapable {

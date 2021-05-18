@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.cache.config;
+package com.study.iot.mqtt.store.config;
 
 import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

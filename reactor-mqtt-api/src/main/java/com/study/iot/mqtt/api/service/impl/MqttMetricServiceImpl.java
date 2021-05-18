@@ -2,7 +2,7 @@ package com.study.iot.mqtt.api.service.impl;
 
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.api.service.IMqttMetricService;
-import com.study.iot.mqtt.cache.manager.CacheManager;
+import com.study.iot.mqtt.store.manager.CacheManager;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

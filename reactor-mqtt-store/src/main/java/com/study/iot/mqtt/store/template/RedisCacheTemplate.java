@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.cache.template;
+package com.study.iot.mqtt.store.template;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

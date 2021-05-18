@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.metric;
 
-import com.study.iot.mqtt.cache.manager.CacheManager;
+import com.study.iot.mqtt.store.manager.CacheManager;
 import com.study.iot.mqtt.common.exception.FrameworkException;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import lombok.extern.slf4j.Slf4j;

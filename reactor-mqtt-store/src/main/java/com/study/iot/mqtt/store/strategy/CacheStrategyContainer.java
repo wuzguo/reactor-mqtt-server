@@ -1,7 +1,7 @@
-package com.study.iot.mqtt.cache.strategy;
+package com.study.iot.mqtt.store.strategy;
 
 import com.google.common.collect.Maps;
-import com.study.iot.mqtt.cache.strategy.CacheStrategy;
+import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;

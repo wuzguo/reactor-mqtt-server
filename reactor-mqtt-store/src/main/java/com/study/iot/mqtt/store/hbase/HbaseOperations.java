@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.cache.hbase;
+package com.study.iot.mqtt.store.hbase;
 
 import java.util.List;
 import org.apache.hadoop.hbase.client.Mutation;

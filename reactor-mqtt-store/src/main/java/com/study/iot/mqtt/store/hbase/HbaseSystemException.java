@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.cache.hbase;
+package com.study.iot.mqtt.store.hbase;
 
 import org.springframework.dao.UncategorizedDataAccessException;
 

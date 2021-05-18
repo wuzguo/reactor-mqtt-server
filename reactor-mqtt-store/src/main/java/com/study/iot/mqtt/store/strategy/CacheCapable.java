@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.cache.strategy;
+package com.study.iot.mqtt.store.strategy;
 
 /**
  * <B>说明：描述</B>

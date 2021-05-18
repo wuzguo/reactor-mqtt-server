@@ -2,8 +2,8 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 
 import com.study.iot.mqtt.auth.service.ConnectAuthentication;
-import com.study.iot.mqtt.cache.manager.CacheManager;
-import com.study.iot.mqtt.cache.service.ChannelManager;
+import com.study.iot.mqtt.store.manager.CacheManager;
+import com.study.iot.mqtt.store.service.ChannelManager;
 import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.common.utils.StringUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;

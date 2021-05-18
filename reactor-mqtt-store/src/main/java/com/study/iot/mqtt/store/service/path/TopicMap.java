@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.cache.service.path;
+package com.study.iot.mqtt.store.service.path;
 
 import com.google.common.collect.Maps;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.cache.constant;
+package com.study.iot.mqtt.store.constant;
 
 /**
  * <B>说明：描述</B>

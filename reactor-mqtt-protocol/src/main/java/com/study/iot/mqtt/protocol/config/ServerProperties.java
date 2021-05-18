@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.protocol.config;
 
 
-import com.study.iot.mqtt.cache.strategy.CacheStrategy;
+import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import java.util.Set;
 import lombok.Data;
