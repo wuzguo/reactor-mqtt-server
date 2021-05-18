@@ -100,20 +100,20 @@ public interface HbaseOperations {
     /**
      * 执行put update or delete
      *
-     * @param tableName
-     * @param action
+     * @param tableName target table
+     * @param action    {@link MutatorCallback}
      */
     void execute(String tableName, MutatorCallback action);
 
     /**
-     * @param tableName
-     * @param mutation
+     * @param tableName target table
+     * @param mutation  {@link Mutation}
      */
     void saveOrUpdate(String tableName, Mutation mutation);
 
     /**
-     * @param tableName
-     * @param mutations
+     * @param tableName target table
+     * @param mutations {@link Mutation}
      */
     void saveOrUpdates(String tableName, List<Mutation> mutations);
 }
