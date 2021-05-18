@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.session.manager;
 
-import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import com.study.iot.mqtt.akka.actor.Subscriber;
 import com.study.iot.mqtt.akka.spring.SpringProps;
@@ -33,6 +32,7 @@ public class DefaultSessionManager implements SessionManager {
 
     @Override
     public void subscribe(String topic) {
-        actorSystem.actorOf(SpringProps.create(actorSystem, Subscriber.class, topic, eventPublisher), "subscriber");
+        actorSystem.actorOf(SpringProps.create(actorSystem, Subscriber.class, topic,
+            eventPublisher), "subscriber");
     }
 }

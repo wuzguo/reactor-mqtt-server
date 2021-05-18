@@ -24,8 +24,8 @@ public class Subscriber extends AbstractActor {
     private final ApplicationEventPublisher eventPublisher;
 
     public Subscriber(String topic, ApplicationEventPublisher eventPublisher) {
-        ActorRef mediator = DistributedPubSub.get(getContext().system()).mediator();
         this.eventPublisher = eventPublisher;
+        ActorRef mediator = DistributedPubSub.get(getContext().system()).mediator();
         mediator.tell(new DistributedPubSubMediator.Subscribe(topic, getSelf()), getSelf());
     }
 

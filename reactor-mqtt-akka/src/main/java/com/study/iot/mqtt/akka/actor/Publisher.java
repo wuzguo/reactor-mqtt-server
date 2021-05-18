@@ -27,16 +27,6 @@ public class Publisher extends AbstractActor {
         this.mediator = DistributedPubSub.get(getContext().getSystem()).mediator();
     }
 
-    /**
-     * 发布消息
-     *
-     * @param topic   主题
-     * @param message 消息体
-     */
-    public void tell(String topic, Object message) {
-        mediator.tell(new DistributedPubSubMediator.Publish(topic, message), getSelf());
-    }
-
     @Override
     public Receive createReceive() {
         return receiveBuilder()
