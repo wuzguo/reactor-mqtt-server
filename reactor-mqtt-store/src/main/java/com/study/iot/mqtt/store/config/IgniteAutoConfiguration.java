@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnBean(value = IgniteProperties.class)
-public class IgniteAutoConfig {
+public class IgniteAutoConfiguration {
 
     @Autowired
     private IgniteProperties igniteProperties;

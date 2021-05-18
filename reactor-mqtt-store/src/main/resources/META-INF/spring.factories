@@ -1,4 +1,4 @@
 org.springframework.context.annotation.Configuration=\
-com.study.iot.mqtt.store.config.IgniteAutoConfig,\
+com.study.iot.mqtt.store.config.IgniteAutoConfiguration,\
 com.study.iot.mqtt.store.config.CacheAutoConfiguration,\
 com.study.iot.mqtt.store.config.

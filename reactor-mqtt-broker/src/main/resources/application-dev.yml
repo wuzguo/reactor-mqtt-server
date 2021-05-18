@@ -8,6 +8,10 @@ spring:
     config: application.conf
   cache:
     mode: memory
+  hbase:
+    quorum: hadoop001:2181,hadoop002:2181,hadoop003:2181
+    root-dir: hdfs://hadoop001:9000/hbase
+    node-parent: /opt/module/apache-zookeeper-3.6.1/zkData
   mqtt:
     broker:
       # 主机地址

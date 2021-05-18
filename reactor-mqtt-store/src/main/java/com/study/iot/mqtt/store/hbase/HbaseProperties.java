@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.store.hbase;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -10,36 +11,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2021/5/7 9:51
  */
 
-@ConfigurationProperties(prefix = "spring.data.hbase")
+@Data
+@ConfigurationProperties(prefix = "spring.hbase")
 public class HbaseProperties {
 
+    /**
+     * ZK集群
+     */
     private String quorum;
 
+    /**
+     *  HDFS 上存储的路径
+     */
     private String rootDir;
 
+    /**
+     * HBase 的根 ZNode
+     */
     private String nodeParent;
-
-    public String getQuorum() {
-        return quorum;
-    }
-
-    public void setQuorum(String quorum) {
-        this.quorum = quorum;
-    }
-
-    public String getRootDir() {
-        return rootDir;
-    }
-
-    public void setRootDir(String rootDir) {
-        this.rootDir = rootDir;
-    }
-
-    public String getNodeParent() {
-        return nodeParent;
-    }
-
-    public void setNodeParent(String nodeParent) {
-        this.nodeParent = nodeParent;
-    }
 }

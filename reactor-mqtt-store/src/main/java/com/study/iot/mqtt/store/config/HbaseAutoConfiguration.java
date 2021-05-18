@@ -1,6 +1,8 @@
-package com.study.iot.mqtt.store.hbase;
+package com.study.iot.mqtt.store.config;
 
 
+import com.study.iot.mqtt.store.hbase.HbaseProperties;
+import com.study.iot.mqtt.store.hbase.HbaseTemplate;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
