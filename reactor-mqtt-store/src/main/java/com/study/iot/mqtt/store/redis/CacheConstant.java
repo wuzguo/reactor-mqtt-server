@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.template;
+package com.study.iot.mqtt.store.redis;
 
 /**
  * <B>说明：描述</B>

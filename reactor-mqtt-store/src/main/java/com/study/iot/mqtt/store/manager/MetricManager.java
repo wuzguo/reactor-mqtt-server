@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.service;
+package com.study.iot.mqtt.store.manager;
 
 import com.study.iot.mqtt.store.strategy.CacheCapable;
 import java.util.Map;

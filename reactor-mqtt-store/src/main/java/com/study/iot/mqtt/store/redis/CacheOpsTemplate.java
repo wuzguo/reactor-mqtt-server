@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.template;
+package com.study.iot.mqtt.store.redis;
 
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.common.exception.FrameworkException;

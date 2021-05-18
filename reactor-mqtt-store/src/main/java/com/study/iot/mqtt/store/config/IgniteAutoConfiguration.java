@@ -5,6 +5,8 @@ import com.study.iot.mqtt.common.message.RetainMessage;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
+
+import com.study.iot.mqtt.store.ignite.IgniteProperties;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteMessaging;
