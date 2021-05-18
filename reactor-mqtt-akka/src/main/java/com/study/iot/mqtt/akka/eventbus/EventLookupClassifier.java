@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.akka.bus;
+package com.study.iot.mqtt.akka.eventbus;
 
 import akka.actor.ActorRef;
 import akka.event.japi.LookupEventBus;

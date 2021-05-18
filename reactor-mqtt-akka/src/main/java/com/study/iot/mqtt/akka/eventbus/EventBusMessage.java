@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.akka.bus;
+package com.study.iot.mqtt.akka.eventbus;
 
 import com.study.iot.mqtt.akka.event.BaseEvent;
 import lombok.Getter;
