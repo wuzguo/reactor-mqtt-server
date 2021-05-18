@@ -11,7 +11,17 @@ package com.study.iot.mqtt.akka.topic;
 public interface AkkaTopic {
 
     /**
-     * 订阅消息
+     * 订阅事件TOPIC
      */
-    String SUB_EVENT ="akka.sub.event";
+    String SUB_EVENT = "akka.sub.event";
+
+    /**
+     * 取消订阅TOPIC
+     */
+    String UN_SUB_EVENT = "akka.unsub.event";
+
+    /**
+     * 连接事件Topic
+     */
+    String CONNECT_EVENT = "akka.connect.event";
 }

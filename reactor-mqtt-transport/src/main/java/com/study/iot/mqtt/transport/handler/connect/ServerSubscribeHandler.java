@@ -54,7 +54,7 @@ public class ServerSubscribeHandler implements StrategyCapable {
         event.setTopic("/session/123456");
         event.setInstanceId("123456");
         event.setClientIdentity("Identity");
-        eventService.pubEvent(event);
+        eventService.tellEvent(event);
 
         List<Integer> qosLevels = subscribeMessage.payload().topicSubscriptions().stream()
             .map(topicSubscription -> topicSubscription.qualityOfService().value()).collect(Collectors.toList());

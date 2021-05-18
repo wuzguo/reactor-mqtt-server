@@ -16,9 +16,10 @@ import org.springframework.context.ApplicationEvent;
 public class BaseEvent extends ApplicationEvent implements Serializable {
 
     /**
-     * 消息ID
+     * 事件ID
      */
     private final Long id;
+
 
     public BaseEvent(Object source, Long id) {
         super(source);

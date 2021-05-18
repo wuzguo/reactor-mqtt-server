@@ -27,7 +27,7 @@ public class EventService {
      *
      * @param event {@link BaseEvent}
      */
-    public void pubEvent(BaseEvent event) {
+    public void tellEvent(BaseEvent event) {
         ActorRef publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
         publisher.tell(event, ActorRef.noSender());
     }
