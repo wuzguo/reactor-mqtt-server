@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.config;
 
-import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
+import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyContainer;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import com.study.iot.mqtt.transport.strategy.WillStrategyContainer;

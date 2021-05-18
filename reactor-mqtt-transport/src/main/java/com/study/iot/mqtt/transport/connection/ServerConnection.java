@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.connection;
+package com.study.iot.mqtt.transport.connection;
 
 import com.study.iot.mqtt.cache.disposable.SerializerDisposable;
 import com.study.iot.mqtt.cache.manager.CacheManager;
@@ -6,7 +6,7 @@ import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.server.router.ServerMessageRouter;
+import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;

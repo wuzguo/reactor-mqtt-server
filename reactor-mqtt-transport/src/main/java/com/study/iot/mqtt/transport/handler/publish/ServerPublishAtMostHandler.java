@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler.publish;
+package com.study.iot.mqtt.transport.handler.publish;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.utils.IdUtil;
@@ -9,7 +9,6 @@ import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
@@ -21,12 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/5/7 13:53
+ * @date 2021/5/7 13:54
  */
 
 @Slf4j
-@PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.AT_LEAST_ONCE)
-public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
+@PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.AT_MOST_ONCE)
+public class ServerPublishAtMostHandler implements PublishStrategyCapable {
 
     @Autowired
     private CacheManager cacheManager;
@@ -35,18 +34,14 @@ public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
     public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
         MqttPublishVariableHeader variableHeader = message.variableHeader();
         MqttFixedHeader header = message.fixedHeader();
-        // back
-        MqttPubAckMessage mqttPubAckMessage = MessageBuilder.buildPubAck(header.isDup(), header.qosLevel(),
-            header.isRetain(), variableHeader.packetId());
-        disposableConnection.sendMessage(mqttPubAckMessage).subscribe();
+        // 过滤掉本身 已经关闭的dispose
         cacheManager.topic().getConnections(variableHeader.topicName())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
-                int messageId = IdUtil.messageId();
                 MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),
-                    messageId, variableHeader.topicName(), bytes);
-                disposable.sendMessageRetry(messageId, mqttMessage).subscribe();
+                    IdUtil.messageId(), variableHeader.topicName(), bytes);
+                disposable.sendMessage(mqttMessage).subscribe();
             });
     }
 }

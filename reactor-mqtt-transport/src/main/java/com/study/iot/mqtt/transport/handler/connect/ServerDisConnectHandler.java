@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler.connect;
+package com.study.iot.mqtt.transport.handler.connect;
 
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;

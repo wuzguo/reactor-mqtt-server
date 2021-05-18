@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler.connect;
+package com.study.iot.mqtt.transport.handler.connect;
 
 import com.study.iot.mqtt.cache.manager.CacheManager;
 import com.study.iot.mqtt.common.message.RetainMessage;

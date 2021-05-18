@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler.will;
+package com.study.iot.mqtt.transport.handler.will;
 
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;

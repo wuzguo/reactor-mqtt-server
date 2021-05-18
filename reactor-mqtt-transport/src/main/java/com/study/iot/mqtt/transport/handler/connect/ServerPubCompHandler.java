@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.transport.server.handler.connect;
+package com.study.iot.mqtt.transport.handler.connect;
 
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
@@ -14,16 +14,16 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/22 9:20
+ * @date 2021/4/22 9:21
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.PUBACK)
-public class ServerPubAckHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.PUBCOMP)
+public class ServerPubCompHandler implements StrategyCapable {
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
-        log.info("server PubAck message: {}, connection: {}", message, disposableConnection);
+        log.info("server PubComp message: {}, connection: {}", message, disposableConnection);
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
         disposableConnection.cancelDisposable(variableHeader.messageId());
     }
