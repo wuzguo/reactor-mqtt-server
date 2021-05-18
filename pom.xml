@@ -63,7 +63,8 @@
         <module>reactor-mqtt-transport</module>
         <module>reactor-mqtt-client</module>
         <module>reactor-mqtt-api</module>
-        <module>reactor-mqtt-cluster</module>
+        <module>reactor-mqtt-akka</module>
+        <module>reactor-mqtt-session</module>
     </modules>
 
     <packaging>pom</packaging>
