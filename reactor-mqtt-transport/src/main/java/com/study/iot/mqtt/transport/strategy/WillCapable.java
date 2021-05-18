@@ -18,8 +18,8 @@ public interface WillCapable {
      * 处理消息
      *
      * @param qoS         {@link MqttQoS}
-     * @param disposableConnection  {@link DisposableConnection}
+     * @param connection  {@link DisposableConnection}
      * @param willMessage {@link WillMessage}
      */
-    void handle(DisposableConnection disposableConnection, MqttQoS qoS, WillMessage willMessage);
+    void handle(DisposableConnection connection, MqttQoS qoS, WillMessage willMessage);
 }

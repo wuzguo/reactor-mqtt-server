@@ -12,8 +12,7 @@ import io.netty.handler.codec.mqtt.MqttPublishMessage;
  */
 
 public interface PublishStrategyCapable {
-
-
+    
     /**
      * 处理消息
      *

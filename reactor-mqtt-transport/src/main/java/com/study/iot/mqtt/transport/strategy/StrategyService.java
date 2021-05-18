@@ -28,17 +28,18 @@ public @interface StrategyService {
     @AliasFor(value = "value", annotation = Service.class)
     String value() default "";
 
+
+    /**
+     * 策略组
+     *
+     * @return {@link String}
+     */
+    String group();
+
     /**
      * 策略
      *
      * @return {@link MqttMessageType}
      */
     MqttMessageType type();
-
-    /**
-     * 策略组
-     *
-     * @return {@link MqttMessageType}
-     */
-    String group();
 }

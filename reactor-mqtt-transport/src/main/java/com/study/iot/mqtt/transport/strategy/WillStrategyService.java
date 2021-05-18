@@ -29,16 +29,16 @@ public @interface WillStrategyService {
     String value() default "";
 
     /**
+     * 策略组
+     *
+     * @return {@link String}
+     */
+    String group();
+
+    /**
      * 策略
      *
      * @return {@link MqttQoS}
      */
     MqttQoS type();
-
-    /**
-     * 策略组
-     *
-     * @return {@link Group}
-     */
-    String group();
 }
