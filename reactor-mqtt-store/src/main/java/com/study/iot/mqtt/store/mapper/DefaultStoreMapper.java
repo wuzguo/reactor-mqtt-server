@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.manager;
+package com.study.iot.mqtt.store.mapper;
 
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.strategy.CacheStrategyContainer;
@@ -13,13 +13,13 @@ import com.study.iot.mqtt.store.strategy.CacheStrategy;
  */
 
 
-public class DefaultCacheManager implements CacheManager {
+public class DefaultStoreMapper implements StoreMapper {
 
     private final CacheStrategyContainer container;
 
     private CacheStrategy strategy;
 
-    public DefaultCacheManager(CacheStrategyContainer container) {
+    public DefaultStoreMapper(CacheStrategyContainer container) {
         this.container = container;
     }
 
@@ -34,17 +34,22 @@ public class DefaultCacheManager implements CacheManager {
     }
 
     @Override
-    public MessageManager message() {
+    public MessageMapper message() {
         return container.getStrategy(CacheGroup.MESSAGE, strategy);
     }
 
     @Override
-    public TopicManager topic() {
+    public TopicMapper topic() {
         return container.getStrategy(CacheGroup.TOPIC, strategy);
     }
 
     @Override
-    public MetricManager metric() {
+    public MetricMapper metric() {
         return container.getStrategy(CacheGroup.METRIC, strategy);
+    }
+
+    @Override
+    public SessionMapper session() {
+        return container.getStrategy(CacheGroup.SESSION, strategy);
     }
 }

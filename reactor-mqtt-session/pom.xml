@@ -28,6 +28,11 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>com.study.iot.mqtt</groupId>
+            <artifactId>reactor-mqtt-store</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>

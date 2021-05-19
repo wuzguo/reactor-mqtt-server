@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
 import com.study.iot.mqtt.session.manager.SessionManager;
-import com.study.iot.mqtt.store.manager.CacheManager;
+import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
@@ -37,7 +37,7 @@ public class ServerPublishHandler implements StrategyCapable {
     private PublishStrategyContainer strategyContainer;
 
     @Autowired
-    private CacheManager cacheManager;
+    private StoreMapper storeMapper;
 
     @Autowired
     private SessionManager sessionManager;
@@ -55,7 +55,7 @@ public class ServerPublishHandler implements StrategyCapable {
             RetainMessage retainMessage = RetainMessage.builder().topic(variableHeader.topicName())
                 .isRetain(fixedHeader.isRetain()).isDup(fixedHeader.isDup()).qos(fixedHeader.qosLevel().value())
                 .copyByteBuf(bytes).build();
-            cacheManager.message().saveRetain(retainMessage);
+            storeMapper.message().saveRetain(retainMessage);
         }
 
         // 又来一个策略模式

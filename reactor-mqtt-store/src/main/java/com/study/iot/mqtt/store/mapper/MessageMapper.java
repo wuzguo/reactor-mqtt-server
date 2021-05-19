@@ -1,9 +1,9 @@
-package com.study.iot.mqtt.store.manager;
+package com.study.iot.mqtt.store.mapper;
 
 import com.study.iot.mqtt.store.strategy.CacheCapable;
 import com.study.iot.mqtt.common.message.RetainMessage;
 
-public interface MessageManager extends CacheCapable {
+public interface MessageMapper extends CacheCapable {
 
     /**
      * 保存消息

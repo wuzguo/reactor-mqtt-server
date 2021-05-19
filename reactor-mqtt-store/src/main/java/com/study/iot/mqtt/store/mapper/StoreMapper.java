@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.manager;
+package com.study.iot.mqtt.store.mapper;
 
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 
@@ -11,7 +11,7 @@ import com.study.iot.mqtt.store.strategy.CacheStrategy;
  */
 
 
-public interface CacheManager {
+public interface StoreMapper {
 
     /**
      * 获取通道管理器
@@ -23,23 +23,29 @@ public interface CacheManager {
     /**
      * 获取消息管理
      *
-     * @return {@link MessageManager}
+     * @return {@link MessageMapper}
      */
-    MessageManager message();
+    MessageMapper message();
 
     /**
      * 获取topic
      *
-     * @return {@link TopicManager}
+     * @return {@link TopicMapper}
      */
-    TopicManager topic();
+    TopicMapper topic();
 
     /**
      * 获取 Metric
      *
-     * @return {@link MetricManager}
+     * @return {@link MetricMapper}
      */
-    MetricManager metric();
+    MetricMapper metric();
+
+    /**
+     * 获取Session
+     * @return {@link SessionMapper}
+     */
+    SessionMapper session();
 
     /**
      * 初始化

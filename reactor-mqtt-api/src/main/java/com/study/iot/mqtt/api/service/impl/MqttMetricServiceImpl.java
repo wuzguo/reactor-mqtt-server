@@ -2,7 +2,7 @@ package com.study.iot.mqtt.api.service.impl;
 
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.api.service.IMqttMetricService;
-import com.study.iot.mqtt.store.manager.CacheManager;
+import com.study.iot.mqtt.store.mapper.StoreMapper;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,11 @@ import reactor.core.publisher.Mono;
 public class MqttMetricServiceImpl implements IMqttMetricService {
 
     @Autowired
-    private CacheManager cacheManager;
+    private StoreMapper storeMapper;
 
     @Override
     public Mono<Map<String, Long>> stat(String matterName) {
-        return cacheManager.metric().loadAll().map(mapLongAdder -> {
+        return storeMapper.metric().loadAll().map(mapLongAdder -> {
             Map<String, Long> metrics = Maps.newHashMap();
             mapLongAdder.forEach((key, adder) -> metrics.put(key, adder.longValue()));
             return metrics;

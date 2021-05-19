@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
-import com.study.iot.mqtt.store.manager.CacheManager;
+import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -28,14 +28,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ServerPublishAtMostHandler implements PublishStrategyCapable {
 
     @Autowired
-    private CacheManager cacheManager;
+    private StoreMapper storeMapper;
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
         MqttPublishVariableHeader variableHeader = message.variableHeader();
         MqttFixedHeader header = message.fixedHeader();
         // 过滤掉本身 已经关闭的dispose
-        cacheManager.topic().getConnections(variableHeader.topicName())
+        storeMapper.topic().getConnections(variableHeader.topicName())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {

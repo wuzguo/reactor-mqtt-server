@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.metric;
 
-import com.study.iot.mqtt.store.manager.CacheManager;
+import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.exception.FrameworkException;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 public class MqttMetricAspect {
 
     @Autowired
-    private CacheManager cacheManager;
+    private StoreMapper storeMapper;
 
     @Around("@annotation(metric)")
     public Object mqttMetric(ProceedingJoinPoint joinPoint, MqttMetric metric) {
@@ -43,9 +43,9 @@ public class MqttMetricAspect {
         this.proceed(joinPoint);
         // 统计数据
         if (metric.type().equals(MetricType.INCREASE)) {
-            return cacheManager.metric().increase(metric.matter());
+            return storeMapper.metric().increase(metric.matter());
         }
-        return cacheManager.metric().decrease(metric.matter());
+        return storeMapper.metric().decrease(metric.matter());
     }
 
     /**

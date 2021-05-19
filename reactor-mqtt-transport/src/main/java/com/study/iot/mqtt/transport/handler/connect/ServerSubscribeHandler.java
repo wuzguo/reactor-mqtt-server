@@ -2,7 +2,7 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 
 import com.study.iot.mqtt.akka.event.SubscribeEvent;
-import com.study.iot.mqtt.store.manager.CacheManager;
+import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ServerSubscribeHandler implements StrategyCapable {
 
     @Autowired
-    private CacheManager cacheManager;
+    private StoreMapper storeMapper;
 
     @Autowired
     private EventService eventService;
@@ -64,8 +64,8 @@ public class ServerSubscribeHandler implements StrategyCapable {
         disposableConnection.sendMessage(mqttSubAckMessage).subscribe();
         subscribeMessage.payload().topicSubscriptions().forEach(topicSubscription -> {
             String topicName = topicSubscription.topicName();
-            cacheManager.topic().add(topicName, disposableConnection);
-            Optional.ofNullable(cacheManager.message().getRetain(topicName)).ifPresent(retainMessage -> {
+            storeMapper.topic().add(topicName, disposableConnection);
+            Optional.ofNullable(storeMapper.message().getRetain(topicName)).ifPresent(retainMessage -> {
                 if (retainMessage.getQos() == 0) {
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),
                         MqttQoS.valueOf(retainMessage.getQos()), retainMessage.getIsRetain(), 1,

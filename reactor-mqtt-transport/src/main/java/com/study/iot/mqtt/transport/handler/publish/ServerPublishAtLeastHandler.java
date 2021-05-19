@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
-import com.study.iot.mqtt.store.manager.CacheManager;
+import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
 
     @Autowired
-    private CacheManager cacheManager;
+    private StoreMapper storeMapper;
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
@@ -39,7 +39,7 @@ public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
         MqttPubAckMessage mqttPubAckMessage = MessageBuilder.buildPubAck(header.isDup(), header.qosLevel(),
             header.isRetain(), variableHeader.packetId());
         disposableConnection.sendMessage(mqttPubAckMessage).subscribe();
-        cacheManager.topic().getConnections(variableHeader.topicName())
+        storeMapper.topic().getConnections(variableHeader.topicName())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {

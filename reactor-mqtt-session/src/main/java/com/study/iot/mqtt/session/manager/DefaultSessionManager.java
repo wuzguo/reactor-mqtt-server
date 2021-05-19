@@ -4,6 +4,8 @@ import akka.actor.ActorSystem;
 import com.study.iot.mqtt.akka.actor.Subscriber;
 import com.study.iot.mqtt.akka.spring.SpringProps;
 import com.study.iot.mqtt.session.domain.ConnectSession;
+import com.study.iot.mqtt.store.mapper.StoreMapper;
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -25,9 +27,17 @@ public class DefaultSessionManager implements SessionManager {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private StoreMapper storeMapper;
+
     @Override
     public ConnectSession create(String instanceId, String clientIdentity, Boolean isCleanSession) {
-        return null;
+        ConnectSession session = ConnectSession.builder().instanceId(instanceId).clientIdentity(clientIdentity)
+            .topics(Collections.emptyList()).build();
+        // 如果是持久化 Session 需要放入Redis保存
+        storeMapper.session().add(clientIdentity, session);
+
+        return session;
     }
 
     @Override

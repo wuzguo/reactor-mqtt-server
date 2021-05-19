@@ -3,6 +3,7 @@ package com.study.iot.mqtt.session.domain;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Queue;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -14,7 +15,13 @@ import lombok.Data;
  */
 
 @Data
+@Builder
 public class ConnectSession implements Serializable {
+
+    /**
+     * SESSION ID
+     */
+    private Long sessionId;
 
     /**
      * 客户端标识

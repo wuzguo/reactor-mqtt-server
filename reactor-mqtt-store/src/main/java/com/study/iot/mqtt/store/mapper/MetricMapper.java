@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.manager;
+package com.study.iot.mqtt.store.mapper;
 
 import com.study.iot.mqtt.store.strategy.CacheCapable;
 import java.util.Map;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
  * @date 2021/5/12 9:23
  */
 
-public interface MetricManager extends CacheCapable {
+public interface MetricMapper extends CacheCapable {
 
     /**
      * 新增1

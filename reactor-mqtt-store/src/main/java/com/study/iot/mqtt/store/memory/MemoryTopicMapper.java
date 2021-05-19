@@ -4,7 +4,7 @@ package com.study.iot.mqtt.store.memory;
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.disposable.SerializerDisposable;
-import com.study.iot.mqtt.store.manager.TopicManager;
+import com.study.iot.mqtt.store.mapper.TopicMapper;
 import com.study.iot.mqtt.store.memory.path.CacheTopicManager;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 
 @CacheStrategyService(group = CacheGroup.TOPIC, type = CacheStrategy.MEMORY)
-public class MemoryTopicManager implements TopicManager {
+public class MemoryTopicMapper implements TopicMapper {
 
     private final CacheTopicManager topicManager = new CacheTopicManager();
 

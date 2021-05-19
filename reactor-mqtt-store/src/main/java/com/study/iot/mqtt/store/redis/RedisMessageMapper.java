@@ -1,10 +1,9 @@
 package com.study.iot.mqtt.store.redis;
 
 import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.manager.MessageManager;
+import com.study.iot.mqtt.store.mapper.MessageMapper;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
-import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @CacheStrategyService(group = CacheGroup.MESSAGE, type = CacheStrategy.REDIS)
-public class RedisMessageManager implements MessageManager {
+public class RedisMessageMapper implements MessageMapper {
 
     @Autowired
     private RedisCacheTemplate redisTemplate;

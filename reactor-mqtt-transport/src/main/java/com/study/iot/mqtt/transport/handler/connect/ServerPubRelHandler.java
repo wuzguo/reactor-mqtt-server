@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
 
-import com.study.iot.mqtt.store.manager.CacheManager;
+import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.MessageBuilder;
@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ServerPubRelHandler implements StrategyCapable {
 
     @Autowired
-    private CacheManager cacheManager;
+    private StoreMapper storeMapper;
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
@@ -45,7 +45,7 @@ public class ServerPubRelHandler implements StrategyCapable {
         // send comp
         disposableConnection.sendMessage(mqttPubRecMessage).subscribe();
         disposableConnection.getAndRemoveQos2Message(messageId)
-            .ifPresent(transportMessage -> cacheManager.topic().getConnections(transportMessage.getTopic())
+            .ifPresent(transportMessage -> storeMapper.topic().getConnections(transportMessage.getTopic())
                 .stream().map(disposable -> (DisposableConnection) disposable)
                 .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
                 .forEach(disposable -> {
