@@ -1,6 +1,8 @@
 package com.study.iot.mqtt.store.hbase;
 
 import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Scan;
 
@@ -24,7 +26,7 @@ public interface HbaseOperations {
      * @param <T>       action type
      * @return the result object of the callback action, or null
      */
-    <T> T execute(String tableName, TableCallback<T> mapper);
+    <T> T execute(@NotBlank String tableName, @NotNull TableCallback<T> action);
 
     /**
      * Scans the target table, using the given column family. The content is processed row by row by the given action,
@@ -103,7 +105,7 @@ public interface HbaseOperations {
      * @param tableName target table
      * @param action    {@link MutatorCallback}
      */
-    void execute(String tableName, MutatorCallback action);
+    void execute(@NotBlank String tableName, @NotNull MutatorCallback action);
 
     /**
      * @param tableName target table
