@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.server.cluster;
+package com.study.iot.mqtt.akka.cluster;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorSystem;

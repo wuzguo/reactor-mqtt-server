@@ -41,6 +41,12 @@ public class ClientPublishHandler implements StrategyCapable {
             .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(disposableConnection, mqttMessage, bytes));
     }
 
+    /**
+     * 转换
+     *
+     * @param byteBuf {@link ByteBuf}
+     * @return {@link byte}
+     */
     private byte[] copyByteBuf(ByteBuf byteBuf) {
         byte[] bytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(bytes);

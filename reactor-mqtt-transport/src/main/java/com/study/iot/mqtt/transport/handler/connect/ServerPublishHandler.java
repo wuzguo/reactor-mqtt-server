@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
+import com.study.iot.mqtt.session.manager.SessionManager;
 import com.study.iot.mqtt.store.manager.CacheManager;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -38,6 +39,9 @@ public class ServerPublishHandler implements StrategyCapable {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private SessionManager sessionManager;
+
     @Override
     @MqttMetric(MetricMatterName.TOTAL_PUBLISH_COUNT)
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
@@ -59,6 +63,11 @@ public class ServerPublishHandler implements StrategyCapable {
             .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(disposableConnection, mqttMessage, bytes));
     }
 
+    /**
+     * 转换
+     * @param byteBuf {@link ByteBuf}
+     * @return {@link byte}
+     */
     private byte[] copyByteBuf(ByteBuf byteBuf) {
         byte[] bytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(bytes);

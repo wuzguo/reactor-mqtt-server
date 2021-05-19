@@ -32,8 +32,8 @@ public class ClientPublishAtLeastHandler implements PublishStrategyCapable {
         log.info("client publish topic: {}, message: {}", variableHeader.topicName(), new String(bytes,
             CharsetUtil.UTF_8));
         // back
-        MqttPubAckMessage mqttPubAckMessage = MessageBuilder.buildPubAck(header.isDup(), header.qosLevel(),
+        MqttPubAckMessage mqttMessage = MessageBuilder.buildPubAck(header.isDup(), header.qosLevel(),
             header.isRetain(), variableHeader.packetId());
-        connection.sendMessage(mqttPubAckMessage).subscribe();
+        connection.sendMessage(mqttMessage).subscribe();
     }
 }

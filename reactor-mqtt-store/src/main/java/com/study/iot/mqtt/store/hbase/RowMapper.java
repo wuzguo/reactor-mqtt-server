@@ -12,5 +12,13 @@ import org.apache.hadoop.hbase.client.Result;
 
 public interface RowMapper<T> {
 
+    /**
+     * Mapper
+     *
+     * @param result {@link Result}
+     * @param rowNum {@link Integer}
+     * @return {@link T}
+     * @throws Exception
+     */
     T mapRow(Result result, int rowNum) throws Exception;
 }

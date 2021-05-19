@@ -2,13 +2,15 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 
 import com.study.iot.mqtt.auth.service.ConnectAuthentication;
-import com.study.iot.mqtt.store.manager.CacheManager;
-import com.study.iot.mqtt.store.manager.ChannelManager;
 import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.common.utils.StringUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.session.config.InstanceUtil;
+import com.study.iot.mqtt.session.manager.SessionManager;
+import com.study.iot.mqtt.store.manager.CacheManager;
+import com.study.iot.mqtt.store.manager.ChannelManager;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -49,9 +51,15 @@ public class ServerConnectHandler implements StrategyCapable {
     @Autowired
     private ConnectAuthentication authentication;
 
+    @Autowired
+    private SessionManager sessionManager;
+
+    @Autowired
+    private InstanceUtil instanceUtil;
+
     @Override
     @MqttMetric(MetricMatterName.TOTAL_CONNECTION_COUNT)
-    public void handle( DisposableConnection connection, MqttMessage message) {
+    public void handle(DisposableConnection connection, MqttMessage message) {
         log.info("server connect message: {}, connection: {}", message, connection);
         MqttConnectMessage connectMessage = (MqttConnectMessage) message;
 
@@ -114,6 +122,9 @@ public class ServerConnectHandler implements StrategyCapable {
                 connection.dispose();
                 return;
             }
+
+            // 创建Session的保存
+            sessionManager.create(instanceUtil.getInstanceId(), identity, variableHeader.isCleanSession());
             // 连接成功，超时时间来自客户端的设置
             acceptConnect(connection, identity, variableHeader.keepAliveTimeSeconds());
             // 如果有遗嘱消息，这里需要处理
@@ -134,8 +145,8 @@ public class ServerConnectHandler implements StrategyCapable {
      * @param message    消息
      * @param qoS        QOS
      */
-    private void setWillMessage(DisposableConnection connection, String topicName, boolean isRetain, byte[] message,
-        int qoS) {
+    private void setWillMessage(DisposableConnection connection, String topicName, boolean isRetain,
+        byte[] message, int qoS) {
         WillMessage willMessage = WillMessage.builder().copyByteBuf(message)
             .qos(qoS).isRetain(isRetain).topic(topicName).build();
         // 设置遗嘱消息
@@ -147,7 +158,7 @@ public class ServerConnectHandler implements StrategyCapable {
      *
      * @param disposableConnection {@link DisposableConnection}
      * @param identity             设备标识
-     * @param keepAliveSeconds 超时时间
+     * @param keepAliveSeconds     超时时间
      */
     private void acceptConnect(DisposableConnection disposableConnection, String identity, Integer keepAliveSeconds) {
         // 连接信息

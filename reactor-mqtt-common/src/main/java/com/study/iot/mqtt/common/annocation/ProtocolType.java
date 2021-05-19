@@ -34,7 +34,7 @@ public enum ProtocolType {
     /**
      * 类型转换
      *
-     * @param code 编码
+     * @param value 编码
      * @return {@link ProtocolType}
      */
     public static ProtocolType valueOf(Integer value) {

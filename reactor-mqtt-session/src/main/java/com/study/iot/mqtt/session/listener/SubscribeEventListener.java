@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class SubscribeEventLister {
+public class SubscribeEventListener {
 
     @EventListener
-    public void onSubEvent(SubscribeEvent event) {
+    public void onSubscribe(SubscribeEvent event) {
         log.info("receive subEvent info: {}", event);
     }
 }
