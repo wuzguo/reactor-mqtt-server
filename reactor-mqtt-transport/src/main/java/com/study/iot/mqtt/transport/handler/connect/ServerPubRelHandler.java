@@ -48,7 +48,7 @@ public class ServerPubRelHandler implements StrategyCapable {
         disposableConnection.sendMessage(mqttPubRecMessage).subscribe();
         disposableConnection.getAndRemoveQos2Message(messageId)
             .ifPresent(transportMessage -> {
-                TopicContainer topicContainer = (TopicContainer) containerManager.get(CacheGroup.TOPIC);
+                TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
                 topicContainer.getConnections(transportMessage.getTopic())
                     .stream().map(disposable -> (DisposableConnection) disposable)
                     .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())

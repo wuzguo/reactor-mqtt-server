@@ -47,7 +47,7 @@ public class DefaultSessionManager implements SessionManager {
         ConnectSession session = ConnectSession.builder().instanceId(instanceId).clientIdentity(clientIdentity)
             .topics(Collections.emptyList()).build();
         // 如果是持久化 Session 需要放入Redis保存
-        containerManager.get(CacheGroup.SESSION).add(clientIdentity, session);
+        containerManager.take(CacheGroup.SESSION).add(clientIdentity, session);
 
         return session;
     }

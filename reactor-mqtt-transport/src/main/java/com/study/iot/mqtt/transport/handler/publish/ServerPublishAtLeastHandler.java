@@ -41,7 +41,7 @@ public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
         MqttPubAckMessage mqttPubAckMessage = MessageBuilder.buildPubAck(header.isDup(), header.qosLevel(),
             header.isRetain(), variableHeader.packetId());
         disposableConnection.sendMessage(mqttPubAckMessage).subscribe();
-        TopicContainer topicContainer = (TopicContainer) containerManager.get(CacheGroup.TOPIC);
+        TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
         topicContainer.getConnections(variableHeader.topicName())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())

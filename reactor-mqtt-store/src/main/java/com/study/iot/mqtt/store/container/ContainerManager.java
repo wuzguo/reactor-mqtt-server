@@ -28,5 +28,21 @@ public interface ContainerManager {
      * @param cacheGroup {@link String}
      * @return {@link StorageContainer}
      */
-    <T extends Serializable> StorageContainer<T> get(@NotNull String cacheGroup);
+    <T extends Serializable> StorageContainer<T> take(@NotNull String cacheGroup);
+
+    /**
+     * 获取连接对象
+     *
+     * @param cacheGroup {@link String}
+     * @return {@link StorageContainer}
+     */
+    TopicContainer topic(@NotNull String cacheGroup);
+
+    /**
+     * 获取连接对象
+     *
+     * @param cacheGroup {@link String}
+     * @return {@link StorageContainer}
+     */
+    MetricContainer metric(@NotNull String cacheGroup);
 }

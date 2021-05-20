@@ -42,8 +42,8 @@ public class ServerUnSubscribeHandler implements StrategyCapable {
         disposableConnection.sendMessage(mqttUnsubAckMessage).subscribe();
         Optional.ofNullable(unsubscribeMessage.payload().topics())
             .ifPresent(topics -> topics.forEach(topic -> {
-                TopicContainer container = (TopicContainer) containerManager.get(CacheGroup.TOPIC);
-                container.remove(topic, disposableConnection);
+                TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
+                topicContainer.remove(topic, disposableConnection);
             }));
     }
 }

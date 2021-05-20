@@ -43,7 +43,7 @@ public class MqttMetricAspect {
     private Object doMetric(ProceedingJoinPoint joinPoint, MqttMetric metric) {
         log.info("mqtt metric {}", metric);
         this.proceed(joinPoint);
-        MetricContainer metricContainer = (MetricContainer) containerManager.get(CacheGroup.METRIC);
+        MetricContainer metricContainer = containerManager.metric(CacheGroup.METRIC);
         // 统计数据
         if (metric.type().equals(MetricType.INCREASE)) {
             return metricContainer.increase(metric.matter());

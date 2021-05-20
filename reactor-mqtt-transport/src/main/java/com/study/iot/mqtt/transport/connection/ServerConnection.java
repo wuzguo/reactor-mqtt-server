@@ -63,14 +63,14 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public Mono<List<SerializerDisposable>> getConnections() {
-        List<Serializable> disposables = containerManager.get(CacheGroup.CHANNEL).getAll();
+        List<Serializable> disposables = containerManager.take(CacheGroup.CHANNEL).getAll();
         return Mono.just(disposables.stream().map(serializable -> (SerializerDisposable) serializable)
             .collect(Collectors.toList()));
     }
 
     @Override
     public Mono<Void> closeConnect(String identity) {
-        return Mono.fromRunnable(() -> Optional.ofNullable(containerManager.get(CacheGroup.CHANNEL)
+        return Mono.fromRunnable(() -> Optional.ofNullable(containerManager.take(CacheGroup.CHANNEL)
             .getAndRemove(identity))
             .ifPresent(serializable -> {
                 Disposable disposable = (Disposable) serializable;
@@ -85,15 +85,15 @@ public class ServerConnection implements ServerSession {
      */
     private void sendWillMessage(Connection connection) {
         Optional.ofNullable(connection.channel().attr(AttributeKeys.willMessage)).map(Attribute::get)
-            .ifPresent(
-                willMessage -> Optional.ofNullable(containerManager.get(CacheGroup.TOPIC).list(willMessage.getTopic()))
-                    .ifPresent(disposables -> disposables.forEach(disposable -> {
-                        MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                        Optional.ofNullable(
-                            messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
-                            .ifPresent(capable -> ((WillCapable) capable)
-                                .handle((DisposableConnection) disposable, qoS, willMessage));
-                    })));
+            .ifPresent(willMessage -> Optional.ofNullable(containerManager.topic(CacheGroup.TOPIC)
+                .getConnections(willMessage.getTopic()))
+                .ifPresent(disposables -> disposables.forEach(disposable -> {
+                    MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
+                    Optional.ofNullable(
+                        messageRouter.getWillContainer().findStrategy(StrategyGroup.WILL_SERVER, qoS))
+                        .ifPresent(capable -> ((WillCapable) capable)
+                            .handle((DisposableConnection) disposable, qoS, willMessage));
+                })));
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ServerConnection implements ServerSession {
             // 删除设备标识
             Optional.ofNullable(connection.channel().attr(AttributeKeys.identity)).map(Attribute::get)
                 .ifPresent(identity -> {
-                    containerManager.get(CacheGroup.CHANNEL).remove(identity);
+                    containerManager.take(CacheGroup.CHANNEL).remove(identity);
                     connection.channel().attr(AttributeKeys.identity).set(null);
                 });
             // 删除连接
@@ -114,8 +114,8 @@ public class ServerConnection implements ServerSession {
             // 删除topic订阅
             Optional.ofNullable(disposableConnection.getTopics())
                 .ifPresent(topics -> topics.forEach(topic -> {
-                    TopicContainer container = (TopicContainer) containerManager.get(CacheGroup.TOPIC);
-                    container.remove(topic, disposableConnection);
+                    TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
+                    topicContainer.remove(topic, disposableConnection);
                 }));
             // 清空各种缓存
             disposableConnection.destroy();

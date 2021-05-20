@@ -58,7 +58,7 @@ public class ServerPublishHandler implements StrategyCapable {
             RetainMessage retainMessage = RetainMessage.builder().topic(variableHeader.topicName())
                 .isRetain(fixedHeader.isRetain()).isDup(fixedHeader.isDup()).qos(fixedHeader.qosLevel().value())
                 .copyByteBuf(bytes).build();
-            containerManager.get(CacheGroup.MESSAGE).add(variableHeader.topicName(), retainMessage);
+            containerManager.take(CacheGroup.MESSAGE).add(variableHeader.topicName(), retainMessage);
         }
 
         // 持久化消息

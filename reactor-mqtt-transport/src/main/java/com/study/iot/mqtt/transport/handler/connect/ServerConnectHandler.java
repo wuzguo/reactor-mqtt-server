@@ -12,7 +12,6 @@ import com.study.iot.mqtt.session.manager.SessionManager;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.container.StorageContainer;
-import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -88,7 +87,7 @@ public class ServerConnectHandler implements StrategyCapable {
 
         MqttConnectVariableHeader variableHeader = connectMessage.variableHeader();
         MqttConnectPayload mqttPayload = connectMessage.payload();
-        StorageContainer<Serializable> storageContainer = containerManager.get(CacheGroup.CHANNEL);
+        StorageContainer<Serializable> storageContainer = containerManager.take(CacheGroup.CHANNEL);
         String identity = mqttPayload.clientIdentifier();
         if (storageContainer.containsKey(identity)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
@@ -175,7 +174,7 @@ public class ServerConnectHandler implements StrategyCapable {
         // 设置 connection
         connection.channel().attr(AttributeKeys.disposableConnection).set(disposableConnection);
         // 保持标识和连接的关系
-        containerManager.get(CacheGroup.CHANNEL).add(identity, disposableConnection);
+        containerManager.take(CacheGroup.CHANNEL).add(identity, disposableConnection);
         // 取消关闭连接
         Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.closeConnection))
             .map(Attribute::get).ifPresent(Disposable::dispose);

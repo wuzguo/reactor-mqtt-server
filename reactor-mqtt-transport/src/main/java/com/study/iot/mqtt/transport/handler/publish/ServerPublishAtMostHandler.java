@@ -1,10 +1,10 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
-import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
@@ -37,8 +37,8 @@ public class ServerPublishAtMostHandler implements PublishStrategyCapable {
         MqttPublishVariableHeader variableHeader = message.variableHeader();
         MqttFixedHeader header = message.fixedHeader();
         // 过滤掉本身 已经关闭的dispose
-        TopicContainer container = (TopicContainer) containerManager.get(CacheGroup.TOPIC);
-        container.getConnections(variableHeader.topicName())
+        TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
+        topicContainer.getConnections(variableHeader.topicName())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {

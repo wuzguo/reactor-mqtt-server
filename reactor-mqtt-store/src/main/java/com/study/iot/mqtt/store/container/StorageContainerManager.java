@@ -29,7 +29,17 @@ public class StorageContainerManager implements ContainerManager {
     }
 
     @Override
-    public <T extends Serializable> StorageContainer<T> get(String cacheGroup) {
+    public <T extends Serializable> StorageContainer<T> take(String cacheGroup) {
+        return container.getStrategy(cacheGroup, strategy);
+    }
+
+    @Override
+    public TopicContainer topic(String cacheGroup) {
+        return container.getStrategy(cacheGroup, strategy);
+    }
+
+    @Override
+    public MetricContainer metric(String cacheGroup) {
         return container.getStrategy(cacheGroup, strategy);
     }
 }

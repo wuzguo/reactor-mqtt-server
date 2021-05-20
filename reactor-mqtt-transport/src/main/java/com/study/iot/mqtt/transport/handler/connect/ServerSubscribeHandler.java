@@ -9,7 +9,6 @@ import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.session.service.EventService;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
-import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -67,8 +66,8 @@ public class ServerSubscribeHandler implements StrategyCapable {
         disposableConnection.sendMessage(mqttSubAckMessage).subscribe();
         subscribeMessage.payload().topicSubscriptions().forEach(topicSubscription -> {
             String topicName = topicSubscription.topicName();
-            ((TopicContainer) containerManager.get(CacheGroup.TOPIC)).add(topicName, disposableConnection);
-            Optional.ofNullable(containerManager.get(CacheGroup.MESSAGE).get(topicName)).ifPresent(serializable -> {
+            containerManager.topic(CacheGroup.TOPIC).add(topicName, disposableConnection);
+            Optional.ofNullable(containerManager.take(CacheGroup.MESSAGE).get(topicName)).ifPresent(serializable -> {
                 RetainMessage retainMessage = (RetainMessage) serializable;
                 if (retainMessage.getQos() == 0) {
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),

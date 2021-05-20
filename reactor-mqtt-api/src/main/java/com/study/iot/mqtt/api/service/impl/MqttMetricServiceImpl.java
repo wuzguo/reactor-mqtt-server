@@ -28,7 +28,7 @@ public class MqttMetricServiceImpl implements IMqttMetricService {
 
     @Override
     public Mono<Map<String, Long>> stat(String matterName) {
-        MetricContainer metricContainer = (MetricContainer) containerManager.get(CacheGroup.METRIC);
+        MetricContainer metricContainer = (MetricContainer) containerManager.take(CacheGroup.METRIC);
         return metricContainer.loadAll().map(mapLongAdder -> {
             Map<String, Long> metrics = Maps.newHashMap();
             mapLongAdder.forEach((key, adder) -> metrics.put(key, adder.longValue()));
