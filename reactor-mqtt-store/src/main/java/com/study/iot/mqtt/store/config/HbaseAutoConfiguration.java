@@ -49,35 +49,6 @@ public class HbaseAutoConfiguration {
         configuration.set("hbase.rest.ssl.enabled", "false");
         configuration.set("hbase.cluster.distributed", "true");
         configuration.set("hbase.master", "hadoop001:16010");
-
-//        configuration.set("hbase.client.write.buffer", "2097152");
-//        configuration.set("hbase.client.pause", "100");
-//        configuration.set("hbase.client.retries.number", "10");
-//        configuration.set("hbase.client.scanner.caching", "100");
-//        configuration.set("hbase.client.keyvalue.maxsize", "10485760");
-//        configuration.set("hbase.ipc.client.allowsInterrupt", "true");
-//        configuration.set("hbase.client.primaryCallTimeout.get", "10");
-//        configuration.set("hbase.client.primaryCallTimeout.multiget", "10");
-//        configuration.set("hbase.client.scanner.timeout.period", "60000");
-//        configuration.set("hbase.coprocessor.region.classes", "org.apache.hadoop.hbase.security.access.SecureBulkLoadEndpoint");
-//        configuration.set("hbase.regionserver.thrift.http", "false");
-//        configuration.set("hbase.thrift.support.proxyuser", "false");
-//        configuration.set("hbase.rpc.timeout", "60000");
-//        configuration.set("hbase.client.operation.timeout", "30000");
-//        configuration.set("hbase.client.scanner.timeout.period", "200000");
-//        configuration.set("hbase.snapshot.enabled", "true");
-//        configuration.set("hbase.snapshot.region.timeout", "300000");
-//        configuration.set("hbase.snapshot.master.timeout.millis", "300000");
-//        configuration.set("hbase.security.authentication", "simple");
-//        configuration.set("hbase.rpc.protection", "authentication");
-//        configuration.set("zookeeper.session.timeout", "60000");
-//        configuration.set("zookeeper.znode.parent", "/hbase");
-//        configuration.set("zookeeper.request.timeout", "30000");
-//        configuration.set("zookeeper.znode.rootserver", "root-region-server");
-//        configuration.set("hbase.rest.ssl.enabled", "false");
-//        configuration.set("hbase.cluster.distributed", "true");
-//        configuration.set("hbase.master", "hadoop001:16010");
-
         return new HbaseTemplate(configuration);
     }
 }

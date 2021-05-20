@@ -58,7 +58,7 @@ public class DefaultSessionManager implements SessionManager {
         // 持久化
         List<Mutation> saveOrUpdates = Lists.newArrayList();
         // rowKey
-        Put put = new Put(Bytes.toBytes(message.getId()));
+        Put put = new Put(Bytes.toBytes(String.valueOf(message.getId())));
         // 列族，列名，值
         ReflectionUtils.doWithFields(message.getClass(), field -> {
             field.setAccessible(true);
