@@ -13,9 +13,11 @@ import com.study.iot.mqtt.transport.strategy.WillCapable;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.Attribute;
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.UnicastProcessor;
@@ -61,8 +63,9 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public Mono<List<SerializerDisposable>> getConnections() {
-        List<SerializerDisposable> disposables = containerManager.get(CacheGroup.CHANNEL).getAll();
-        return Mono.just(disposables);
+        List<Serializable> disposables = containerManager.get(CacheGroup.CHANNEL).getAll();
+        return Mono.just(disposables.stream().map(serializable -> (SerializerDisposable) serializable)
+            .collect(Collectors.toList()));
     }
 
     @Override

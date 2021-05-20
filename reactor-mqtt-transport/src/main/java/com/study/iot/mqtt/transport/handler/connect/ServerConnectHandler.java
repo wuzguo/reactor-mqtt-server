@@ -29,6 +29,7 @@ import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttUnacceptableProtocolVersionException;
 import io.netty.util.Attribute;
 import io.netty.util.CharsetUtil;
+import java.io.Serializable;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +88,7 @@ public class ServerConnectHandler implements StrategyCapable {
 
         MqttConnectVariableHeader variableHeader = connectMessage.variableHeader();
         MqttConnectPayload mqttPayload = connectMessage.payload();
-        StorageContainer storageContainer = containerManager.get(CacheGroup.CHANNEL);
+        StorageContainer<Serializable> storageContainer = containerManager.get(CacheGroup.CHANNEL);
         String identity = mqttPayload.clientIdentifier();
         if (storageContainer.containsKey(identity)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
