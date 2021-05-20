@@ -128,10 +128,11 @@ public class HbaseTemplate implements HbaseOperations {
     @Override
     public void execute(@NotBlank String tableName, @NotNull MutatorCallback action) {
         BufferedMutatorParams mutatorParams = new BufferedMutatorParams(TableName.valueOf(tableName));
-        try (BufferedMutator mutator = this.connection
-            .getBufferedMutator(mutatorParams.writeBufferSize(3 * 1024 * 1024))) {
+        try (BufferedMutator mutator = this.connection.getBufferedMutator(mutatorParams.writeBufferSize(3 * 1024 * 1024))) {
             action.doInMutator(mutator);
         } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            log.error("error: {}", throwable.getMessage());
             throw new HbaseSystemException(throwable);
         }
     }

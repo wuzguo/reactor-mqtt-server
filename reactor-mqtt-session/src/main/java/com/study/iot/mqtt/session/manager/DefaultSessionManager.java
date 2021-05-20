@@ -4,6 +4,7 @@ import akka.actor.ActorSystem;
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.akka.actor.Subscriber;
 import com.study.iot.mqtt.akka.spring.SpringProps;
+import com.study.iot.mqtt.common.utils.ObjectUtil;
 import com.study.iot.mqtt.session.domain.BaseMessage;
 import com.study.iot.mqtt.session.domain.ConnectSession;
 import com.study.iot.mqtt.store.constant.CacheGroup;
@@ -61,8 +62,10 @@ public class DefaultSessionManager implements SessionManager {
         // 列族，列名，值
         ReflectionUtils.doWithFields(message.getClass(), field -> {
             field.setAccessible(true);
-            put.addColumn(Bytes.toBytes("message"), Bytes.toBytes(field.getName()),
-                Bytes.toBytes(String.valueOf(field.get(message))));
+            if (!ObjectUtil.isNull(field.get(message))) {
+                put.addColumn(Bytes.toBytes("message"), Bytes.toBytes(field.getName()),
+                    Bytes.toBytes(String.valueOf(field.get(message))));
+            }
         });
         saveOrUpdates.add(put);
         this.hbaseTemplate.saveOrUpdates("reactor-mqtt-message", saveOrUpdates);
