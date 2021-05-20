@@ -57,4 +57,4 @@ spring:
 logging:
   level:
     root: info
-    com.study.iot: debug
+    com.study.iot.mqtt: debug
