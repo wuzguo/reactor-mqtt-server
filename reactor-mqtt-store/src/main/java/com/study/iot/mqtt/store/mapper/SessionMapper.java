@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.store.mapper;
 
+import com.study.iot.mqtt.store.strategy.CacheCapable;
 import java.io.Serializable;
 
 /**
@@ -10,7 +11,7 @@ import java.io.Serializable;
  * @date 2021/5/19 19:02
  */
 
-public interface SessionMapper {
+public interface SessionMapper extends CacheCapable {
 
     /**
      * 添加连接

@@ -1,5 +1,7 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
+import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.session.domain.SessionMessage;
 import com.study.iot.mqtt.session.manager.SessionManager;
 import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.message.RetainMessage;
@@ -57,6 +59,15 @@ public class ServerPublishHandler implements StrategyCapable {
                 .copyByteBuf(bytes).build();
             storeMapper.message().saveRetain(retainMessage);
         }
+
+        // 持久化消息
+        SessionMessage sessionMessage = SessionMessage.builder().id(IdUtil.idGen())
+            .messageId(variableHeader.packetId())
+            .messageType(fixedHeader.messageType().value())
+            .qos(fixedHeader.qosLevel().value())
+            .copyByteBuf(bytes)
+            .retain(fixedHeader.isRetain()).build();
+        sessionManager.add("", sessionMessage);
 
         // 又来一个策略模式
         Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH, fixedHeader.qosLevel()))

@@ -53,9 +53,6 @@ public class DefaultSessionManager implements SessionManager {
 
     @Override
     public void add(String identity, BaseMessage message) {
-        ConnectSession session = storeMapper.session().get(identity);
-        session.add(message);
-        storeMapper.session().add(identity, session);
         // 持久化
         List<Mutation> saveOrUpdates = Lists.newArrayList();
         // rowKey

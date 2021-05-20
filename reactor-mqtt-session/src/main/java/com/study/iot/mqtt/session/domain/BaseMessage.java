@@ -2,6 +2,7 @@ package com.study.iot.mqtt.session.domain;
 
 import java.io.Serializable;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 /**
  * <B>说明：描述</B>
@@ -12,8 +13,8 @@ import lombok.Data;
  */
 
 @Data
+@SuperBuilder
 public class BaseMessage implements Serializable {
-
     /**
      * 消息ID
      */

@@ -39,7 +39,7 @@ public class HbaseAutoConfiguration {
         Configuration configuration = HBaseConfiguration.create();
         configuration.set(HBASE_QUORUM, this.hbaseProperties.getQuorum());
         configuration.set(HBASE_ROOTDIR, hbaseProperties.getRootDir());
-        configuration.set(HBASE_ZNODE_PARENT, hbaseProperties.getNodeParent());
+     //   configuration.set(HBASE_ZNODE_PARENT, hbaseProperties.getNodeParent());
         return new HbaseTemplate(configuration);
     }
 }
