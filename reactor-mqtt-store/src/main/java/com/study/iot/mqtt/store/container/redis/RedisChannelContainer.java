@@ -1,10 +1,11 @@
-package com.study.iot.mqtt.store.redis;
+package com.study.iot.mqtt.store.container.redis;
 
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.disposable.SerializerDisposable;
-import com.study.iot.mqtt.store.mapper.ChannelManager;
+import com.study.iot.mqtt.store.container.StorageContainer;
+import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
@@ -22,7 +23,7 @@ import reactor.core.Disposable;
  */
 
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.REDIS)
-public class RedisChannelManager implements ChannelManager {
+public class RedisChannelContainer implements StorageContainer<SerializerDisposable> {
 
     @Autowired
     private RedisCacheTemplate redisTemplate;
@@ -38,6 +39,21 @@ public class RedisChannelManager implements ChannelManager {
     }
 
     @Override
+    public SerializerDisposable get(String key) {
+        return null;
+    }
+
+    @Override
+    public List<SerializerDisposable> list(String key) {
+        return null;
+    }
+
+    @Override
+    public List<SerializerDisposable> getAll() {
+        return Lists.newArrayList(redisTemplate.hmget(CacheGroup.CHANNEL, SerializerDisposable.class).values());
+    }
+
+    @Override
     public SerializerDisposable getAndRemove(String identity) {
         SerializerDisposable disposable = redisTemplate.hget(CacheGroup.CHANNEL, identity, SerializerDisposable.class);
         redisTemplate.hdel(CacheGroup.CHANNEL, identity);
@@ -47,10 +63,5 @@ public class RedisChannelManager implements ChannelManager {
     @Override
     public Boolean containsKey(String identity) {
         return ObjectUtil.isNull(redisTemplate.hget(CacheGroup.CHANNEL, identity, Disposable.class));
-    }
-
-    @Override
-    public List<SerializerDisposable> getConnections() {
-        return Lists.newArrayList(redisTemplate.hmget(CacheGroup.CHANNEL, SerializerDisposable.class).values());
     }
 }

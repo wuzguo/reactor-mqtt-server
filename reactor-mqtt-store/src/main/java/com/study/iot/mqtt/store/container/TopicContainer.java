@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.mapper;
+package com.study.iot.mqtt.store.container;
 
 import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import com.study.iot.mqtt.store.strategy.CacheCapable;
@@ -6,7 +6,7 @@ import java.util.List;
 import reactor.core.Disposable;
 
 
-public interface TopicMapper extends CacheCapable {
+public interface TopicContainer extends CacheCapable {
 
     /**
      * 获取连接

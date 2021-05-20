@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.server.runner;
 
 import com.google.common.collect.Sets;
-import com.study.iot.mqtt.store.mapper.StoreMapper;
+import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 public class MqttServerRunner implements ApplicationRunner {
 
     @Autowired
-    private StoreMapper storeMapper;
+    private ContainerManager containerManager;
 
     @Autowired
     private ServerMessageRouter messageRouter;
@@ -57,7 +57,7 @@ public class MqttServerRunner implements ApplicationRunner {
             .build();
         // 启动服务
         ServerSession serverSession = new TransportServer().create(serverProperties)
-            .start(storeMapper, messageRouter).block();
+            .start(containerManager, messageRouter).block();
         Optional.ofNullable(serverSession)
             .ifPresent(session -> session.getConnections().subscribe(disposables -> disposables.stream()
                 .map(disposable -> (DisposableConnection) disposable)

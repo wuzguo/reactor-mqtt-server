@@ -1,7 +1,9 @@
 package com.study.iot.mqtt.transport.metric;
 
-import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.exception.FrameworkException;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.container.ContainerManager;
+import com.study.iot.mqtt.store.container.MetricContainer;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Component;
 public class MqttMetricAspect {
 
     @Autowired
-    private StoreMapper storeMapper;
+    private ContainerManager containerManager;
 
     @Around("@annotation(metric)")
     public Object mqttMetric(ProceedingJoinPoint joinPoint, MqttMetric metric) {
@@ -41,11 +43,12 @@ public class MqttMetricAspect {
     private Object doMetric(ProceedingJoinPoint joinPoint, MqttMetric metric) {
         log.info("mqtt metric {}", metric);
         this.proceed(joinPoint);
+        MetricContainer metricContainer = (MetricContainer) containerManager.get(CacheGroup.METRIC);
         // 统计数据
         if (metric.type().equals(MetricType.INCREASE)) {
-            return storeMapper.metric().increase(metric.matter());
+            return metricContainer.increase(metric.matter());
         }
-        return storeMapper.metric().decrease(metric.matter());
+        return metricContainer.decrease(metric.matter());
     }
 
     /**

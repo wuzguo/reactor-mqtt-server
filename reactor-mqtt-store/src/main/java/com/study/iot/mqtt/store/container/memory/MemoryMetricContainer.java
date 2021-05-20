@@ -1,8 +1,8 @@
-package com.study.iot.mqtt.store.memory;
+package com.study.iot.mqtt.store.container.memory;
 
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.mapper.MetricMapper;
+import com.study.iot.mqtt.store.container.MetricContainer;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.Map;
@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
  */
 
 @CacheStrategyService(group = CacheGroup.METRIC, type = CacheStrategy.MEMORY)
-public class MemoryMetricMapper implements MetricMapper {
+public class MemoryMetricContainer implements MetricContainer {
 
     private final Map<String, LongAdder> mapMetric = Maps.newConcurrentMap();
 

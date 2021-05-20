@@ -1,10 +1,12 @@
 package com.study.iot.mqtt.transport.connection;
 
-import com.study.iot.mqtt.store.disposable.SerializerDisposable;
-import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ServerSession;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.container.ContainerManager;
+import com.study.iot.mqtt.store.container.TopicContainer;
+import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
@@ -31,15 +33,15 @@ public class ServerConnection implements ServerSession {
 
     private final List<Disposable> disposables;
 
-    private final StoreMapper storeMapper;
+    private final ContainerManager containerManager;
 
     private final ServerMessageRouter messageRouter;
 
     public ServerConnection(UnicastProcessor<DisposableConnection> processor, List<Disposable> disposables,
-        StoreMapper storeMapper, ServerMessageRouter messageRouter) {
+        ContainerManager containerManager, ServerMessageRouter messageRouter) {
         this.disposables = disposables;
         this.messageRouter = messageRouter;
-        this.storeMapper = storeMapper;
+        this.containerManager = containerManager;
         processor.subscribe(this::subscribe);
     }
 
@@ -59,14 +61,18 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public Mono<List<SerializerDisposable>> getConnections() {
-        List<SerializerDisposable> disposables = storeMapper.channel().getConnections();
+        List<SerializerDisposable> disposables = containerManager.get(CacheGroup.CHANNEL).getAll();
         return Mono.just(disposables);
     }
 
     @Override
     public Mono<Void> closeConnect(String identity) {
-        return Mono.fromRunnable(() -> Optional.ofNullable(storeMapper.channel().getAndRemove(identity))
-            .ifPresent(Disposable::dispose));
+        return Mono.fromRunnable(() -> Optional.ofNullable(containerManager.get(CacheGroup.CHANNEL)
+            .getAndRemove(identity))
+            .ifPresent(serializable -> {
+                Disposable disposable = (Disposable) serializable;
+                disposable.dispose();
+            }));
     }
 
     /**
@@ -77,7 +83,7 @@ public class ServerConnection implements ServerSession {
     private void sendWillMessage(Connection connection) {
         Optional.ofNullable(connection.channel().attr(AttributeKeys.willMessage)).map(Attribute::get)
             .ifPresent(
-                willMessage -> Optional.ofNullable(storeMapper.topic().getConnections(willMessage.getTopic()))
+                willMessage -> Optional.ofNullable(containerManager.get(CacheGroup.TOPIC).list(willMessage.getTopic()))
                     .ifPresent(disposables -> disposables.forEach(disposable -> {
                         MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                         Optional.ofNullable(
@@ -97,14 +103,17 @@ public class ServerConnection implements ServerSession {
             // 删除设备标识
             Optional.ofNullable(connection.channel().attr(AttributeKeys.identity)).map(Attribute::get)
                 .ifPresent(identity -> {
-                    storeMapper.channel().remove(identity);
+                    containerManager.get(CacheGroup.CHANNEL).remove(identity);
                     connection.channel().attr(AttributeKeys.identity).set(null);
                 });
             // 删除连接
             connection.channel().attr(AttributeKeys.disposableConnection).set(null);
             // 删除topic订阅
             Optional.ofNullable(disposableConnection.getTopics())
-                .ifPresent(topics -> topics.forEach(topic -> storeMapper.topic().remove(topic, disposableConnection)));
+                .ifPresent(topics -> topics.forEach(topic -> {
+                    TopicContainer container = (TopicContainer) containerManager.get(CacheGroup.TOPIC);
+                    container.remove(topic, disposableConnection);
+                }));
             // 清空各种缓存
             disposableConnection.destroy();
         });

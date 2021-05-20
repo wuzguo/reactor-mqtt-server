@@ -1,8 +1,9 @@
-package com.study.iot.mqtt.store.ignites;
+package com.study.iot.mqtt.store.container.ignites;
 
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.disposable.SerializerDisposable;
-import com.study.iot.mqtt.store.mapper.ChannelManager;
+import com.study.iot.mqtt.store.container.StorageContainer;
+import com.study.iot.mqtt.store.properties.IgniteProperties;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.List;
@@ -23,7 +24,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 @ConditionalOnBean(value = IgniteProperties.class)
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.IGNITE)
-public class IgniteChannelManager implements ChannelManager {
+public class IgniteChannelContainer implements StorageContainer<SerializerDisposable> {
 
     @Resource
     private IgniteCache<String, SerializerDisposable> disposableCache;
@@ -39,6 +40,25 @@ public class IgniteChannelManager implements ChannelManager {
     }
 
     @Override
+    public SerializerDisposable get(String key) {
+        return null;
+    }
+
+    @Override
+    public List<SerializerDisposable> list(String key) {
+        return null;
+    }
+
+    @Override
+    public List<SerializerDisposable> getAll() {
+        return disposableCache.query(new ScanQuery<String, SerializerDisposable>())
+            .getAll()
+            .stream()
+            .map(Cache.Entry::getValue)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public SerializerDisposable getAndRemove(String identity) {
         return disposableCache.getAndRemove(identity);
     }
@@ -46,14 +66,5 @@ public class IgniteChannelManager implements ChannelManager {
     @Override
     public Boolean containsKey(String identity) {
         return disposableCache.containsKey(identity);
-    }
-
-    @Override
-    public List<SerializerDisposable> getConnections() {
-        return disposableCache.query(new ScanQuery<String, SerializerDisposable>())
-            .getAll()
-            .stream()
-            .map(Cache.Entry::getValue)
-            .collect(Collectors.toList());
     }
 }

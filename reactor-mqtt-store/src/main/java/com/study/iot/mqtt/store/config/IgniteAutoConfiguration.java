@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
 
-import com.study.iot.mqtt.store.ignites.IgniteProperties;
+import com.study.iot.mqtt.store.properties.IgniteProperties;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteMessaging;

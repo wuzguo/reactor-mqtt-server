@@ -1,7 +1,8 @@
-package com.study.iot.mqtt.store.redis;
+package com.study.iot.mqtt.store.container.redis;
 
 import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.mapper.MetricMapper;
+import com.study.iot.mqtt.store.container.MetricContainer;
+import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
@@ -19,7 +20,7 @@ import reactor.core.publisher.Mono;
  */
 
 @CacheStrategyService(group = CacheGroup.METRIC, type = CacheStrategy.REDIS)
-public class RedisMetricMapper implements MetricMapper {
+public class RedisMetricContainer implements MetricContainer {
 
     @Autowired
     private RedisCacheTemplate redisTemplate;

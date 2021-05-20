@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.store.config;
 
-import com.study.iot.mqtt.store.mapper.DefaultStoreMapper;
+import com.study.iot.mqtt.store.container.StorageContainerManager;
 import com.study.iot.mqtt.store.strategy.CacheStrategyContainer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -26,7 +26,7 @@ public class CacheAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DefaultStoreMapper cacheManager(CacheStrategyContainer container) {
-        return new DefaultStoreMapper(container);
+    public StorageContainerManager cacheManager(CacheStrategyContainer container) {
+        return new StorageContainerManager(container);
     }
 }

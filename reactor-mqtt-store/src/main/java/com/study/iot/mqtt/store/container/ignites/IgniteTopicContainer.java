@@ -1,9 +1,10 @@
-package com.study.iot.mqtt.store.ignites;
+package com.study.iot.mqtt.store.container.ignites;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.disposable.SerializerDisposable;
-import com.study.iot.mqtt.store.mapper.TopicMapper;
+import com.study.iot.mqtt.store.container.TopicContainer;
+import com.study.iot.mqtt.store.properties.IgniteProperties;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.List;
@@ -22,7 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 @ConditionalOnBean(value = IgniteProperties.class)
 @CacheStrategyService(group = CacheGroup.TOPIC, type = CacheStrategy.IGNITE)
-public class IgniteTopicMapper implements TopicMapper {
+public class IgniteTopicContainer implements TopicContainer {
 
     @Resource
     private IgniteCache<String, List<SerializerDisposable>> topicDisposableCache;

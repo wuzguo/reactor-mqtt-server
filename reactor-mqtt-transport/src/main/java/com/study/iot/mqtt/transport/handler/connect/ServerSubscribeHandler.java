@@ -2,11 +2,14 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 
 import com.study.iot.mqtt.akka.event.SubscribeEvent;
-import com.study.iot.mqtt.store.mapper.StoreMapper;
+import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.session.service.EventService;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.container.ContainerManager;
+import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -38,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ServerSubscribeHandler implements StrategyCapable {
 
     @Autowired
-    private StoreMapper storeMapper;
+    private ContainerManager containerManager;
 
     @Autowired
     private EventService eventService;
@@ -64,8 +67,9 @@ public class ServerSubscribeHandler implements StrategyCapable {
         disposableConnection.sendMessage(mqttSubAckMessage).subscribe();
         subscribeMessage.payload().topicSubscriptions().forEach(topicSubscription -> {
             String topicName = topicSubscription.topicName();
-            storeMapper.topic().add(topicName, disposableConnection);
-            Optional.ofNullable(storeMapper.message().getRetain(topicName)).ifPresent(retainMessage -> {
+            ((TopicContainer) containerManager.get(CacheGroup.TOPIC)).add(topicName, disposableConnection);
+            Optional.ofNullable(containerManager.get(CacheGroup.MESSAGE).get(topicName)).ifPresent(serializable -> {
+                RetainMessage retainMessage = (RetainMessage) serializable;
                 if (retainMessage.getQos() == 0) {
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),
                         MqttQoS.valueOf(retainMessage.getQos()), retainMessage.getIsRetain(), 1,

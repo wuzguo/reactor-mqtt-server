@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport;
 
 
-import com.study.iot.mqtt.store.mapper.StoreMapper;
+import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.protocol.ProtocolFactory;
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -26,7 +26,7 @@ public class TransportServerFactory {
         unicastProcessor = UnicastProcessor.create();
     }
 
-    public Mono<ServerSession> start(ServerProperties properties, StoreMapper storeMapper,
+    public Mono<ServerSession> start(ServerProperties properties, ContainerManager containerManager,
         ServerMessageRouter messageRouter) {
         // 获取DisposableServer
         List<Disposable> disposables = properties.getProtocols().stream()
@@ -35,12 +35,12 @@ public class TransportServerFactory {
                 .getTransport()
                 .start(properties, unicastProcessor).subscribe()).collect(Collectors.toList());
         // 返回
-        return Mono.just(this.wrapper(disposables, storeMapper, messageRouter))
+        return Mono.just(this.wrapper(disposables, containerManager, messageRouter))
             .doOnError(properties.getThrowable());
     }
 
-    private ServerSession wrapper(List<Disposable> disposables, StoreMapper storeMapper,
+    private ServerSession wrapper(List<Disposable> disposables, ContainerManager containerManager,
         ServerMessageRouter messageRouter) {
-        return new ServerConnection(unicastProcessor, disposables, storeMapper, messageRouter);
+        return new ServerConnection(unicastProcessor, disposables, containerManager, messageRouter);
     }
 }

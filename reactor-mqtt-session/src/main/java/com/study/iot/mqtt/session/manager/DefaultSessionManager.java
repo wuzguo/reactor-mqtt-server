@@ -6,8 +6,9 @@ import com.study.iot.mqtt.akka.actor.Subscriber;
 import com.study.iot.mqtt.akka.spring.SpringProps;
 import com.study.iot.mqtt.session.domain.BaseMessage;
 import com.study.iot.mqtt.session.domain.ConnectSession;
+import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
-import com.study.iot.mqtt.store.mapper.StoreMapper;
+import com.study.iot.mqtt.store.container.ContainerManager;
 import java.util.Collections;
 import java.util.List;
 import org.apache.hadoop.hbase.client.Mutation;
@@ -36,7 +37,7 @@ public class DefaultSessionManager implements SessionManager {
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    private StoreMapper storeMapper;
+    private ContainerManager containerManager;
 
     @Autowired
     private HbaseTemplate hbaseTemplate;
@@ -46,7 +47,7 @@ public class DefaultSessionManager implements SessionManager {
         ConnectSession session = ConnectSession.builder().instanceId(instanceId).clientIdentity(clientIdentity)
             .topics(Collections.emptyList()).build();
         // 如果是持久化 Session 需要放入Redis保存
-        storeMapper.session().add(clientIdentity, session);
+        containerManager.get(CacheGroup.SESSION).add(clientIdentity, session);
 
         return session;
     }

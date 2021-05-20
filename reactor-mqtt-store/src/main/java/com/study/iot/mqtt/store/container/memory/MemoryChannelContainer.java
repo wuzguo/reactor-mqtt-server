@@ -1,11 +1,11 @@
-package com.study.iot.mqtt.store.memory;
+package com.study.iot.mqtt.store.container.memory;
 
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.disposable.SerializerDisposable;
-import com.study.iot.mqtt.store.mapper.ChannelManager;
+import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.List;
@@ -21,19 +21,35 @@ import java.util.Map;
  */
 
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.MEMORY)
-public class MemoryChannelManager implements ChannelManager {
+public class MemoryChannelContainer implements StorageContainer<SerializerDisposable> {
 
     private final Map<String, SerializerDisposable> mapDisposable = Maps.newConcurrentMap();
 
     @Override
-    public void add(String identity, SerializerDisposable disposable) {
-        mapDisposable.put(identity, disposable);
+    public void add(String key, SerializerDisposable value) {
+        mapDisposable.put(key, value);
     }
 
     @Override
     public void remove(String identity) {
         mapDisposable.remove(identity);
     }
+
+    @Override
+    public SerializerDisposable get(String key) {
+        return mapDisposable.get(key);
+    }
+
+    @Override
+    public List<SerializerDisposable> list(String key) {
+        return null;
+    }
+
+    @Override
+    public List<SerializerDisposable> getAll() {
+        return Lists.newArrayList(mapDisposable.values());
+    }
+
 
     @Override
     public SerializerDisposable getAndRemove(String identity) {
@@ -43,10 +59,5 @@ public class MemoryChannelManager implements ChannelManager {
     @Override
     public Boolean containsKey(String identity) {
         return mapDisposable.containsKey(identity);
-    }
-
-    @Override
-    public List<SerializerDisposable> getConnections() {
-        return Lists.newArrayList(mapDisposable.values());
     }
 }

@@ -1,11 +1,12 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
+import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.session.domain.SessionMessage;
 import com.study.iot.mqtt.session.manager.SessionManager;
-import com.study.iot.mqtt.store.mapper.StoreMapper;
-import com.study.iot.mqtt.common.message.RetainMessage;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -39,7 +40,7 @@ public class ServerPublishHandler implements StrategyCapable {
     private PublishStrategyContainer strategyContainer;
 
     @Autowired
-    private StoreMapper storeMapper;
+    private ContainerManager containerManager;
 
     @Autowired
     private SessionManager sessionManager;
@@ -57,7 +58,7 @@ public class ServerPublishHandler implements StrategyCapable {
             RetainMessage retainMessage = RetainMessage.builder().topic(variableHeader.topicName())
                 .isRetain(fixedHeader.isRetain()).isDup(fixedHeader.isDup()).qos(fixedHeader.qosLevel().value())
                 .copyByteBuf(bytes).build();
-            storeMapper.message().saveRetain(retainMessage);
+            containerManager.get(CacheGroup.MESSAGE).add(variableHeader.topicName(), retainMessage);
         }
 
         // 持久化消息
@@ -76,6 +77,7 @@ public class ServerPublishHandler implements StrategyCapable {
 
     /**
      * 转换
+     *
      * @param byteBuf {@link ByteBuf}
      * @return {@link byte}
      */

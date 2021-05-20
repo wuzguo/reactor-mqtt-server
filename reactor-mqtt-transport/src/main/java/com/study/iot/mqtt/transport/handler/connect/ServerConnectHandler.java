@@ -9,8 +9,10 @@ import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.session.config.InstanceUtil;
 import com.study.iot.mqtt.session.manager.SessionManager;
-import com.study.iot.mqtt.store.mapper.StoreMapper;
-import com.study.iot.mqtt.store.mapper.ChannelManager;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.container.ContainerManager;
+import com.study.iot.mqtt.store.container.StorageContainer;
+import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
@@ -46,7 +48,7 @@ import reactor.netty.Connection;
 public class ServerConnectHandler implements StrategyCapable {
 
     @Autowired
-    private StoreMapper storeMapper;
+    private ContainerManager containerManager;
 
     @Autowired
     private ConnectAuthentication authentication;
@@ -85,9 +87,9 @@ public class ServerConnectHandler implements StrategyCapable {
 
         MqttConnectVariableHeader variableHeader = connectMessage.variableHeader();
         MqttConnectPayload mqttPayload = connectMessage.payload();
-        ChannelManager channelManager = storeMapper.channel();
+        StorageContainer storageContainer = containerManager.get(CacheGroup.CHANNEL);
         String identity = mqttPayload.clientIdentifier();
-        if (channelManager.containsKey(identity)) {
+        if (storageContainer.containsKey(identity)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false);
             connection.sendMessage(connAckMessage).subscribe();
@@ -172,7 +174,7 @@ public class ServerConnectHandler implements StrategyCapable {
         // 设置 connection
         connection.channel().attr(AttributeKeys.disposableConnection).set(disposableConnection);
         // 保持标识和连接的关系
-        storeMapper.channel().add(identity, disposableConnection);
+        containerManager.get(CacheGroup.CHANNEL).add(identity, disposableConnection);
         // 取消关闭连接
         Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.closeConnection))
             .map(Attribute::get).ifPresent(Disposable::dispose);

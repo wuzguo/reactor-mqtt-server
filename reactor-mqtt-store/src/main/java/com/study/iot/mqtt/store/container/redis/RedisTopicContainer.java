@@ -1,10 +1,11 @@
-package com.study.iot.mqtt.store.redis;
+package com.study.iot.mqtt.store.container.redis;
 
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.disposable.SerializerDisposable;
-import com.study.iot.mqtt.store.mapper.TopicMapper;
+import com.study.iot.mqtt.store.container.TopicContainer;
+import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @CacheStrategyService(group = CacheGroup.TOPIC, type = CacheStrategy.MEMORY)
-public class RedisTopicMapper implements TopicMapper {
+public class RedisTopicContainer implements TopicContainer {
 
     @Autowired
     private RedisCacheTemplate redisTemplate;

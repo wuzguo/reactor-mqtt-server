@@ -1,10 +1,12 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
 
-import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.utils.IdUtil;
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.MessageBuilder;
+import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.container.ContainerManager;
+import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
@@ -31,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ServerPubRelHandler implements StrategyCapable {
 
     @Autowired
-    private StoreMapper storeMapper;
+    private ContainerManager containerManager;
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
@@ -45,15 +47,18 @@ public class ServerPubRelHandler implements StrategyCapable {
         // send comp
         disposableConnection.sendMessage(mqttPubRecMessage).subscribe();
         disposableConnection.getAndRemoveQos2Message(messageId)
-            .ifPresent(transportMessage -> storeMapper.topic().getConnections(transportMessage.getTopic())
-                .stream().map(disposable -> (DisposableConnection) disposable)
-                .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
-                .forEach(disposable -> {
-                    int connMessageId = IdUtil.messageId();
-                    MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false,
-                        MqttQoS.valueOf(transportMessage.getQos()), header.isRetain(), connMessageId,
-                        transportMessage.getTopic(), transportMessage.getCopyByteBuf());
-                    disposable.sendMessageRetry(connMessageId, mqttMessage).subscribe();
-                }));
+            .ifPresent(transportMessage -> {
+                TopicContainer topicContainer = (TopicContainer) containerManager.get(CacheGroup.TOPIC);
+                topicContainer.getConnections(transportMessage.getTopic())
+                    .stream().map(disposable -> (DisposableConnection) disposable)
+                    .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
+                    .forEach(disposable -> {
+                        int connMessageId = IdUtil.messageId();
+                        MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false,
+                            MqttQoS.valueOf(transportMessage.getQos()), header.isRetain(), connMessageId,
+                            transportMessage.getTopic(), transportMessage.getCopyByteBuf());
+                        disposable.sendMessageRetry(connMessageId, mqttMessage).subscribe();
+                    });
+            });
     }
 }

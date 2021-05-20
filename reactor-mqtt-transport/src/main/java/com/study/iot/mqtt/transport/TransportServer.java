@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport;
 
 
-import com.study.iot.mqtt.store.mapper.StoreMapper;
+import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import com.study.iot.mqtt.protocol.session.ServerSession;
@@ -22,8 +22,8 @@ public class TransportServer {
         return this;
     }
 
-    public Mono<ServerSession> start(StoreMapper storeMapper, ServerMessageRouter messageRouter) {
-        storeMapper.strategy(properties.getStrategy());
-        return transportFactory.start(properties, storeMapper, messageRouter);
+    public Mono<ServerSession> start(ContainerManager containerManager, ServerMessageRouter messageRouter) {
+        containerManager.strategy(properties.getStrategy());
+        return transportFactory.start(properties, containerManager, messageRouter);
     }
 }

@@ -1,8 +1,9 @@
-package com.study.iot.mqtt.store.ignites;
+package com.study.iot.mqtt.store.container.ignites;
 
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.mapper.MetricMapper;
+import com.study.iot.mqtt.store.container.MetricContainer;
+import com.study.iot.mqtt.store.properties.IgniteProperties;
 import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.Map;
@@ -24,7 +25,7 @@ import reactor.core.publisher.Mono;
 
 @ConditionalOnBean(value = IgniteProperties.class)
 @CacheStrategyService(group = CacheGroup.METRIC, type = CacheStrategy.IGNITE)
-public class IgniteMetricMapper implements MetricMapper {
+public class IgniteMetricContainer implements MetricContainer {
 
     @Resource
     private IgniteCache<String, LongAdder> metricCache;

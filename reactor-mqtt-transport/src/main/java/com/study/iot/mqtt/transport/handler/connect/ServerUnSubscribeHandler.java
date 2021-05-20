@@ -1,9 +1,11 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
 
-import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.container.ContainerManager;
+import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
@@ -28,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ServerUnSubscribeHandler implements StrategyCapable {
 
     @Autowired
-    private StoreMapper storeMapper;
+    private ContainerManager containerManager;
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
@@ -39,6 +41,9 @@ public class ServerUnSubscribeHandler implements StrategyCapable {
             MessageBuilder.buildUnsubAck(unsubscribeMessage.variableHeader().messageId());
         disposableConnection.sendMessage(mqttUnsubAckMessage).subscribe();
         Optional.ofNullable(unsubscribeMessage.payload().topics())
-            .ifPresent(topics -> topics.forEach(topic -> storeMapper.topic().remove(topic, disposableConnection)));
+            .ifPresent(topics -> topics.forEach(topic -> {
+                TopicContainer container = (TopicContainer) containerManager.get(CacheGroup.TOPIC);
+                container.remove(topic, disposableConnection);
+            }));
     }
 }

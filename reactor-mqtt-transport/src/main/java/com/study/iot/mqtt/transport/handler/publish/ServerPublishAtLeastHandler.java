@@ -1,9 +1,11 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
-import com.study.iot.mqtt.store.mapper.StoreMapper;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.store.constant.CacheGroup;
+import com.study.iot.mqtt.store.container.ContainerManager;
+import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
@@ -29,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
 
     @Autowired
-    private StoreMapper storeMapper;
+    private ContainerManager containerManager;
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
@@ -39,7 +41,8 @@ public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
         MqttPubAckMessage mqttPubAckMessage = MessageBuilder.buildPubAck(header.isDup(), header.qosLevel(),
             header.isRetain(), variableHeader.packetId());
         disposableConnection.sendMessage(mqttPubAckMessage).subscribe();
-        storeMapper.topic().getConnections(variableHeader.topicName())
+        TopicContainer topicContainer = (TopicContainer) containerManager.get(CacheGroup.TOPIC);
+        topicContainer.getConnections(variableHeader.topicName())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
