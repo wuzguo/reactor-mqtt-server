@@ -6,7 +6,6 @@ import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.container.TopicContainer;
-import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import com.study.iot.mqtt.transport.strategy.WillCapable;
@@ -62,9 +61,9 @@ public class ServerConnection implements ServerSession {
     }
 
     @Override
-    public Mono<List<SerializerDisposable>> getConnections() {
-        List<Serializable> disposables = containerManager.take(CacheGroup.CHANNEL).getAll();
-        return Mono.just(disposables.stream().map(serializable -> (SerializerDisposable) serializable)
+    public Mono<List<Disposable>> getConnections() {
+        List<Object> disposables = containerManager.take(CacheGroup.CHANNEL).getAll();
+        return Mono.just(disposables.stream().map(serializable -> (Disposable) serializable)
             .collect(Collectors.toList()));
     }
 

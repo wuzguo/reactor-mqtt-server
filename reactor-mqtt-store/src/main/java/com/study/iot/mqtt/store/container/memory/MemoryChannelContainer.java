@@ -4,12 +4,12 @@ package com.study.iot.mqtt.store.container.memory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import com.study.iot.mqtt.store.container.StorageContainer;
-import com.study.iot.mqtt.store.strategy.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.List;
 import java.util.Map;
+import reactor.core.Disposable;
 
 
 /**
@@ -21,12 +21,12 @@ import java.util.Map;
  */
 
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.MEMORY)
-public class MemoryChannelContainer implements StorageContainer<SerializerDisposable> {
+public class MemoryChannelContainer implements StorageContainer<Disposable> {
 
-    private final Map<String, SerializerDisposable> mapDisposable = Maps.newConcurrentMap();
+    private final Map<String, Disposable> mapDisposable = Maps.newConcurrentMap();
 
     @Override
-    public void add(String key, SerializerDisposable value) {
+    public void add(String key, Disposable value) {
         mapDisposable.put(key, value);
     }
 
@@ -36,23 +36,23 @@ public class MemoryChannelContainer implements StorageContainer<SerializerDispos
     }
 
     @Override
-    public SerializerDisposable get(String key) {
+    public Disposable get(String key) {
         return mapDisposable.get(key);
     }
 
     @Override
-    public List<SerializerDisposable> list(String key) {
+    public List<Disposable> list(String key) {
         return null;
     }
 
     @Override
-    public List<SerializerDisposable> getAll() {
+    public List<Disposable> getAll() {
         return Lists.newArrayList(mapDisposable.values());
     }
 
 
     @Override
-    public SerializerDisposable getAndRemove(String identity) {
+    public Disposable getAndRemove(String identity) {
         return mapDisposable.remove(identity);
     }
 

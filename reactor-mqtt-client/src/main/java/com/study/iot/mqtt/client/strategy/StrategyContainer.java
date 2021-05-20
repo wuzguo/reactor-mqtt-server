@@ -1,7 +1,7 @@
-package com.study.iot.mqtt.store.strategy;
+package com.study.iot.mqtt.client.strategy;
 
 import com.google.common.collect.Maps;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import io.netty.handler.codec.mqtt.MqttMessageType;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -19,9 +19,9 @@ import org.springframework.context.ApplicationContextAware;
  */
 
 @AllArgsConstructor
-public class CacheStrategyContainer implements ApplicationContextAware {
+public class StrategyContainer implements ApplicationContextAware {
 
-    private static final Map<String, Map<CacheStrategy, Class<? extends CacheCapable>>> container = Maps
+    private static final Map<String, Map<MqttMessageType, Class<? extends StrategyCapable>>> container = Maps
         .newConcurrentMap();
 
     private final ApplicationContext applicationContext;
@@ -32,23 +32,23 @@ public class CacheStrategyContainer implements ApplicationContextAware {
     }
 
     private void initializingContainer(ApplicationContext applicationContext) {
-        Optional.of(applicationContext.getBeansWithAnnotation(CacheStrategyService.class))
+        Optional.of(applicationContext.getBeansWithAnnotation(StrategyService.class))
             .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
-                if (!CacheCapable.class.isAssignableFrom(v.getClass())) {
+                if (!StrategyCapable.class.isAssignableFrom(v.getClass())) {
                     throw new BeanDefinitionValidationException(String
-                        .format("%s must implemented interface CacheCapable.", v.getClass()));
+                        .format("%s must implemented interface StrategyCapable.", v.getClass()));
                 }
 
-                Class<? extends CacheCapable> strategyClass = (Class<? extends CacheCapable>) v.getClass();
-                CacheStrategyService cacheStrategyService = strategyClass.getAnnotation(CacheStrategyService.class);
+                Class<? extends StrategyCapable> strategyClass = (Class<? extends StrategyCapable>) v.getClass();
+                StrategyService strategyService = strategyClass.getAnnotation(StrategyService.class);
 
-                String group = cacheStrategyService.group();
-                Map<CacheStrategy, Class<? extends CacheCapable>> storage = container.get(group);
+                String group = strategyService.group();
+                Map<MqttMessageType, Class<? extends StrategyCapable>> storage = container.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
 
-                CacheStrategy value = cacheStrategyService.type();
+                MqttMessageType value = strategyService.type();
                 storage.putIfAbsent(value, strategyClass);
                 container.put(group, storage);
             }));
@@ -57,20 +57,20 @@ public class CacheStrategyContainer implements ApplicationContextAware {
     /**
      * 获取策略类型，抛出异常
      *
-     * @param group {@link Group}
+     * @param group {@link String}
      * @param value value Id
      * @param <T>   泛型
-     * @return {@link CacheCapable} 结果
+     * @return {@link StrategyCapable} 结果
      */
-    public <T extends CacheCapable> T getStrategy(String group, CacheStrategy value) {
-        Map<CacheStrategy, Class<? extends CacheCapable>> storage = container.get(group);
+    public <T extends StrategyCapable> T getStrategy(String group, MqttMessageType value) {
+        Map<MqttMessageType, Class<? extends StrategyCapable>> storage = container.get(group);
         if (storage == null) {
             throw new BeanDefinitionValidationException(String
                 .format("StrategyService group '%s' not found in value container", group));
 
         }
 
-        Class<? extends CacheCapable> strategy = storage.get(value);
+        Class<? extends StrategyCapable> strategy = storage.get(value);
         if (strategy == null) {
             throw new BeanDefinitionValidationException(String
                 .format("StrategyService value '%s' not found in value group '%s'", value, group));
@@ -83,18 +83,18 @@ public class CacheStrategyContainer implements ApplicationContextAware {
     /**
      * 获取策略类型，不抛出异常
      *
-     * @param group {@link Group}
+     * @param group {@link String}
      * @param value value Id
      * @param <T>   泛型
-     * @return {@link CacheCapable} 结果
+     * @return {@link StrategyCapable} 结果
      */
-    public <T extends CacheCapable> T findStrategy(String group, CacheStrategy value) {
-        Map<CacheStrategy, Class<? extends CacheCapable>> storage = container.get(group);
+    public <T extends StrategyCapable> T findStrategy(String group, MqttMessageType value) {
+        Map<MqttMessageType, Class<? extends StrategyCapable>> storage = container.get(group);
         if (storage == null) {
             return null;
         }
 
-        Class<? extends CacheCapable> strategy = storage.get(value);
+        Class<? extends StrategyCapable> strategy = storage.get(value);
         if (strategy == null) {
             return null;
         }

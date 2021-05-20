@@ -9,8 +9,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -38,45 +36,25 @@ import org.apache.hadoop.hbase.util.Bytes;
 @Slf4j
 public class HbaseTemplate implements HbaseOperations {
 
-    @Setter
-    @Getter
-    private Configuration configuration;
-
-    @Setter
     private volatile Connection connection;
 
-    /**
-     * 懒汉模式获取连接
-     *
-     * @return {@link Connection}
-     */
-    public Connection getConnection() {
-        if (null == this.connection) {
-            synchronized (this) {
-                if (null == this.connection) {
-                    try {
-                        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(200, Integer.MAX_VALUE, 60L,
-                            TimeUnit.SECONDS, new SynchronousQueue<>(), Executors.defaultThreadFactory(),
-                            new ThreadPoolExecutor.AbortPolicy());
-                        // init pool
-                        poolExecutor.prestartCoreThread();
-                        this.connection = ConnectionFactory.createConnection(configuration, poolExecutor);
-                    } catch (IOException e) {
-                        log.error("hbase connection资源池创建失败");
-                    }
-                }
-            }
-        }
-        return this.connection;
-    }
-
     public HbaseTemplate(@NotNull Configuration configuration) {
-        this.setConfiguration(configuration);
+        try {
+            ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(200, Integer.MAX_VALUE, 60L,
+                TimeUnit.SECONDS, new SynchronousQueue<>(), Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.AbortPolicy());
+            // init pool
+            poolExecutor.prestartCoreThread();
+            // 获取连接
+            this.connection = ConnectionFactory.createConnection(configuration, poolExecutor);
+        } catch (IOException e) {
+            log.error("hbase connection资源池创建失败");
+        }
     }
 
     @Override
     public <T> T execute(@NotBlank String tableName, @NotNull TableCallback<T> action) {
-        try (Table table = this.getConnection().getTable(TableName.valueOf(tableName))) {
+        try (Table table = this.connection.getTable(TableName.valueOf(tableName))) {
             return action.doInTable(table);
         } catch (Throwable throwable) {
             throw new HbaseSystemException(throwable);
@@ -150,7 +128,7 @@ public class HbaseTemplate implements HbaseOperations {
     @Override
     public void execute(@NotBlank String tableName, @NotNull MutatorCallback action) {
         BufferedMutatorParams mutatorParams = new BufferedMutatorParams(TableName.valueOf(tableName));
-        try (BufferedMutator mutator = this.getConnection()
+        try (BufferedMutator mutator = this.connection
             .getBufferedMutator(mutatorParams.writeBufferSize(3 * 1024 * 1024))) {
             action.doInMutator(mutator);
         } catch (Throwable throwable) {

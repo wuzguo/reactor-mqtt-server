@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.store.container;
 
-import com.study.iot.mqtt.store.strategy.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyContainer;
 import java.io.Serializable;
 
@@ -29,7 +29,7 @@ public class StorageContainerManager implements ContainerManager {
     }
 
     @Override
-    public <T extends Serializable> StorageContainer<T> take(String cacheGroup) {
+    public <T> StorageContainer<T> take(String cacheGroup) {
         return container.getStrategy(cacheGroup, strategy);
     }
 

@@ -8,7 +8,6 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>reactor-mqtt-client</artifactId>
 
     <properties>
@@ -18,9 +17,17 @@
 
     <dependencies>
         <dependency>
-            <artifactId>reactor-mqtt-transport</artifactId>
+            <artifactId>reactor-mqtt-protocol</artifactId>
             <groupId>com.study.iot.mqtt</groupId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

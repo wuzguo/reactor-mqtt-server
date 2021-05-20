@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.store.container;
 
-import com.study.iot.mqtt.store.strategy.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 
@@ -28,7 +28,7 @@ public interface ContainerManager {
      * @param cacheGroup {@link String}
      * @return {@link StorageContainer}
      */
-    <T extends Serializable> StorageContainer<T> take(@NotNull String cacheGroup);
+    <T> StorageContainer<T> take(@NotNull String cacheGroup);
 
     /**
      * 获取连接对象

@@ -1,7 +1,6 @@
-package com.study.iot.mqtt.store.strategy;
+package com.study.iot.mqtt.common.enums;
 
 import com.study.iot.mqtt.common.utils.StringUtil;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

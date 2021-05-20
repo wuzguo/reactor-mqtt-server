@@ -1,10 +1,9 @@
 package com.study.iot.mqtt.store.container.ignites;
 
 import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.store.properties.IgniteProperties;
-import com.study.iot.mqtt.store.strategy.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,6 +12,7 @@ import javax.cache.Cache;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import reactor.core.Disposable;
 
 /**
  * <B>说明：描述</B>
@@ -24,13 +24,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 @ConditionalOnBean(value = IgniteProperties.class)
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.IGNITE)
-public class IgniteChannelContainer implements StorageContainer<SerializerDisposable> {
+public class IgniteChannelContainer implements StorageContainer<Disposable> {
 
     @Resource
-    private IgniteCache<String, SerializerDisposable> disposableCache;
+    private IgniteCache<String, Disposable> disposableCache;
 
     @Override
-    public void add(String identity, SerializerDisposable disposable) {
+    public void add(String identity, Disposable disposable) {
         disposableCache.put(identity, disposable);
     }
 
@@ -40,18 +40,18 @@ public class IgniteChannelContainer implements StorageContainer<SerializerDispos
     }
 
     @Override
-    public SerializerDisposable get(String key) {
+    public Disposable get(String key) {
         return null;
     }
 
     @Override
-    public List<SerializerDisposable> list(String key) {
+    public List<Disposable> list(String key) {
         return null;
     }
 
     @Override
-    public List<SerializerDisposable> getAll() {
-        return disposableCache.query(new ScanQuery<String, SerializerDisposable>())
+    public List<Disposable> getAll() {
+        return disposableCache.query(new ScanQuery<String, Disposable>())
             .getAll()
             .stream()
             .map(Cache.Entry::getValue)
@@ -59,7 +59,7 @@ public class IgniteChannelContainer implements StorageContainer<SerializerDispos
     }
 
     @Override
-    public SerializerDisposable getAndRemove(String identity) {
+    public Disposable getAndRemove(String identity) {
         return disposableCache.getAndRemove(identity);
     }
 

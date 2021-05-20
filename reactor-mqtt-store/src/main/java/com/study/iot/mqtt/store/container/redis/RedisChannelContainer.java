@@ -3,10 +3,9 @@ package com.study.iot.mqtt.store.container.redis;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
-import com.study.iot.mqtt.store.strategy.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
 import java.util.List;
@@ -23,13 +22,13 @@ import reactor.core.Disposable;
  */
 
 @CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheStrategy.REDIS)
-public class RedisChannelContainer implements StorageContainer<SerializerDisposable> {
+public class RedisChannelContainer implements StorageContainer<Disposable> {
 
     @Autowired
     private RedisCacheTemplate redisTemplate;
 
     @Override
-    public void add(String identity, SerializerDisposable disposable) {
+    public void add(String identity, Disposable disposable) {
         redisTemplate.hset(CacheGroup.CHANNEL, identity, disposable);
     }
 
@@ -39,23 +38,23 @@ public class RedisChannelContainer implements StorageContainer<SerializerDisposa
     }
 
     @Override
-    public SerializerDisposable get(String key) {
+    public Disposable get(String key) {
         return null;
     }
 
     @Override
-    public List<SerializerDisposable> list(String key) {
+    public List<Disposable> list(String key) {
         return null;
     }
 
     @Override
-    public List<SerializerDisposable> getAll() {
-        return Lists.newArrayList(redisTemplate.hmget(CacheGroup.CHANNEL, SerializerDisposable.class).values());
+    public List<Disposable> getAll() {
+        return Lists.newArrayList(redisTemplate.hmget(CacheGroup.CHANNEL, Disposable.class).values());
     }
 
     @Override
-    public SerializerDisposable getAndRemove(String identity) {
-        SerializerDisposable disposable = redisTemplate.hget(CacheGroup.CHANNEL, identity, SerializerDisposable.class);
+    public Disposable getAndRemove(String identity) {
+        Disposable disposable = redisTemplate.hget(CacheGroup.CHANNEL, identity, Disposable.class);
         redisTemplate.hdel(CacheGroup.CHANNEL, identity);
         return disposable;
     }

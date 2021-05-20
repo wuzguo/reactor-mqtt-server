@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.store.config;
 
 
-import com.study.iot.mqtt.store.hbase.HbaseProperties;
+import com.study.iot.mqtt.store.properties.HbaseProperties;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -28,7 +28,7 @@ public class HbaseAutoConfiguration {
 
     private static final String HBASE_ROOTDIR = "hbase.rootdir";
 
-    private static final String HBASE_ZNODE_PARENT = "zookeeper.znode.parent";
+    private static final String HBASE_ZNODE_PARENT = "hbase.zookeeper.property.dataDir";
 
     @Autowired
     private HbaseProperties hbaseProperties;
@@ -39,7 +39,7 @@ public class HbaseAutoConfiguration {
         Configuration configuration = HBaseConfiguration.create();
         configuration.set(HBASE_QUORUM, this.hbaseProperties.getQuorum());
         configuration.set(HBASE_ROOTDIR, hbaseProperties.getRootDir());
-     //   configuration.set(HBASE_ZNODE_PARENT, hbaseProperties.getNodeParent());
+        configuration.set(HBASE_ZNODE_PARENT, hbaseProperties.getNodeParent());
         return new HbaseTemplate(configuration);
     }
 }

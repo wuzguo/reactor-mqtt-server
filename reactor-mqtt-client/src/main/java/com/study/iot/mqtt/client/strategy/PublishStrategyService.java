@@ -1,6 +1,6 @@
-package com.study.iot.mqtt.store.strategy;
+package com.study.iot.mqtt.client.strategy;
 
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import io.netty.handler.codec.mqtt.MqttQoS;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -23,17 +23,10 @@ import org.springframework.stereotype.Service;
 @Documented
 @Inherited
 @Service
-public @interface CacheStrategyService {
+public @interface PublishStrategyService {
 
     @AliasFor(value = "value", annotation = Service.class)
     String value() default "";
-
-    /**
-     * 策略
-     *
-     * @return {@link CacheStrategy}
-     */
-    CacheStrategy type();
 
     /**
      * 策略组
@@ -41,4 +34,11 @@ public @interface CacheStrategyService {
      * @return {@link String}
      */
     String group();
+
+    /**
+     * 策略
+     *
+     * @return {@link MqttQoS}
+     */
+    MqttQoS type();
 }

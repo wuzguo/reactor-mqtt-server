@@ -1,10 +1,9 @@
 package com.study.iot.mqtt.store.container.ignites;
 
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.StorageContainer;
-import com.study.iot.mqtt.store.strategy.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -16,10 +15,10 @@ import java.util.List;
  */
 
 @CacheStrategyService(group = CacheGroup.SESSION, type = CacheStrategy.IGNITE)
-public class IgniteSessionContainer implements StorageContainer {
+public class IgniteSessionContainer implements StorageContainer<Object> {
 
     @Override
-    public void add(String key, Serializable value) {
+    public void add(String key, Object value) {
 
     }
 
@@ -29,22 +28,22 @@ public class IgniteSessionContainer implements StorageContainer {
     }
 
     @Override
-    public Serializable get(String key) {
+    public Object get(String key) {
         return null;
     }
 
     @Override
-    public List list(String key) {
+    public List<Object> list(String key) {
         return null;
     }
 
     @Override
-    public List getAll() {
+    public List<Object> getAll() {
         return null;
     }
 
     @Override
-    public Serializable getAndRemove(String key) {
+    public Object getAndRemove(String key) {
         return null;
     }
 

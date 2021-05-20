@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
  * @date 2021/5/20 10:45
  */
 
-public interface StorageContainer<T extends Serializable> extends CacheCapable {
+public interface StorageContainer<T> extends CacheCapable {
 
     /**
      * 添加连接

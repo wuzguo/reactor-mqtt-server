@@ -2,16 +2,16 @@ package com.study.iot.mqtt.store.container.ignites;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.store.properties.IgniteProperties;
-import com.study.iot.mqtt.store.strategy.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
 import org.apache.ignite.IgniteCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import reactor.core.Disposable;
 
 /**
  * <B>说明：描述</B>
@@ -26,23 +26,23 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 public class IgniteTopicContainer implements TopicContainer {
 
     @Resource
-    private IgniteCache<String, List<SerializerDisposable>> topicDisposableCache;
+    private IgniteCache<String, List<Disposable>> topicDisposableCache;
 
     @Override
-    public List<SerializerDisposable> getConnections(String topic) {
+    public List<Disposable> getConnections(String topic) {
         return topicDisposableCache.get(topic);
     }
 
     @Override
-    public void add(String topic, SerializerDisposable disposable) {
-        List<SerializerDisposable> disposables = Optional.ofNullable(topicDisposableCache.get(topic))
+    public void add(String topic, Disposable disposable) {
+        List<Disposable> disposables = Optional.ofNullable(topicDisposableCache.get(topic))
             .orElse(Lists.newArrayList());
         disposables.add(disposable);
         topicDisposableCache.put(topic, disposables);
     }
 
     @Override
-    public void remove(String topic, SerializerDisposable disposable) {
+    public void remove(String topic, Disposable disposable) {
         Optional.ofNullable(topicDisposableCache.get(topic)).ifPresent(disposables -> {
             disposables.remove(disposable);
             topicDisposableCache.put(topic, disposables);

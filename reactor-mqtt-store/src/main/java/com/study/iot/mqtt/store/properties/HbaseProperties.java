@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.hbase;
+package com.study.iot.mqtt.store.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

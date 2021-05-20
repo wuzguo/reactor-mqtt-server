@@ -3,7 +3,7 @@ package com.study.iot.mqtt.store.container.redis;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.MetricContainer;
 import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
-import com.study.iot.mqtt.store.strategy.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
 import java.util.Map;

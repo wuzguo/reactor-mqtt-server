@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.client.config;
 
 import com.study.iot.mqtt.client.router.ClientMessageRouter;
-import com.study.iot.mqtt.transport.strategy.StrategyContainer;
+import com.study.iot.mqtt.client.strategy.StrategyContainer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -3,11 +3,11 @@ package com.study.iot.mqtt.store.container.path;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.study.iot.mqtt.store.disposable.SerializerDisposable;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
+import reactor.core.Disposable;
 
 /**
  * <B>说明：描述</B>
@@ -19,9 +19,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class CacheTopicManager {
 
-    private final TopicMap<String, SerializerDisposable> mapPath = new TopicMap<>();
+    private final TopicMap<String, Disposable> mapPath = new TopicMap<>();
 
-    private final LoadingCache<String, Optional<List<SerializerDisposable>>> mapDisposableCache =
+    private final LoadingCache<String, Optional<List<Disposable>>> mapDisposableCache =
         // 设置并发级别为8，并发级别是指可以同时写缓存的线程数
         CacheBuilder.newBuilder()
             // 设置缓存容器的初始容量为10
@@ -34,16 +34,16 @@ public class CacheTopicManager {
             .recordStats()
             // 设置读写缓存后n秒钟过期,实际很少用到,类似于expireAfterWrite
             .expireAfterWrite(20, TimeUnit.MINUTES)
-            .build(new CacheLoader<String, Optional<List<SerializerDisposable>>>() {
+            .build(new CacheLoader<String, Optional<List<Disposable>>>() {
                 @Override
-                public Optional<List<SerializerDisposable>> load(@NotNull String key) throws Exception {
+                public Optional<List<Disposable>> load(@NotNull String key) throws Exception {
                     String[] methodArray = key.split("/");
                     return Optional.ofNullable(mapPath.getData(methodArray));
                 }
             });
 
 
-    public Optional<List<SerializerDisposable>> getConnections(String topic) {
+    public Optional<List<Disposable>> getConnections(String topic) {
         try {
             return mapDisposableCache.getUnchecked(topic);
         } catch (Exception e) {
@@ -51,13 +51,13 @@ public class CacheTopicManager {
         }
     }
 
-    public void addConnection(String topic, SerializerDisposable connection) {
+    public void addConnection(String topic, Disposable connection) {
         String[] methodArray = topic.split("/");
         mapPath.putData(methodArray, connection);
         mapDisposableCache.invalidate(topic);
     }
 
-    public void deleteConnection(String topic, SerializerDisposable connection) {
+    public void deleteConnection(String topic, Disposable connection) {
         String[] methodArray = topic.split("/");
         mapPath.delete(methodArray, connection);
         mapDisposableCache.invalidate(topic);
