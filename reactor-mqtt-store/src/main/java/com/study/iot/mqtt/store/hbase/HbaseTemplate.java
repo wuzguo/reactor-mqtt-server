@@ -26,7 +26,6 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.springframework.util.StopWatch;
 
 /**
  * <B>说明：描述</B>
@@ -77,14 +76,10 @@ public class HbaseTemplate implements HbaseOperations {
 
     @Override
     public <T> T execute(@NotBlank String tableName, @NotNull TableCallback<T> action) {
-        StopWatch sw = new StopWatch();
-        sw.start();
         try (Table table = this.getConnection().getTable(TableName.valueOf(tableName))) {
             return action.doInTable(table);
         } catch (Throwable throwable) {
             throw new HbaseSystemException(throwable);
-        } finally {
-            sw.stop();
         }
     }
 
@@ -154,17 +149,12 @@ public class HbaseTemplate implements HbaseOperations {
 
     @Override
     public void execute(@NotBlank String tableName, @NotNull MutatorCallback action) {
-        StopWatch sw = new StopWatch();
-        sw.start();
         BufferedMutatorParams mutatorParams = new BufferedMutatorParams(TableName.valueOf(tableName));
         try (BufferedMutator mutator = this.getConnection()
             .getBufferedMutator(mutatorParams.writeBufferSize(3 * 1024 * 1024))) {
             action.doInMutator(mutator);
         } catch (Throwable throwable) {
-            sw.stop();
             throw new HbaseSystemException(throwable);
-        } finally {
-            sw.stop();
         }
     }
 

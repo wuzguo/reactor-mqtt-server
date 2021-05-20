@@ -60,4 +60,17 @@ public class ConnectSession implements Serializable {
     public void removeTopic(String topic) {
         topics.remove(topic);
     }
+
+    /**
+     * 添加消息
+     * @param message {@link BaseMessage}
+     */
+    public void add(BaseMessage message) {
+        messages.add(message);
+    }
+
+
+    public void poll() {
+        messages.poll();
+    }
 }
