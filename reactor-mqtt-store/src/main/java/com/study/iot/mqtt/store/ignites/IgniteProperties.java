@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.ignite;
+package com.study.iot.mqtt.store.ignites;
 
 import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

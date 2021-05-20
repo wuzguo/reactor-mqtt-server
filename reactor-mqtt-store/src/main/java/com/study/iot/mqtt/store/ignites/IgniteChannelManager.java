@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.store.ignite;
+package com.study.iot.mqtt.store.ignites;
 
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.disposable.SerializerDisposable;
