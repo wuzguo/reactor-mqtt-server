@@ -5,6 +5,7 @@ import akka.actor.ActorRef;
 import akka.cluster.pubsub.DistributedPubSub;
 import akka.cluster.pubsub.DistributedPubSubMediator;
 import com.study.iot.mqtt.akka.annotation.ActorBean;
+import com.study.iot.mqtt.akka.event.BaseEvent;
 import com.study.iot.mqtt.akka.event.SubscribeEvent;
 import com.study.iot.mqtt.akka.topic.AkkaTopic;
 import lombok.extern.slf4j.Slf4j;
@@ -31,11 +32,11 @@ public class Publisher extends AbstractActor {
     public Receive createReceive() {
         return receiveBuilder()
             .match(String.class, message -> log.info("publisher receive message: {}", message))
-            .match(SubscribeEvent.class, this::processEvent)
+            .match(BaseEvent.class, this::processEvent)
             .build();
     }
 
-    private void processEvent(SubscribeEvent event) {
+    private void processEvent(BaseEvent event) {
         log.info("receive event message: {}", event);
         mediator.tell(new DistributedPubSubMediator.Publish(AkkaTopic.SUB_EVENT, event), getSelf());
     }

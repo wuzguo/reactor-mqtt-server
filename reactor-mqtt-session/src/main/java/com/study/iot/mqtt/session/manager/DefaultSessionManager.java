@@ -5,9 +5,8 @@ import akka.actor.ActorSystem;
 import com.study.iot.mqtt.akka.actor.Publisher;
 import com.study.iot.mqtt.akka.actor.Receiver;
 import com.study.iot.mqtt.akka.actor.Subscriber;
-import com.study.iot.mqtt.akka.event.SubscribeEvent;
+import com.study.iot.mqtt.akka.event.SessionEvent;
 import com.study.iot.mqtt.akka.spring.SpringProps;
-import com.study.iot.mqtt.akka.topic.AkkaTopic;
 import com.study.iot.mqtt.common.domain.ConnectSession;
 import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.common.utils.IdUtil;
@@ -67,11 +66,10 @@ public class DefaultSessionManager implements SessionManager {
         hbaseTemplate.saveOrUpdate("reactor-mqtt-message", message);
         // 发布订阅消息
         ActorRef publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
-        SubscribeEvent event = new SubscribeEvent(this, IdUtil.idGen());
+        SessionEvent event = new SessionEvent(this, IdUtil.idGen());
         event.setIdentity(identity);
         event.setInstanceId(instanceUtil.getInstanceId());
         event.setRow(message.getRow());
-        event.setTopic(AkkaTopic.SUB_EVENT);
         publisher.tell(event, ActorRef.noSender());
     }
 
