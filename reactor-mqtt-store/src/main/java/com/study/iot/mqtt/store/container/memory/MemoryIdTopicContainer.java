@@ -1,11 +1,11 @@
 package com.study.iot.mqtt.store.container.memory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public class MemoryIdTopicContainer implements StorageContainer<String> {
 
     @Override
     public void add(String key, String value) {
-        List<String> values = Optional.ofNullable(messages.get(key)).orElse(Collections.emptyList());
+        List<String> values = Optional.ofNullable(messages.get(key)).orElse(Lists.newArrayList());
         values.add(value);
         messages.put(key, values);
     }

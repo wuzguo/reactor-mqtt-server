@@ -68,6 +68,7 @@ public class DefaultSessionManager implements SessionManager {
         ActorRef publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
         SessionEvent event = new SessionEvent(this, IdUtil.idGen());
         event.setIdentity(identity);
+        event.setTopic(message.getTopic());
         event.setInstanceId(instanceUtil.getInstanceId());
         event.setRow(message.getRow());
         publisher.tell(event, ActorRef.noSender());
