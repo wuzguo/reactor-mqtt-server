@@ -6,6 +6,7 @@ import akka.cluster.pubsub.DistributedPubSub;
 import akka.cluster.pubsub.DistributedPubSubMediator;
 import com.study.iot.mqtt.akka.annotation.ActorBean;
 import com.study.iot.mqtt.akka.event.SubscribeEvent;
+import com.study.iot.mqtt.akka.topic.AkkaTopic;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,6 +37,6 @@ public class Publisher extends AbstractActor {
 
     private void processEvent(SubscribeEvent event) {
         log.info("receive event message: {}", event);
-        mediator.tell(new DistributedPubSubMediator.Publish(event.getTopic(), event), getSelf());
+        mediator.tell(new DistributedPubSubMediator.Publish(AkkaTopic.SUB_EVENT, event), getSelf());
     }
 }

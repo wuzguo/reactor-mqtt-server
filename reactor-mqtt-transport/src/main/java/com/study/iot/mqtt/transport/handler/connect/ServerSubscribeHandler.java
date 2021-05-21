@@ -4,8 +4,10 @@ package com.study.iot.mqtt.transport.handler.connect;
 import com.study.iot.mqtt.akka.event.SubscribeEvent;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
+import com.study.iot.mqtt.session.config.InstanceUtil;
 import com.study.iot.mqtt.session.service.EventService;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
@@ -45,18 +47,15 @@ public class ServerSubscribeHandler implements StrategyCapable {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private InstanceUtil instanceUtil;
+
     @Override
     @MqttMetric(MetricMatterName.TOTAL_RECEIVE_COUNT)
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
         log.info("server Subscribe message: {}, connection: {}", message, disposableConnection);
         MqttFixedHeader header = message.fixedHeader();
         MqttSubscribeMessage subscribeMessage = (MqttSubscribeMessage) message;
-
-        SubscribeEvent event = new SubscribeEvent(this, IdUtil.idGen());
-        event.setTopic("/session/123456");
-        event.setInstanceId("123456");
-        event.setIdentity("Identity");
-        eventService.tellEvent(event);
 
         List<Integer> qosLevels = subscribeMessage.payload().topicSubscriptions().stream()
             .map(topicSubscription -> topicSubscription.qualityOfService().value()).collect(Collectors.toList());
@@ -66,6 +65,13 @@ public class ServerSubscribeHandler implements StrategyCapable {
         disposableConnection.sendMessage(mqttSubAckMessage).subscribe();
         subscribeMessage.payload().topicSubscriptions().forEach(topicSubscription -> {
             String topicName = topicSubscription.topicName();
+//            // 发布订阅
+//            SubscribeEvent event = new SubscribeEvent(this, IdUtil.idGen());
+//            event.setTopicName(topicName);
+//            event.setInstanceId(instanceUtil.getInstanceId());
+//            event.setIdentity(disposableConnection.getConnection().channel().attr(AttributeKeys.identity).get());
+//            eventService.tellEvent(event);
+            // 存储本地的订阅主题
             containerManager.topic(CacheGroup.TOPIC).add(topicName, disposableConnection);
             Optional.ofNullable(containerManager.take(CacheGroup.MESSAGE).get(topicName)).ifPresent(serializable -> {
                 RetainMessage retainMessage = (RetainMessage) serializable;

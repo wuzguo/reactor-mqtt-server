@@ -21,7 +21,6 @@ public class BaseEvent extends ApplicationEvent implements Serializable {
      */
     private final Long id;
 
-
     public BaseEvent(Object source, Long id) {
         super(source);
         this.id = id;

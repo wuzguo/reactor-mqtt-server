@@ -8,12 +8,13 @@ import lombok.Setter;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/5/18 14:32
+ * @date 2021/5/21 15:30
  */
 
 @Getter
 @Setter
-public class SubscribeEvent extends BaseEvent {
+public class SessionEvent extends BaseEvent {
+
 
     /**
      * 客户端标识
@@ -26,11 +27,16 @@ public class SubscribeEvent extends BaseEvent {
     private String instanceId;
 
     /**
-     * 主题名称
+     * 消息对应的ROW
      */
-    private String topicName;
+    private String row;
 
-    public SubscribeEvent(Object source, Long id) {
+    /**
+     * AKKA 主题
+     */
+    private String topic;
+
+    public SessionEvent(Object source, Long id) {
         super(source, id);
     }
 }

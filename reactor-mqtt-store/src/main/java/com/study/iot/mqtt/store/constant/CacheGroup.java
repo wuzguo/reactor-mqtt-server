@@ -16,6 +16,8 @@ public interface CacheGroup {
 
     String TOPIC = "cache.topic";
 
+    String ID_TOPIC = "cache.id.topic";
+
     String METRIC = "cache.metric";
 
     String SESSION = "cache.session";
