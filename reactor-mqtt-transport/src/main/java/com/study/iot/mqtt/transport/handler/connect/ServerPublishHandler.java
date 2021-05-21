@@ -61,13 +61,15 @@ public class ServerPublishHandler implements StrategyCapable {
         Connection connection = disposableConnection.getConnection();
         String identity = connection.channel().attr(AttributeKeys.identity).get();
         SessionMessage sessionMessage = SessionMessage.builder().row(IdUtil.idGen().toString())
-            .messageId(variableHeader.packetId())
-            .dup(fixedHeader.isDup())
             .identity(identity)
+            .sessionId(IdUtil.idGen().toString())
+            .messageId(variableHeader.packetId())
+            .topic(variableHeader.topicName())
+            .retain(fixedHeader.isRetain())
             .messageType(fixedHeader.messageType().value())
             .qos(fixedHeader.qosLevel().value())
-            .copyByteBuf(bytes)
-            .retain(fixedHeader.isRetain()).build();
+            .dup(fixedHeader.isDup())
+            .copyByteBuf(bytes).build();
         sessionManager.add(identity, sessionMessage);
     }
 

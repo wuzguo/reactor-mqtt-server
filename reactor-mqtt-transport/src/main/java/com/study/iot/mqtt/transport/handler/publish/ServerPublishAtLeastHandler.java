@@ -13,6 +13,8 @@ import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import java.util.Collections;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,7 +42,7 @@ public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
             message.getRetain(), message.getMessageId());
         disposableConnection.sendMessage(mqttPubAckMessage).subscribe();
         TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
-        topicContainer.getConnections(message.getTopic())
+        Optional.ofNullable(topicContainer.getConnections(message.getTopic())).orElse(Collections.emptyList())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {

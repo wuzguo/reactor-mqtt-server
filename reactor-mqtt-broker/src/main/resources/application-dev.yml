@@ -1,5 +1,5 @@
 server:
-  port: 8800
+  port: 8810
 
 # 开发环境配置
 spring:
@@ -17,7 +17,7 @@ spring:
       # 主机地址
       host: localhost
       # 端口
-      port: 1884
+      port: 1886
       # 心跳时间(秒)
       heart: 100000
       #开启日志
@@ -56,5 +56,5 @@ spring:
 
 logging:
   level:
-    root: debug
+    root: info
     com.study.iot.mqtt: debug

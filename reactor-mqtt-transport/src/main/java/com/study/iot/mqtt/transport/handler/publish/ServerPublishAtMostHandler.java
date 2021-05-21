@@ -12,6 +12,8 @@ import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import java.util.Collections;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,7 +36,7 @@ public class ServerPublishAtMostHandler implements PublishStrategyCapable {
     public void handle(DisposableConnection disposableConnection, SessionMessage message) {
         // 过滤掉本身 已经关闭的dispose
         TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
-        topicContainer.getConnections(message.getTopic())
+        Optional.ofNullable(topicContainer.getConnections(message.getTopic())).orElse(Collections.emptyList())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
