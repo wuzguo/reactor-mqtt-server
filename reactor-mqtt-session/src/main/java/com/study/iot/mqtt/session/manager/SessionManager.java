@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.session.manager;
 
-import com.study.iot.mqtt.session.domain.BaseMessage;
-import com.study.iot.mqtt.session.domain.ConnectSession;
+import com.study.iot.mqtt.common.domain.BaseMessage;
+import com.study.iot.mqtt.common.domain.ConnectSession;
 
 /**
  * <B>说明：描述</B>
@@ -19,10 +19,16 @@ public interface SessionManager {
      * @param instanceId     实例ID
      * @param identity       客户端标识
      * @param isCleanSession 是否清除Session
+     */
+    void add(String instanceId, String identity, Boolean isCleanSession);
+
+    /**
+     * 获取Session
+     *
+     * @param identity 连接标识
      * @return {@link ConnectSession}
      */
-    ConnectSession create(String instanceId, String identity, Boolean isCleanSession);
-
+    ConnectSession get(String identity);
 
     /**
      * 添加消息
@@ -37,5 +43,5 @@ public interface SessionManager {
      *
      * @param topic TOPIC
      */
-    void subscribe(String topic);
+    void doReady(String topic);
 }

@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.session.domain;
+package com.study.iot.mqtt.common.domain;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,7 +26,7 @@ public class ConnectSession implements Serializable {
     /**
      * 客户端标识
      */
-    private String clientIdentity;
+    private String identity;
 
     /**
      * 对应的实例ID

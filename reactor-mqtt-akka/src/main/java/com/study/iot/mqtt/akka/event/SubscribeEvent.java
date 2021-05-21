@@ -26,11 +26,8 @@ public class SubscribeEvent extends BaseEvent {
      */
     private String instanceId;
 
-    /**
-     * 订阅的Topic
-     */
-    private String topic;
 
+    private String topic;
 
     public SubscribeEvent(Object source, Long id) {
         super(source, id);

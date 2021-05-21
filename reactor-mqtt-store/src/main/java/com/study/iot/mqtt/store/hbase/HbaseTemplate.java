@@ -1,6 +1,8 @@
 package com.study.iot.mqtt.store.hbase;
 
 import com.google.common.collect.Lists;
+import com.study.iot.mqtt.common.domain.BaseMessage;
+import com.study.iot.mqtt.common.utils.ObjectUtil;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -19,11 +21,13 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Mutation;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * <B>说明：描述</B>
@@ -149,5 +153,23 @@ public class HbaseTemplate implements HbaseOperations {
         this.execute(tableName, mutator -> {
             mutator.mutate(mutations);
         });
+    }
+
+    @Override
+    public void saveOrUpdate(String tableName, BaseMessage message) {
+        // 持久化
+        List<Mutation> mutations = Lists.newArrayList();
+        // rowKey
+        Put put = new Put(Bytes.toBytes(String.valueOf(message.getId())));
+        // 列族，列名，值
+        ReflectionUtils.doWithFields(message.getClass(), field -> {
+            field.setAccessible(true);
+            if (!ObjectUtil.isNull(field.get(message))) {
+                put.addColumn(Bytes.toBytes("message"), Bytes.toBytes(field.getName()),
+                    Bytes.toBytes(String.valueOf(field.get(message))));
+            }
+        });
+        mutations.add(put);
+        this.saveOrUpdates("reactor-mqtt-message", mutations);
     }
 }

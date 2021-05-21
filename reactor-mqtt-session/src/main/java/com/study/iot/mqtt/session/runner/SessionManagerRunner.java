@@ -25,6 +25,6 @@ public class SessionManagerRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        sessionManager.subscribe(AkkaTopic.SUB_EVENT);
+        sessionManager.doReady(AkkaTopic.SUB_EVENT);
     }
 }

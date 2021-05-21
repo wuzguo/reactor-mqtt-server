@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.store.hbase;
 
+import com.study.iot.mqtt.common.domain.BaseMessage;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -118,4 +119,12 @@ public interface HbaseOperations {
      * @param mutations {@link Mutation}
      */
     void saveOrUpdates(String tableName, List<Mutation> mutations);
+
+    /**
+     * 保存对象
+     *
+     * @param tableName 表名称
+     * @param message   消息体 {@link BaseMessage}
+     */
+    void saveOrUpdate(String tableName, BaseMessage message);
 }

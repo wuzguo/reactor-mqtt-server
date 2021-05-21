@@ -1,24 +1,22 @@
 package com.study.iot.mqtt.session.manager;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import com.google.common.collect.Lists;
+import com.study.iot.mqtt.akka.actor.Receiver;
+import com.study.iot.mqtt.akka.actor.Sender;
 import com.study.iot.mqtt.akka.actor.Subscriber;
+import com.study.iot.mqtt.akka.event.SenderEvent;
 import com.study.iot.mqtt.akka.spring.SpringProps;
-import com.study.iot.mqtt.common.utils.ObjectUtil;
-import com.study.iot.mqtt.session.domain.BaseMessage;
-import com.study.iot.mqtt.session.domain.ConnectSession;
+import com.study.iot.mqtt.common.domain.BaseMessage;
+import com.study.iot.mqtt.common.domain.ConnectSession;
+import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.store.constant.CacheGroup;
-import com.study.iot.mqtt.store.hbase.HbaseTemplate;
 import com.study.iot.mqtt.store.container.ContainerManager;
+import com.study.iot.mqtt.store.hbase.HbaseTemplate;
 import java.util.Collections;
-import java.util.List;
-import org.apache.hadoop.hbase.client.Mutation;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * <B>说明：描述</B>
@@ -44,35 +42,36 @@ public class DefaultSessionManager implements SessionManager {
     private HbaseTemplate hbaseTemplate;
 
     @Override
-    public ConnectSession create(String instanceId, String clientIdentity, Boolean isCleanSession) {
-        ConnectSession session = ConnectSession.builder().instanceId(instanceId).clientIdentity(clientIdentity)
+    public void add(String instanceId, String identity, Boolean isCleanSession) {
+        ConnectSession session = ConnectSession.builder().instanceId(instanceId).identity(identity)
             .topics(Collections.emptyList()).build();
         // 如果是持久化 Session 需要放入Redis保存
-        containerManager.take(CacheGroup.SESSION).add(clientIdentity, session);
+        containerManager.take(CacheGroup.SESSION).add(identity, session);
 
-        return session;
+    }
+
+    @Override
+    public ConnectSession get(String identity) {
+        // 先写死
+        return ConnectSession.builder().instanceId("localhost:1885").build();
     }
 
     @Override
     public void add(String identity, BaseMessage message) {
         // 持久化
-        List<Mutation> saveOrUpdates = Lists.newArrayList();
-        // rowKey
-        Put put = new Put(Bytes.toBytes(String.valueOf(message.getId())));
-        // 列族，列名，值
-        ReflectionUtils.doWithFields(message.getClass(), field -> {
-            field.setAccessible(true);
-            if (!ObjectUtil.isNull(field.get(message))) {
-                put.addColumn(Bytes.toBytes("message"), Bytes.toBytes(field.getName()),
-                    Bytes.toBytes(String.valueOf(field.get(message))));
-            }
-        });
-        saveOrUpdates.add(put);
-        this.hbaseTemplate.saveOrUpdates("reactor-mqtt-message", saveOrUpdates);
+        this.hbaseTemplate.saveOrUpdate("reactor-mqtt-message", message);
+        // 发送定向消息
+        ActorRef sender = actorSystem.actorOf(SpringProps.create(actorSystem, Sender.class), "sender");
+        SenderEvent event = new SenderEvent(this, IdUtil.idGen());
+        event.setPath(this.get(identity).getInstanceId());
+        sender.tell(event, ActorRef.noSender());
     }
 
     @Override
-    public void subscribe(String topic) {
+    public void doReady(String topic) {
+        // 发布订阅模式的订阅者
         actorSystem.actorOf(SpringProps.create(actorSystem, Subscriber.class, topic, eventPublisher), "subscriber");
+        // 点对点模式的接收者
+        actorSystem.actorOf(SpringProps.create(actorSystem, Receiver.class, eventPublisher), "receiver");
     }
 }

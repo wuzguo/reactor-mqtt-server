@@ -2,8 +2,9 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import com.study.iot.mqtt.session.domain.SessionMessage;
+import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.session.manager.SessionManager;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
@@ -23,6 +24,7 @@ import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.netty.Connection;
 
 /**
  * <B>说明：描述</B>
@@ -61,14 +63,17 @@ public class ServerPublishHandler implements StrategyCapable {
             containerManager.take(CacheGroup.MESSAGE).add(variableHeader.topicName(), retainMessage);
         }
 
-        // 持久化消息
+        // 持久化消息，这里可以使用发布订阅模式
+        Connection connection = disposableConnection.getConnection();
+        String identity = connection.channel().attr(AttributeKeys.identity).get();
         SessionMessage sessionMessage = SessionMessage.builder().id(IdUtil.idGen())
             .messageId(variableHeader.packetId())
+            .identity(identity)
             .messageType(fixedHeader.messageType().value())
             .qos(fixedHeader.qosLevel().value())
             .copyByteBuf(bytes)
             .retain(fixedHeader.isRetain()).build();
-        sessionManager.add("", sessionMessage);
+        sessionManager.add(identity, sessionMessage);
 
         // 又来一个策略模式
         Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH, fixedHeader.qosLevel()))

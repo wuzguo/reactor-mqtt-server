@@ -126,7 +126,7 @@ public class ServerConnectHandler implements StrategyCapable {
             }
 
             // 创建Session的保存
-            sessionManager.create(instanceUtil.getInstanceId(), identity, variableHeader.isCleanSession());
+            sessionManager.add(instanceUtil.getInstanceId(), identity, variableHeader.isCleanSession());
             // 连接成功，超时时间来自客户端的设置
             acceptConnect(connection, identity, variableHeader.keepAliveTimeSeconds());
             // 如果有遗嘱消息，这里需要处理
