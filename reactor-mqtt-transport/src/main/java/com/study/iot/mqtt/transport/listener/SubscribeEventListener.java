@@ -3,6 +3,7 @@ package com.study.iot.mqtt.transport.listener;
 import com.study.iot.mqtt.akka.event.SubscribeEvent;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -27,6 +28,7 @@ public class SubscribeEventListener {
     public void listen(SubscribeEvent event) {
         log.info("receive subscribe event info: {}", event);
         // 这里要存起来哪些客户端订阅了哪些主题
-        containerManager.take(CacheGroup.ID_TOPIC).add(event.getTopicName(), event.getIdentity());
+        Optional.ofNullable(event.getTopicNames()).ifPresent(topicNames -> topicNames
+            .forEach(topicName -> containerManager.take(CacheGroup.ID_TOPIC).add(topicName, event.getIdentity())));
     }
 }

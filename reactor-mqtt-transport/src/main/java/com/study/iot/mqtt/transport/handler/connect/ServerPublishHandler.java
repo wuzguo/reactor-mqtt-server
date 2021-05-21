@@ -59,6 +59,7 @@ public class ServerPublishHandler implements StrategyCapable {
 
         // 持久化消息，这里可以使用发布订阅模式
         Connection connection = disposableConnection.getConnection();
+        // 当前发送消息的客户端ID
         String identity = connection.channel().attr(AttributeKeys.identity).get();
         SessionMessage sessionMessage = SessionMessage.builder().row(IdUtil.idGen().toString())
             .identity(identity)

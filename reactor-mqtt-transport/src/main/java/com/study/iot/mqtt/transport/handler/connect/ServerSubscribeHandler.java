@@ -23,8 +23,10 @@ import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.handler.codec.mqtt.MqttSubAckMessage;
 import io.netty.handler.codec.mqtt.MqttSubscribeMessage;
+import io.netty.handler.codec.mqtt.MqttTopicSubscription;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,14 +65,19 @@ public class ServerSubscribeHandler implements StrategyCapable {
         int messageId = subscribeMessage.variableHeader().messageId();
         MqttSubAckMessage mqttSubAckMessage = MessageBuilder.buildSubAck(messageId, qosLevels);
         disposableConnection.sendMessage(mqttSubAckMessage).subscribe();
-        subscribeMessage.payload().topicSubscriptions().forEach(topicSubscription -> {
+        List<MqttTopicSubscription> subscriptions = subscribeMessage.payload().topicSubscriptions();
+
+        Set<String> topicNames = subscriptions.stream().map(MqttTopicSubscription::topicName)
+            .collect(Collectors.toSet());
+        // 发布订阅
+        SubscribeEvent event = new SubscribeEvent(this, IdUtil.idGen());
+        event.setTopicNames(topicNames);
+        event.setInstanceId(instanceUtil.getInstanceId());
+        event.setIdentity(disposableConnection.getConnection().channel().attr(AttributeKeys.identity).get());
+        eventService.tellEvent(event);
+        // 遍历
+        subscriptions.forEach(topicSubscription -> {
             String topicName = topicSubscription.topicName();
-//            // 发布订阅
-//            SubscribeEvent event = new SubscribeEvent(this, IdUtil.idGen());
-//            event.setTopicName(topicName);
-//            event.setInstanceId(instanceUtil.getInstanceId());
-//            event.setIdentity(disposableConnection.getConnection().channel().attr(AttributeKeys.identity).get());
-//            eventService.tellEvent(event);
             // 存储本地的订阅主题
             containerManager.topic(CacheGroup.TOPIC).add(topicName, disposableConnection);
             Optional.ofNullable(containerManager.take(CacheGroup.MESSAGE).get(topicName)).ifPresent(serializable -> {

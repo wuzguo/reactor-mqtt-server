@@ -12,6 +12,7 @@ import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyContainer;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import java.util.Collections;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,17 +44,22 @@ public class SessionEventListener {
     public void listen(SessionEvent event) {
         log.info("receive subscribe event info: {}", event);
         // 查询连接信息
-        DisposableConnection disposableConnection = (DisposableConnection) containerManager.take(CacheGroup.CHANNEL)
-            .get(event.getIdentity());
-        // 如果有连接就执行下面的逻辑
-        if (!ObjectUtil.isNull(disposableConnection)) {
-            // 获取消息体
-            SessionMessage sessionMessage = hbaseTemplate.get("reactor-mqtt-message",
-                event.getRow(), new SessionMessageRowMapper());
-            // 又来一个策略模式
-            Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH,
-                MqttQoS.valueOf(sessionMessage.getQos())))
-                .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(disposableConnection, sessionMessage));
-        }
+        Optional.ofNullable(containerManager.take(CacheGroup.ID_TOPIC).list(event.getTopic()))
+            .orElse(Collections.emptyList())
+            .forEach(identity -> {
+                DisposableConnection disposableConnection = (DisposableConnection) containerManager
+                    .take(CacheGroup.CHANNEL).get(String.valueOf(identity));
+                // 如果有连接就执行下面的逻辑
+                if (!ObjectUtil.isNull(disposableConnection)) {
+                    // 获取消息体
+                    SessionMessage sessionMessage = hbaseTemplate.get("reactor-mqtt-message",
+                        event.getRow(), new SessionMessageRowMapper());
+                    // 又来一个策略模式
+                    Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH,
+                        MqttQoS.valueOf(sessionMessage.getQos())))
+                        .ifPresent(
+                            capable -> ((PublishStrategyCapable) capable).handle(disposableConnection, sessionMessage));
+                }
+            });
     }
 }

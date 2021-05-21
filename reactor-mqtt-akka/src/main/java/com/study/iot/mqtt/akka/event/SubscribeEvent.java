@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.akka.event;
 
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,7 +29,7 @@ public class SubscribeEvent extends BaseEvent {
     /**
      * 主题名称
      */
-    private String topicName;
+    private Set<String> topicNames;
 
     public SubscribeEvent(Object source, Long id) {
         super(source, id);
