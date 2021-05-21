@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
+import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -9,11 +10,8 @@ import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttPubAckMessage;
-import io.netty.handler.codec.mqtt.MqttPublishMessage;
-import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,21 +32,21 @@ public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
     private ContainerManager containerManager;
 
     @Override
-    public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
-        MqttPublishVariableHeader variableHeader = message.variableHeader();
-        MqttFixedHeader header = message.fixedHeader();
+    public void handle(DisposableConnection disposableConnection, SessionMessage message) {
         // back
-        MqttPubAckMessage mqttPubAckMessage = MessageBuilder.buildPubAck(header.isDup(), header.qosLevel(),
-            header.isRetain(), variableHeader.packetId());
+        MqttQoS mqttQoS = MqttQoS.valueOf(message.getQos());
+
+        MqttPubAckMessage mqttPubAckMessage = MessageBuilder.buildPubAck(message.getDup(), mqttQoS,
+            message.getRetain(), message.getMessageId());
         disposableConnection.sendMessage(mqttPubAckMessage).subscribe();
         TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
-        topicContainer.getConnections(variableHeader.topicName())
+        topicContainer.getConnections(message.getTopic())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
                 int messageId = IdUtil.messageId();
-                MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),
-                    messageId, variableHeader.topicName(), bytes);
+                MqttMessage mqttMessage = MessageBuilder.buildPub(false, mqttQoS, message.getRetain(),
+                    messageId, message.getTopic(), message.getCopyByteBuf());
                 disposable.sendMessageRetry(messageId, mqttMessage).subscribe();
             });
     }

@@ -53,6 +53,11 @@ public class SessionMessage extends BaseMessage {
     private Integer qos;
 
     /**
+     * 是否重发
+     */
+    private Boolean dup;
+
+    /**
      * 消息
      */
     private byte[] copyByteBuf;

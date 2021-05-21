@@ -19,7 +19,7 @@ public class SubscribeEvent extends BaseEvent {
     /**
      * 客户端标识
      */
-    private String clientIdentity;
+    private String identity;
 
     /**
      * 对应的实例ID

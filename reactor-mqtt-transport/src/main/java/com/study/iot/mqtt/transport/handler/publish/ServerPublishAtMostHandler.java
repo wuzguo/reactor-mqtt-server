@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
+import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -9,10 +10,7 @@ import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttPublishMessage;
-import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +31,15 @@ public class ServerPublishAtMostHandler implements PublishStrategyCapable {
     private ContainerManager containerManager;
 
     @Override
-    public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
-        MqttPublishVariableHeader variableHeader = message.variableHeader();
-        MqttFixedHeader header = message.fixedHeader();
+    public void handle(DisposableConnection disposableConnection, SessionMessage message) {
         // 过滤掉本身 已经关闭的dispose
         TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
-        topicContainer.getConnections(variableHeader.topicName())
+        topicContainer.getConnections(message.getTopic())
             .stream().map(disposable -> (DisposableConnection) disposable)
             .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
             .forEach(disposable -> {
-                MqttMessage mqttMessage = MessageBuilder.buildPub(false, header.qosLevel(), header.isRetain(),
-                    IdUtil.messageId(), variableHeader.topicName(), bytes);
+                MqttMessage mqttMessage = MessageBuilder.buildPub(false, MqttQoS.valueOf(message.getQos()),
+                    message.getRetain(), IdUtil.messageId(), message.getTopic(), message.getCopyByteBuf());
                 disposable.sendMessage(mqttMessage).subscribe();
             });
     }

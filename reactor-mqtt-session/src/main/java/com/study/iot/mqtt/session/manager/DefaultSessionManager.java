@@ -10,6 +10,7 @@ import com.study.iot.mqtt.akka.spring.SpringProps;
 import com.study.iot.mqtt.common.domain.BaseMessage;
 import com.study.iot.mqtt.common.domain.ConnectSession;
 import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.session.config.InstanceUtil;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
@@ -41,6 +42,9 @@ public class DefaultSessionManager implements SessionManager {
     @Autowired
     private HbaseTemplate hbaseTemplate;
 
+    @Autowired
+    private InstanceUtil instanceUtil;
+
     @Override
     public void add(String instanceId, String identity, Boolean isCleanSession) {
         ConnectSession session = ConnectSession.builder().instanceId(instanceId).identity(identity)
@@ -53,16 +57,19 @@ public class DefaultSessionManager implements SessionManager {
     @Override
     public ConnectSession get(String identity) {
         // 先写死
-        return ConnectSession.builder().instanceId("localhost:1885").build();
+        return ConnectSession.builder().instanceId("localhost:1884").build();
     }
 
     @Override
     public void add(String identity, BaseMessage message) {
         // 持久化
-        this.hbaseTemplate.saveOrUpdate("reactor-mqtt-message", message);
+        hbaseTemplate.saveOrUpdate("reactor-mqtt-message", message);
         // 发送定向消息
         ActorRef sender = actorSystem.actorOf(SpringProps.create(actorSystem, Sender.class), "sender");
         SenderEvent event = new SenderEvent(this, IdUtil.idGen());
+        event.setIdentity(identity);
+        event.setInstanceId(instanceUtil.getInstanceId());
+        event.setRow(message.getRow());
         event.setPath(this.get(identity).getInstanceId());
         sender.tell(event, ActorRef.noSender());
     }
@@ -71,7 +78,8 @@ public class DefaultSessionManager implements SessionManager {
     public void doReady(String topic) {
         // 发布订阅模式的订阅者
         actorSystem.actorOf(SpringProps.create(actorSystem, Subscriber.class, topic, eventPublisher), "subscriber");
-        // 点对点模式的接收者
-        actorSystem.actorOf(SpringProps.create(actorSystem, Receiver.class, eventPublisher), "receiver");
+        // 点对点模式的接收者，接收者名称为实例ID
+        actorSystem
+            .actorOf(SpringProps.create(actorSystem, Receiver.class, eventPublisher), instanceUtil.getInstanceId());
     }
 }

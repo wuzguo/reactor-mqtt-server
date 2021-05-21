@@ -1,18 +1,16 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
+import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.common.utils.IdUtil;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.session.manager.SessionManager;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyContainer;
 import com.study.iot.mqtt.transport.strategy.StrategyCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.buffer.ByteBuf;
@@ -21,7 +19,6 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.netty.Connection;
@@ -37,9 +34,6 @@ import reactor.netty.Connection;
 @Slf4j
 @StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.PUBLISH)
 public class ServerPublishHandler implements StrategyCapable {
-
-    @Autowired
-    private PublishStrategyContainer strategyContainer;
 
     @Autowired
     private ContainerManager containerManager;
@@ -66,18 +60,15 @@ public class ServerPublishHandler implements StrategyCapable {
         // 持久化消息，这里可以使用发布订阅模式
         Connection connection = disposableConnection.getConnection();
         String identity = connection.channel().attr(AttributeKeys.identity).get();
-        SessionMessage sessionMessage = SessionMessage.builder().id(IdUtil.idGen())
+        SessionMessage sessionMessage = SessionMessage.builder().row(IdUtil.idGen().toString())
             .messageId(variableHeader.packetId())
+            .dup(fixedHeader.isDup())
             .identity(identity)
             .messageType(fixedHeader.messageType().value())
             .qos(fixedHeader.qosLevel().value())
             .copyByteBuf(bytes)
             .retain(fixedHeader.isRetain()).build();
         sessionManager.add(identity, sessionMessage);
-
-        // 又来一个策略模式
-        Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH, fixedHeader.qosLevel()))
-            .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(disposableConnection, mqttMessage, bytes));
     }
 
     /**

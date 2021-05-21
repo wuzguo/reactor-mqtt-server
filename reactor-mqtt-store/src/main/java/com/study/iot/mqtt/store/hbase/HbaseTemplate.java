@@ -160,7 +160,7 @@ public class HbaseTemplate implements HbaseOperations {
         // 持久化
         List<Mutation> mutations = Lists.newArrayList();
         // rowKey
-        Put put = new Put(Bytes.toBytes(String.valueOf(message.getId())));
+        Put put = new Put(Bytes.toBytes(message.getRow()));
         // 列族，列名，值
         ReflectionUtils.doWithFields(message.getClass(), field -> {
             field.setAccessible(true);

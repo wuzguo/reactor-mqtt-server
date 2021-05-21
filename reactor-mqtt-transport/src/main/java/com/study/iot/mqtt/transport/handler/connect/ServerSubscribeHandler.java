@@ -55,7 +55,7 @@ public class ServerSubscribeHandler implements StrategyCapable {
         SubscribeEvent event = new SubscribeEvent(this, IdUtil.idGen());
         event.setTopic("/session/123456");
         event.setInstanceId("123456");
-        event.setClientIdentity("Identity");
+        event.setIdentity("Identity");
         eventService.tellEvent(event);
 
         List<Integer> qosLevels = subscribeMessage.payload().topicSubscriptions().stream()

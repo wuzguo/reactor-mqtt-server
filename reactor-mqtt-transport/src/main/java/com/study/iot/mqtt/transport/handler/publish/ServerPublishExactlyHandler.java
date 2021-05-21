@@ -1,15 +1,13 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
+import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.common.message.TransportMessage;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
-import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttPublishMessage;
-import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import io.netty.handler.codec.mqtt.MqttQoS;
 
 /**
@@ -24,19 +22,16 @@ import io.netty.handler.codec.mqtt.MqttQoS;
 public class ServerPublishExactlyHandler implements PublishStrategyCapable {
 
     @Override
-    public void handle(DisposableConnection disposableConnection, MqttPublishMessage message, byte[] bytes) {
-        MqttFixedHeader header = message.fixedHeader();
-        MqttPublishVariableHeader variableHeader = message.variableHeader();
-
+    public void handle(DisposableConnection disposableConnection, SessionMessage message) {
         //  send rec
-        int messageId = variableHeader.packetId();
+        int messageId = message.getMessageId();
         MqttMessage mqttMessage = MessageBuilder.buildPubRec(messageId);
         disposableConnection.sendMessageRetry(messageId, mqttMessage);
 
-        TransportMessage transportMessage = TransportMessage.builder().isRetain(header.isRetain())
-            .isDup(false).topic(variableHeader.topicName())
-            .copyByteBuf(bytes)
-            .qos(header.qosLevel().value())
+        TransportMessage transportMessage = TransportMessage.builder().isRetain(message.getRetain())
+            .isDup(false).topic(message.getTopic())
+            .copyByteBuf(message.getCopyByteBuf())
+            .qos(message.getQos())
             .build();
         disposableConnection.saveQos2Message(messageId, transportMessage);
     }

@@ -18,5 +18,5 @@ public class BaseMessage implements Serializable {
     /**
      * 消息ID
      */
-    private Long id;
+    private String row;
 }

@@ -17,6 +17,21 @@ import lombok.Setter;
 public class SenderEvent extends BaseEvent {
 
     /**
+     * 客户端标识
+     */
+    private String identity;
+
+    /**
+     * 对应的实例ID
+     */
+    private String instanceId;
+
+    /**
+     * 消息对应的ROW
+     */
+    private String row;
+
+    /**
      * 路径
      */
     private String path;

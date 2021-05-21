@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.transport.strategy;
 
+import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 
@@ -18,7 +19,6 @@ public interface PublishStrategyCapable {
      *
      * @param message    {@link MqttPublishMessage}
      * @param connection {@link DisposableConnection}
-     * @param bytes      {@link Byte}
      */
-    void handle(DisposableConnection connection, MqttPublishMessage message, byte[] bytes);
+    void handle(DisposableConnection connection, SessionMessage message);
 }
