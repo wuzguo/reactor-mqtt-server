@@ -163,9 +163,15 @@ public class HbaseTemplate implements HbaseOperations {
         // 列族，列名，值
         ReflectionUtils.doWithFields(message.getClass(), field -> {
             field.setAccessible(true);
+
             if (!ObjectUtil.isNull(field.get(message))) {
-                put.addColumn(Bytes.toBytes("message"), Bytes.toBytes(field.getName()),
-                    Bytes.toBytes(String.valueOf(field.get(message))));
+                if ("copyByteBuf".equals(field.getName())) {
+                    byte[] bytes = (byte[]) field.get(message);
+                    put.addColumn(Bytes.toBytes("message"), Bytes.toBytes(field.getName()), bytes);
+                } else {
+                    put.addColumn(Bytes.toBytes("message"), Bytes.toBytes(field.getName()),
+                        Bytes.toBytes(String.valueOf(field.get(message))));
+                }
             }
         });
         mutations.add(put);
