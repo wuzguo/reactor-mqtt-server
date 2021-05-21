@@ -28,7 +28,7 @@ public class MqttMetricAspect {
     @Autowired
     private ContainerManager containerManager;
 
-    @Around("@annotation(metric)")
+ //   @Around("@annotation(metric)")
     public Object mqttMetric(ProceedingJoinPoint joinPoint, MqttMetric metric) {
         return doMetric(joinPoint, metric);
     }

@@ -18,7 +18,7 @@ public class SessionMessageRowMapper implements RowMapper<SessionMessage> {
     /**
      * 列族
      */
-    private final static byte[] COLUMNFAMILY = "message".getBytes();
+    private final static byte[] COLUMN_FAMILY = "message".getBytes();
 
     /**
      * ROW
@@ -33,12 +33,12 @@ public class SessionMessageRowMapper implements RowMapper<SessionMessage> {
     /**
      * SessionId
      */
-    private final static byte[] SESSIONID = "sessionId".getBytes();
+    private final static byte[] SESSION_ID = "sessionId".getBytes();
 
     /**
      * 消息ID
      */
-    private final static byte[] MESSAGEID = "messageId".getBytes();
+    private final static byte[] MESSAGE_ID = "messageId".getBytes();
 
     /**
      * TOPIC
@@ -53,7 +53,7 @@ public class SessionMessageRowMapper implements RowMapper<SessionMessage> {
     /**
      * 消息类型
      */
-    private final static byte[] MESSAGETYPE = "messageType".getBytes();
+    private final static byte[] MESSAGE_TYPE = "messageType".getBytes();
 
     /**
      * 消息质量
@@ -68,22 +68,22 @@ public class SessionMessageRowMapper implements RowMapper<SessionMessage> {
     /**
      * 消息
      */
-    private final static byte[] COPYBYTEBUF = "copyByteBuf".getBytes();
+    private final static byte[] COPY_BYTE_BUF = "copyByteBuf".getBytes();
 
 
     @Override
     public SessionMessage mapRow(Result result, int rowNum) throws Exception {
         return SessionMessage.builder()
-            .row(Bytes.toString(result.getValue(COLUMNFAMILY, ROW)))
-            .identity(Bytes.toString(result.getValue(COLUMNFAMILY, IDENTITY)))
-            .sessionId(Bytes.toString(result.getValue(COLUMNFAMILY, SESSIONID)))
-            .messageId(Integer.valueOf(Bytes.toString(result.getValue(COLUMNFAMILY, MESSAGEID))))
-            .topic(Bytes.toString(result.getValue(COLUMNFAMILY, TOPIC)))
-            .retain(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMNFAMILY, RETAIN))))
-            .messageType(Integer.valueOf(Bytes.toString(result.getValue(COLUMNFAMILY, MESSAGETYPE))))
-            .qos(Integer.valueOf(Bytes.toString(result.getValue(COLUMNFAMILY, QOS))))
-            .dup(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMNFAMILY, DUP))))
-            .copyByteBuf(result.getValue(COLUMNFAMILY, COPYBYTEBUF))
+            .row(Bytes.toString(result.getValue(COLUMN_FAMILY, ROW)))
+            .identity(Bytes.toString(result.getValue(COLUMN_FAMILY, IDENTITY)))
+            .sessionId(Bytes.toString(result.getValue(COLUMN_FAMILY, SESSION_ID)))
+            .messageId(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, MESSAGE_ID))))
+            .topic(Bytes.toString(result.getValue(COLUMN_FAMILY, TOPIC)))
+            .retain(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMN_FAMILY, RETAIN))))
+            .messageType(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, MESSAGE_TYPE))))
+            .qos(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, QOS))))
+            .dup(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMN_FAMILY, DUP))))
+            .copyByteBuf(result.getValue(COLUMN_FAMILY, COPY_BYTE_BUF))
             .build();
     }
 }

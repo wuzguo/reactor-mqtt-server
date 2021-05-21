@@ -41,7 +41,7 @@ public class TestConsumer {
             .setHasCleanSession(true);
 
         ClientProperties properties = ClientProperties.builder()
-            .host("localhost").port(1884)
+            .host("localhost").port(1885)
             .protocol(ProtocolType.MQTT)
             .keepAliveSeconds(60)
             .isLog(true)

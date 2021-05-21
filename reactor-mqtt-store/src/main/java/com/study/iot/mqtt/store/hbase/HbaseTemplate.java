@@ -135,7 +135,6 @@ public class HbaseTemplate implements HbaseOperations {
         try (BufferedMutator mutator = this.connection.getBufferedMutator(mutatorParams.writeBufferSize(3 * 1024 * 1024))) {
             action.doInMutator(mutator);
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
             log.error("error: {}", throwable.getMessage());
             throw new HbaseSystemException(throwable);
         }
