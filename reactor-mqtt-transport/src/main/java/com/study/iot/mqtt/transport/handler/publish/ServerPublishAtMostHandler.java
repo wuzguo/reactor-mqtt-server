@@ -38,7 +38,7 @@ public class ServerPublishAtMostHandler implements PublishStrategyCapable {
         TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
         Optional.ofNullable(topicContainer.getConnections(message.getTopic())).orElse(Collections.emptyList())
             .stream().map(disposable -> (DisposableConnection) disposable)
-            .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
+            .filter(disposable -> !disposable.isDispose())
             .forEach(disposable -> {
                 MqttMessage mqttMessage = MessageBuilder.buildPub(false, MqttQoS.valueOf(message.getQos()),
                     message.getRetain(), IdUtil.messageId(), message.getTopic(), message.getCopyByteBuf());
