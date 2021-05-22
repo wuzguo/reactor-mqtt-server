@@ -1,6 +1,9 @@
 package com.study.iot.mqtt.store.hbase;
 
+import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Result;
+
+import java.util.List;
 
 /**
  * <B>说明：描述</B>
@@ -21,4 +24,13 @@ public interface RowMapper<T> {
      * @throws Exception
      */
     T mapRow(Result result, int rowNum) throws Exception;
+
+    /**
+     * 将对象转换为 Mutation
+     *
+     * @param value 对象
+     * @return {@link Mutation}
+     * @throws Exception
+     */
+    List<Mutation> mapObject(T value) throws Exception;
 }

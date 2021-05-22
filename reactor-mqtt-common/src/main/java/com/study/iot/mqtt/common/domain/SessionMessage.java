@@ -18,6 +18,16 @@ import lombok.experimental.SuperBuilder;
 public class SessionMessage extends BaseMessage {
 
     /**
+     * 表名
+     */
+    public static final String TABLE_NAME = "reactor-mqtt-message";
+
+    /**
+     * 列族
+     */
+    public static final String COLUMN_FAMILY = "message";
+
+    /**
      * 客户端标识
      */
     private String identity;

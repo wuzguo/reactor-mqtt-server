@@ -1,11 +1,11 @@
 package com.study.iot.mqtt.store.hbase;
 
-import com.study.iot.mqtt.common.domain.BaseMessage;
-import java.util.List;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Scan;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * <B>说明：描述</B>
@@ -98,7 +98,7 @@ public interface HbaseOperations {
      * @return object mapping the target row
      */
     <T> T get(String tableName, final String rowName, final String familyName, final String qualifier,
-        final RowMapper<T> mapper);
+              final RowMapper<T> mapper);
 
     /**
      * 执行put update or delete
@@ -121,10 +121,8 @@ public interface HbaseOperations {
     void saveOrUpdates(String tableName, List<Mutation> mutations);
 
     /**
-     * 保存对象
-     *
-     * @param tableName 表名称
-     * @param message   消息体 {@link BaseMessage}
+     * @param tableName target table
+     * @param mapper    {@link RowMapper}
      */
-    void saveOrUpdate(String tableName, BaseMessage message);
+    <T> void saveOrUpdates(String tableName, T value, final RowMapper<T> mapper);
 }

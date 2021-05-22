@@ -1,9 +1,16 @@
 package com.study.iot.mqtt.store.mapper;
 
+import com.google.common.collect.Lists;
 import com.study.iot.mqtt.common.domain.SessionMessage;
+import com.study.iot.mqtt.common.utils.ObjectUtil;
 import com.study.iot.mqtt.store.hbase.RowMapper;
+import org.apache.hadoop.hbase.client.Mutation;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.springframework.util.ReflectionUtils;
+
+import java.util.List;
 
 /**
  * <B>说明：描述</B>
@@ -18,7 +25,7 @@ public class SessionMessageRowMapper implements RowMapper<SessionMessage> {
     /**
      * 列族
      */
-    private final static byte[] COLUMN_FAMILY = "message".getBytes();
+    private final static byte[] COLUMN_FAMILY = SessionMessage.COLUMN_FAMILY.getBytes();
 
     /**
      * ROW
@@ -74,16 +81,40 @@ public class SessionMessageRowMapper implements RowMapper<SessionMessage> {
     @Override
     public SessionMessage mapRow(Result result, int rowNum) throws Exception {
         return SessionMessage.builder()
-            .row(Bytes.toString(result.getValue(COLUMN_FAMILY, ROW)))
-            .identity(Bytes.toString(result.getValue(COLUMN_FAMILY, IDENTITY)))
-            .sessionId(Bytes.toString(result.getValue(COLUMN_FAMILY, SESSION_ID)))
-            .messageId(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, MESSAGE_ID))))
-            .topic(Bytes.toString(result.getValue(COLUMN_FAMILY, TOPIC)))
-            .retain(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMN_FAMILY, RETAIN))))
-            .messageType(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, MESSAGE_TYPE))))
-            .qos(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, QOS))))
-            .dup(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMN_FAMILY, DUP))))
-            .copyByteBuf(result.getValue(COLUMN_FAMILY, COPY_BYTE_BUF))
-            .build();
+                .row(Bytes.toString(result.getValue(COLUMN_FAMILY, ROW)))
+                .identity(Bytes.toString(result.getValue(COLUMN_FAMILY, IDENTITY)))
+                .sessionId(Bytes.toString(result.getValue(COLUMN_FAMILY, SESSION_ID)))
+                .messageId(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, MESSAGE_ID))))
+                .topic(Bytes.toString(result.getValue(COLUMN_FAMILY, TOPIC)))
+                .retain(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMN_FAMILY, RETAIN))))
+                .messageType(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, MESSAGE_TYPE))))
+                .qos(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, QOS))))
+                .dup(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMN_FAMILY, DUP))))
+                .copyByteBuf(result.getValue(COLUMN_FAMILY, COPY_BYTE_BUF))
+                .build();
+    }
+
+    @Override
+    public List<Mutation> mapObject(SessionMessage value) throws Exception {
+        // 持久化
+        List<Mutation> mutations = Lists.newArrayList();
+        // rowKey
+        Put put = new Put(Bytes.toBytes(value.getRow()));
+        // 列族，列名，值
+        ReflectionUtils.doWithFields(value.getClass(), field -> {
+            field.setAccessible(true);
+            System.out.println("-----" + field.getGenericType().getTypeName());
+            if (!ObjectUtil.isNull(field.get(value))) {
+                if ("copyByteBuf".equals(field.getName())) {
+                    byte[] bytes = (byte[]) field.get(value);
+                    put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), Bytes.toBytes(field.getName()), bytes);
+                } else {
+                    put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), Bytes.toBytes(field.getName()),
+                            Bytes.toBytes(String.valueOf(field.get(value))));
+                }
+            }
+        });
+        mutations.add(put);
+        return mutations;
     }
 }

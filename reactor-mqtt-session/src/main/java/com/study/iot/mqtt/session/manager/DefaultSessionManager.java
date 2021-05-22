@@ -14,10 +14,12 @@ import com.study.iot.mqtt.session.config.InstanceUtil;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
-import java.util.Collections;
+import com.study.iot.mqtt.store.mapper.SessionMessageRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 /**
  * <B>说明：描述</B>
@@ -48,7 +50,7 @@ public class DefaultSessionManager implements SessionManager {
     @Override
     public void add(String instanceId, String identity, Boolean isCleanSession) {
         ConnectSession session = ConnectSession.builder().instanceId(instanceId).identity(identity)
-            .topics(Collections.emptyList()).build();
+                .topics(Collections.emptyList()).build();
         // 如果是持久化 Session 需要放入Redis保存
         containerManager.take(CacheGroup.SESSION).add(identity, session);
 
@@ -63,7 +65,7 @@ public class DefaultSessionManager implements SessionManager {
     @Override
     public void add(String identity, SessionMessage message) {
         // 持久化
-        hbaseTemplate.saveOrUpdate("reactor-mqtt-message", message);
+        hbaseTemplate.saveOrUpdates(SessionMessage.TABLE_NAME, message, new SessionMessageRowMapper());
         // 发布订阅消息
         ActorRef publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
         SessionEvent event = new SessionEvent(this, IdUtil.idGen());
@@ -78,9 +80,9 @@ public class DefaultSessionManager implements SessionManager {
     public void doReady(String topic) {
         // 发布订阅模式的订阅者
         actorSystem.actorOf(SpringProps.create(actorSystem, Subscriber.class, topic, eventPublisher),
-            "subscriber");
+                "subscriber");
         // 点对点模式的接收者，接收者名称为实例ID
         actorSystem.actorOf(SpringProps.create(actorSystem, Receiver.class, eventPublisher),
-            instanceUtil.getInstanceId());
+                instanceUtil.getInstanceId());
     }
 }
