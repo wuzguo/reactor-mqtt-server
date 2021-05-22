@@ -82,17 +82,17 @@ c.s.i.mqtt.protocol.mqtt.MqttTransport   : connected successes
 
 配置参数如图所示，配置完成后点击连接按钮。
 
-![](./images/2.png)
+![](/images/2.png)
 
 连接成功后如图所示：
 
-![](./images/3.png)
+![](/images/3.png)
 
 #### 发布订阅消息
 
 连接成功后可以通过客户端工具的Topic正常发布消息。也可以使用  reactor-mqtt-client 模块中运行 TestProducer类发布消息。
 
-
+![](/images/1.png)
 
 ### 已实现功能
 
