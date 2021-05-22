@@ -13,7 +13,7 @@ import java.util.List;
  * @date 2021/5/7 9:51
  */
 
-public interface RowMapper<T> {
+public interface TableMapper<T> {
 
     /**
      * Mapper

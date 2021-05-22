@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.store.hbase;
 
-import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Scan;
 
 import javax.validation.constraints.NotBlank;
@@ -38,7 +37,7 @@ public interface HbaseOperations {
      * @param <T>       action type
      * @return a list of objects mapping the scanned rows
      */
-    <T> List<T> find(String tableName, String family, final RowMapper<T> mapper);
+    <T> List<T> find(String tableName, String family, final TableMapper<T> mapper);
 
     /**
      * Scans the target table, using the given column family. The content is processed row by row by the given action,
@@ -50,7 +49,7 @@ public interface HbaseOperations {
      * @param <T>       action type
      * @return a list of objects mapping the scanned rows
      */
-    <T> List<T> find(String tableName, String family, String qualifier, final RowMapper<T> mapper);
+    <T> List<T> find(String tableName, String family, String qualifier, final TableMapper<T> mapper);
 
     /**
      * Scans the target table using the given {@link Scan} object. Suitable for maximum control over the scanning
@@ -61,7 +60,7 @@ public interface HbaseOperations {
      * @param <T>       action type
      * @return a list of objects mapping the scanned rows
      */
-    <T> List<T> find(String tableName, final Scan scan, final RowMapper<T> mapper);
+    <T> List<T> find(String tableName, final Scan scan, final TableMapper<T> mapper);
 
     /**
      * Gets an individual row from the given table. The content is mapped by the given action.
@@ -72,7 +71,7 @@ public interface HbaseOperations {
      * @param <T>       mapper type
      * @return object mapping the target row
      */
-    <T> T get(String tableName, String rowName, final RowMapper<T> mapper);
+    <T> T get(String tableName, String rowName, final TableMapper<T> mapper);
 
     /**
      * Gets an individual row from the given table. The content is mapped by the given action.
@@ -84,7 +83,7 @@ public interface HbaseOperations {
      * @param <T>        mapper type
      * @return object mapping the target row
      */
-    <T> T get(String tableName, String rowName, String familyName, final RowMapper<T> mapper);
+    <T> T get(String tableName, String rowName, String familyName, final TableMapper<T> mapper);
 
     /**
      * Gets an individual row from the given table. The content is mapped by the given action.
@@ -98,7 +97,7 @@ public interface HbaseOperations {
      * @return object mapping the target row
      */
     <T> T get(String tableName, final String rowName, final String familyName, final String qualifier,
-              final RowMapper<T> mapper);
+              final TableMapper<T> mapper);
 
     /**
      * 执行put update or delete
@@ -113,8 +112,8 @@ public interface HbaseOperations {
      * 保存对象
      * @param tableName 表名
      * @param object 对象
-     * @param mapper Mapper {@link RowMapper}
+     * @param mapper Mapper {@link TableMapper}
      * @param <T> 对象类型
      */
-    <T> void saveOrUpdate(String tableName, T object, final RowMapper<T> mapper);
+    <T> void saveOrUpdate(String tableName, T object, final TableMapper<T> mapper);
 }

@@ -14,7 +14,7 @@ import com.study.iot.mqtt.session.config.InstanceUtil;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
-import com.study.iot.mqtt.store.mapper.SessionMessageRowMapper;
+import com.study.iot.mqtt.store.mapper.SessionMessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -65,7 +65,7 @@ public class DefaultSessionManager implements SessionManager {
     @Override
     public void add(String identity, SessionMessage message) {
         // 持久化
-        hbaseTemplate.saveOrUpdate(SessionMessage.TABLE_NAME, message, new SessionMessageRowMapper());
+        hbaseTemplate.saveOrUpdate(SessionMessage.TABLE_NAME, message, new SessionMessageMapper());
         // 发布订阅消息
         ActorRef publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
         SessionEvent event = new SessionEvent(this, IdUtil.idGen());

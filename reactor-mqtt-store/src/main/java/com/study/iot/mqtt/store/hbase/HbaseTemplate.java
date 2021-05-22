@@ -54,7 +54,7 @@ public class HbaseTemplate implements HbaseOperations {
     }
 
     @Override
-    public <T> List<T> find(String tableName, String family, final RowMapper<T> action) {
+    public <T> List<T> find(String tableName, String family, final TableMapper<T> action) {
         Scan scan = new Scan();
         scan.setCaching(5000);
         scan.addFamily(Bytes.toBytes(family));
@@ -62,7 +62,7 @@ public class HbaseTemplate implements HbaseOperations {
     }
 
     @Override
-    public <T> List<T> find(String tableName, String family, String qualifier, final RowMapper<T> action) {
+    public <T> List<T> find(String tableName, String family, String qualifier, final TableMapper<T> action) {
         Scan scan = new Scan();
         scan.setCaching(5000);
         scan.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
@@ -70,7 +70,7 @@ public class HbaseTemplate implements HbaseOperations {
     }
 
     @Override
-    public <T> List<T> find(String tableName, final Scan scan, final RowMapper<T> action) {
+    public <T> List<T> find(String tableName, final Scan scan, final TableMapper<T> action) {
         return this.execute(tableName, table -> {
             int caching = scan.getCaching();
             // 如果caching未设置(默认是1)，将默认配置成5000
@@ -90,18 +90,18 @@ public class HbaseTemplate implements HbaseOperations {
     }
 
     @Override
-    public <T> T get(String tableName, String rowName, final RowMapper<T> mapper) {
+    public <T> T get(String tableName, String rowName, final TableMapper<T> mapper) {
         return this.get(tableName, rowName, null, null, mapper);
     }
 
     @Override
-    public <T> T get(String tableName, String rowName, String familyName, final RowMapper<T> mapper) {
+    public <T> T get(String tableName, String rowName, String familyName, final TableMapper<T> mapper) {
         return this.get(tableName, rowName, familyName, null, mapper);
     }
 
     @Override
     public <T> T get(String tableName, final String rowName, final String familyName, final String qualifier,
-                     final RowMapper<T> mapper) {
+                     final TableMapper<T> mapper) {
         return this.execute(tableName, table -> {
             Get get = new Get(Bytes.toBytes(rowName));
             if (StringUtils.isNotBlank(familyName)) {
@@ -129,7 +129,7 @@ public class HbaseTemplate implements HbaseOperations {
     }
 
     @Override
-    public <T> void saveOrUpdate(String tableName, T value, RowMapper<T> mapper) {
+    public <T> void saveOrUpdate(String tableName, T value, TableMapper<T> mapper) {
         try {
             this.saveOrUpdate(tableName, mapper.mutations(value));
         } catch (Exception e) {

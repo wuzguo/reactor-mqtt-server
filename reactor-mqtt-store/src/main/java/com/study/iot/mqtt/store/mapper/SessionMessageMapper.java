@@ -3,7 +3,7 @@ package com.study.iot.mqtt.store.mapper;
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
-import com.study.iot.mqtt.store.hbase.RowMapper;
+import com.study.iot.mqtt.store.hbase.TableMapper;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
@@ -20,7 +20,7 @@ import java.util.List;
  * @date 2021/5/21 10:51
  */
 
-public class SessionMessageRowMapper implements RowMapper<SessionMessage> {
+public class SessionMessageMapper implements TableMapper<SessionMessage> {
 
     /**
      * 列族

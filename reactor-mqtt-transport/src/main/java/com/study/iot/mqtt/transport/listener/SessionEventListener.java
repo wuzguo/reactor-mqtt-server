@@ -7,7 +7,7 @@ import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
-import com.study.iot.mqtt.store.mapper.SessionMessageRowMapper;
+import com.study.iot.mqtt.store.mapper.SessionMessageMapper;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
 import com.study.iot.mqtt.transport.strategy.PublishStrategyContainer;
@@ -54,7 +54,7 @@ public class SessionEventListener {
                     if (!ObjectUtil.isNull(disposableConnection)) {
                         // 获取消息体
                         SessionMessage sessionMessage = hbaseTemplate.get(SessionMessage.TABLE_NAME,
-                                event.getRow(), new SessionMessageRowMapper());
+                                event.getRow(), new SessionMessageMapper());
                         // 又来一个策略模式
                         Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH,
                                 MqttQoS.valueOf(sessionMessage.getQos())))
