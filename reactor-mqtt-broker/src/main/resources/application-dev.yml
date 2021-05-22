@@ -9,9 +9,17 @@ spring:
   cache:
     mode: memory
   hbase:
-    quorum: hadoop001,hadoop002,hadoop003
+    master: hadoop001:16010
+    quorum: hadoop001:2181,hadoop002:2181,hadoop003:2181
     root-dir: hdfs://hadoop001:9000/hbase
-    node-parent: /opt/module/apache-zookeeper-3.6.1/zkData
+    znode-parent: /hbase
+    client-port: 2181
+    session-timeout: 60000
+    rpc-timeout: 60000
+    operation-timeout: 30000
+    scanner-timeout: 200000
+    ssl-enabled: false
+    distributed: true
   mqtt:
     broker:
       # 主机地址

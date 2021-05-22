@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.store.config;
 
 
-import com.study.iot.mqtt.store.properties.HbaseProperties;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
+import com.study.iot.mqtt.store.properties.HbaseProperties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,25 @@ public class HbaseAutoConfiguration {
 
     private static final String HBASE_ROOTDIR = "hbase.rootdir";
 
-    private static final String HBASE_ZNODE_PARENT = "hbase.zookeeper.property.dataDir";
+    private static final String HBASE_ZNODE_PARENT = "zookeeper.znode.parent";
+
+    private static final String HBASE_ZOOKEEPER_PROPERTY_DATADIR = "hbase.zookeeper.property.dataDir";
+
+    private static final String ZOOKEEPER_SESSION_TIMEOUT = "zookeeper.session.timeout";
+
+    private static final String HBASE_RPC_TIMEOUT = "hbase.rpc.timeout";
+
+    private static final String HBASE_CLIENT_OPERATION_TIMEOUT = "hbase.client.operation.timeout";
+
+    private static final String HBASE_CLIENT_SCANNER_TIMEOUT_PERIOD = "hbase.client.scanner.timeout.period";
+
+    private static final String HBASE_ZOOKEEPER_PROPERTY_CLIENTPORT = "hbase.zookeeper.property.clientPort";
+
+    private static final String HBASE_REST_SSL_ENABLED = "hbase.rest.ssl.enabled";
+
+    private static final String HBASE_CLUSTER_DISTRIBUTED = "hbase.cluster.distributed";
+
+    private static final String HBASE_MASTER = "hbase.master";
 
     @Autowired
     private HbaseProperties hbaseProperties;
@@ -37,18 +55,17 @@ public class HbaseAutoConfiguration {
     @ConditionalOnMissingBean(HbaseTemplate.class)
     public HbaseTemplate hbaseTemplate() {
         Configuration configuration = HBaseConfiguration.create();
-        configuration.set(HBASE_QUORUM, this.hbaseProperties.getQuorum());
+        configuration.set(HBASE_MASTER, hbaseProperties.getMaster());
+        configuration.set(HBASE_QUORUM, hbaseProperties.getQuorum());
         configuration.set(HBASE_ROOTDIR, hbaseProperties.getRootDir());
-        configuration.set(HBASE_ZNODE_PARENT, hbaseProperties.getNodeParent());
-        configuration.set("zookeeper.znode.parent", "/hbase");
-        configuration.set("zookeeper.session.timeout", "60000");
-        configuration.set("hbase.rpc.timeout", "60000");
-        configuration.set("hbase.client.operation.timeout", "30000");
-        configuration.set("hbase.client.scanner.timeout.period", "200000");
-        configuration.set("hbase.zookeeper.property.clientPort", "2181");
-        configuration.set("hbase.rest.ssl.enabled", "false");
-        configuration.set("hbase.cluster.distributed", "true");
-        configuration.set("hbase.master", "hadoop001:16010");
+        configuration.set(HBASE_ZNODE_PARENT, hbaseProperties.getZnodeParent());
+        configuration.set(ZOOKEEPER_SESSION_TIMEOUT, String.valueOf(hbaseProperties.getSessionTimeout()));
+        configuration.set(HBASE_RPC_TIMEOUT, String.valueOf(hbaseProperties.getRpcTimeout()));
+        configuration.set(HBASE_CLIENT_OPERATION_TIMEOUT, String.valueOf(hbaseProperties.getOperationTimeout()));
+        configuration.set(HBASE_CLIENT_SCANNER_TIMEOUT_PERIOD, String.valueOf(hbaseProperties.getScannerTimeout()));
+        configuration.set(HBASE_ZOOKEEPER_PROPERTY_CLIENTPORT, String.valueOf(hbaseProperties.getClientPort()));
+        configuration.set(HBASE_REST_SSL_ENABLED, hbaseProperties.getSslEnabled().toString());
+        configuration.set(HBASE_CLUSTER_DISTRIBUTED, hbaseProperties.getDistributed().toString());
         return new HbaseTemplate(configuration);
     }
 }

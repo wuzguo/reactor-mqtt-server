@@ -14,6 +14,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "spring.hbase")
 public class HbaseProperties {
+    /**
+     * master
+     */
+    private String master;
 
     /**
      * ZK集群
@@ -28,5 +32,40 @@ public class HbaseProperties {
     /**
      * HBase 的根 ZNode
      */
-    private String nodeParent;
+    private String znodeParent;
+
+    /**
+     * 客户端端口
+     */
+    private Integer clientPort;
+
+    /**
+     * Session
+     */
+    private Integer sessionTimeout;
+
+    /**
+     * RPC
+     */
+    private Integer rpcTimeout;
+
+    /**
+     * 操作超时
+     */
+    private Integer operationTimeout;
+
+    /**
+     * Scanner
+     */
+    private Integer scannerTimeout;
+
+    /**
+     * SSL
+     */
+    private Boolean sslEnabled;
+
+    /**
+     * Distributed
+     */
+    private Boolean distributed;
 }
