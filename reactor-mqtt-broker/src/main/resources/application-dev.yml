@@ -1,5 +1,5 @@
 server:
-  port: 8810
+  port: 8800
 
 # 开发环境配置
 spring:
@@ -25,7 +25,7 @@ spring:
       # 主机地址
       host: localhost
       # 端口
-      port: 1886
+      port: 1800
       # 心跳时间(秒)
       heart: 100000
       #开启日志

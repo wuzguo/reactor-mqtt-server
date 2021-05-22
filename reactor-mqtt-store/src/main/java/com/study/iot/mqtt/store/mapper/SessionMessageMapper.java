@@ -4,12 +4,14 @@ import com.google.common.collect.Lists;
 import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.common.utils.ObjectUtil;
 import com.study.iot.mqtt.store.hbase.TableMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.util.ReflectionUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -20,6 +22,7 @@ import java.util.List;
  * @date 2021/5/21 10:51
  */
 
+@Slf4j
 public class SessionMessageMapper implements TableMapper<SessionMessage> {
 
     /**
@@ -95,26 +98,51 @@ public class SessionMessageMapper implements TableMapper<SessionMessage> {
     }
 
     @Override
-    public List<Mutation> mutations(SessionMessage value) throws Exception {
-        // 持久化
-        List<Mutation> mutations = Lists.newArrayList();
+    public List<Mutation> mutations(SessionMessage message) throws Exception {
         // rowKey
-        Put put = new Put(Bytes.toBytes(value.getRow()));
+        Put put = new Put(Bytes.toBytes(message.getRow()));
         // 列族，列名，值
-        ReflectionUtils.doWithFields(value.getClass(), field -> {
+        ReflectionUtils.doWithFields(message.getClass(), field -> {
             field.setAccessible(true);
-            System.out.println("-----" + field.getGenericType().getTypeName());
-            if (!ObjectUtil.isNull(field.get(value))) {
-                if ("copyByteBuf".equals(field.getName())) {
-                    byte[] bytes = (byte[]) field.get(value);
-                    put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), Bytes.toBytes(field.getName()), bytes);
-                } else {
-                    put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), Bytes.toBytes(field.getName()),
-                            Bytes.toBytes(String.valueOf(field.get(value))));
-                }
+            String typeName = field.getGenericType().getTypeName();
+            Object filedValue = field.get(message);
+            // 如果不为空
+            if (!ObjectUtil.isNull(filedValue)) {
+                put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), Bytes.toBytes(field.getName()),
+                        convert(filedValue, typeName));
             }
         });
-        mutations.add(put);
-        return mutations;
+        // 返回
+        return Lists.newArrayList(put);
+    }
+
+    /**
+     * 类型转换
+     *
+     * @param fieldValue 值
+     * @param type       类型
+     * @return {@link byte[]}
+     */
+    private byte[] convert(Object fieldValue, String type) {
+        if ("java.lang.String".equals(type)) {
+            return Bytes.toBytes((String) fieldValue);
+        } else if ("java.lang.Integer".equals(type) || "int".equals(type)) {
+            return Bytes.toBytes((Integer) fieldValue);
+        } else if ("java.lang.Boolean".equals(type)) {
+            return Bytes.toBytes((Boolean) fieldValue);
+        } else if ("byte[]".equals(type)) {
+            return (byte[]) fieldValue;
+        } else if ("java.sql.Timestamp".equals(type) || "java.util.Date".equals(type)) {
+            return Bytes.toBytes((String) fieldValue);
+        } else if ("java.lang.Long".equals(type) || "long".equals(type)) {
+            return Bytes.toBytes((Long) fieldValue);
+        } else if ("java.lang.Float".equals(type) || "float".equals(type)) {
+            return Bytes.toBytes((Float) fieldValue);
+        } else if ("java.math.BigDecimal".equals(type)) {
+            return Bytes.toBytes((BigDecimal) fieldValue);
+        } else {
+            log.info("file value type: {}, value: {}", type, fieldValue);
+            return Bytes.toBytes((String) fieldValue);
+        }
     }
 }
