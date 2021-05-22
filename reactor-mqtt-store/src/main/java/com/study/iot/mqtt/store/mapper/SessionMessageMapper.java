@@ -2,16 +2,14 @@ package com.study.iot.mqtt.store.mapper;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.common.domain.SessionMessage;
-import com.study.iot.mqtt.common.utils.ObjectUtil;
 import com.study.iot.mqtt.store.hbase.TableMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.Mutation;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.springframework.util.ReflectionUtils;
 
-import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -28,57 +26,57 @@ public class SessionMessageMapper implements TableMapper<SessionMessage> {
     /**
      * 列族
      */
-    private final static byte[] COLUMN_FAMILY = SessionMessage.COLUMN_FAMILY.getBytes();
+    private final static byte[] COLUMN_FAMILY = SessionMessage.COLUMN_FAMILY.getBytes(StandardCharsets.UTF_8);
 
     /**
      * ROW
      */
-    private final static byte[] ROW = "row".getBytes();
+    private final static byte[] ROW = "row".getBytes(StandardCharsets.UTF_8);
 
     /**
      * 客户端标识
      */
-    private final static byte[] IDENTITY = "identity".getBytes();
+    private final static byte[] IDENTITY = "identity".getBytes(StandardCharsets.UTF_8);
 
     /**
      * SessionId
      */
-    private final static byte[] SESSION_ID = "sessionId".getBytes();
+    private final static byte[] SESSION_ID = "sessionId".getBytes(StandardCharsets.UTF_8);
 
     /**
      * 消息ID
      */
-    private final static byte[] MESSAGE_ID = "messageId".getBytes();
+    private final static byte[] MESSAGE_ID = "messageId".getBytes(StandardCharsets.UTF_8);
 
     /**
      * TOPIC
      */
-    private final static byte[] TOPIC = "topic".getBytes();
+    private final static byte[] TOPIC = "topic".getBytes(StandardCharsets.UTF_8);
 
     /**
      * 保持
      */
-    private final static byte[] RETAIN = "retain".getBytes();
+    private final static byte[] RETAIN = "retain".getBytes(StandardCharsets.UTF_8);
 
     /**
      * 消息类型
      */
-    private final static byte[] MESSAGE_TYPE = "messageType".getBytes();
+    private final static byte[] MESSAGE_TYPE = "messageType".getBytes(StandardCharsets.UTF_8);
 
     /**
      * 消息质量
      */
-    private final static byte[] QOS = "qos".getBytes();
+    private final static byte[] QOS = "qos".getBytes(StandardCharsets.UTF_8);
 
     /**
      * 是否重发
      */
-    private final static byte[] DUP = "dup".getBytes();
+    private final static byte[] DUP = "dup".getBytes(StandardCharsets.UTF_8);
 
     /**
      * 消息
      */
-    private final static byte[] COPY_BYTE_BUF = "copyByteBuf".getBytes();
+    private final static byte[] COPY_BYTE_BUF = "copyByteBuf".getBytes(StandardCharsets.UTF_8);
 
 
     @Override
@@ -101,48 +99,16 @@ public class SessionMessageMapper implements TableMapper<SessionMessage> {
     public List<Mutation> mutations(SessionMessage message) throws Exception {
         // rowKey
         Put put = new Put(Bytes.toBytes(message.getRow()));
-        // 列族，列名，值
-        ReflectionUtils.doWithFields(message.getClass(), field -> {
-            field.setAccessible(true);
-            String typeName = field.getGenericType().getTypeName();
-            Object filedValue = field.get(message);
-            // 如果不为空
-            if (!ObjectUtil.isNull(filedValue)) {
-                put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), Bytes.toBytes(field.getName()),
-                        convert(filedValue, typeName));
-            }
-        });
-        // 返回
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), ROW, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), IDENTITY, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), SESSION_ID, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), MESSAGE_ID, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), TOPIC, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), RETAIN, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), MESSAGE_TYPE, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), QOS, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), DUP, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), COPY_BYTE_BUF, Bytes.toBytes(message.getRow()));
         return Lists.newArrayList(put);
-    }
-
-    /**
-     * 类型转换
-     *
-     * @param fieldValue 值
-     * @param type       类型
-     * @return {@link byte[]}
-     */
-    private byte[] convert(Object fieldValue, String type) {
-        if ("java.lang.String".equals(type)) {
-            return Bytes.toBytes((String) fieldValue);
-        } else if ("java.lang.Integer".equals(type) || "int".equals(type)) {
-            return Bytes.toBytes((Integer) fieldValue);
-        } else if ("java.lang.Boolean".equals(type)) {
-            return Bytes.toBytes((Boolean) fieldValue);
-        } else if ("byte[]".equals(type)) {
-            return (byte[]) fieldValue;
-        } else if ("java.sql.Timestamp".equals(type) || "java.util.Date".equals(type)) {
-            return Bytes.toBytes((String) fieldValue);
-        } else if ("java.lang.Long".equals(type) || "long".equals(type)) {
-            return Bytes.toBytes((Long) fieldValue);
-        } else if ("java.lang.Float".equals(type) || "float".equals(type)) {
-            return Bytes.toBytes((Float) fieldValue);
-        } else if ("java.math.BigDecimal".equals(type)) {
-            return Bytes.toBytes((BigDecimal) fieldValue);
-        } else {
-            log.info("file value type: {}, value: {}", type, fieldValue);
-            return Bytes.toBytes((String) fieldValue);
-        }
     }
 }
