@@ -65,7 +65,7 @@ public class DefaultSessionManager implements SessionManager {
     @Override
     public void add(String identity, SessionMessage message) {
         // 持久化
-        hbaseTemplate.saveOrUpdates(SessionMessage.TABLE_NAME, message, new SessionMessageRowMapper());
+        hbaseTemplate.saveOrUpdate(SessionMessage.TABLE_NAME, message, new SessionMessageRowMapper());
         // 发布订阅消息
         ActorRef publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
         SessionEvent event = new SessionEvent(this, IdUtil.idGen());

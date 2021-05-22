@@ -48,12 +48,12 @@
             <groupId>ch.qos.logback</groupId>
         </dependency>
         <dependency>
-            <artifactId>spring-core</artifactId>
-            <groupId>org.springframework</groupId>
-        </dependency>
-        <dependency>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <groupId>com.fasterxml.jackson.datatype</groupId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
         </dependency>
     </dependencies>
 </project>

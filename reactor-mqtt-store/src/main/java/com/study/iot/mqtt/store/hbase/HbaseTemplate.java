@@ -129,26 +129,24 @@ public class HbaseTemplate implements HbaseOperations {
     }
 
     @Override
-    public void saveOrUpdate(String tableName, final Mutation mutation) {
-        this.execute(tableName, mutator -> {
-            mutator.mutate(mutation);
-        });
-    }
-
-    @Override
-    public void saveOrUpdates(String tableName, final List<Mutation> mutations) {
-        this.execute(tableName, mutator -> {
-            mutator.mutate(mutations);
-        });
-    }
-
-    @Override
-    public <T> void saveOrUpdates(String tableName, T value, RowMapper<T> mapper) {
+    public <T> void saveOrUpdate(String tableName, T value, RowMapper<T> mapper) {
         try {
-            this.saveOrUpdates(tableName, mapper.mapObject(value));
+            this.saveOrUpdate(tableName, mapper.mutations(value));
         } catch (Exception e) {
             log.error("error: {}", e.getMessage());
             throw new HbaseSystemException(e);
         }
+    }
+
+    /**
+     * 保存对象
+     *
+     * @param tableName 表名
+     * @param mutations {@link Mutation}
+     */
+    private void saveOrUpdate(String tableName, final List<Mutation> mutations) {
+        this.execute(tableName, mutator -> {
+            mutator.mutate(mutations);
+        });
     }
 }

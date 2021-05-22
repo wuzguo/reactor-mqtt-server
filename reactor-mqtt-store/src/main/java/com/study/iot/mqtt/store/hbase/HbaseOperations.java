@@ -108,21 +108,13 @@ public interface HbaseOperations {
      */
     void execute(@NotBlank String tableName, @NotNull MutatorCallback action);
 
-    /**
-     * @param tableName target table
-     * @param mutation  {@link Mutation}
-     */
-    void saveOrUpdate(String tableName, Mutation mutation);
 
     /**
-     * @param tableName target table
-     * @param mutations {@link Mutation}
+     * 保存对象
+     * @param tableName 表名
+     * @param object 对象
+     * @param mapper Mapper {@link RowMapper}
+     * @param <T> 对象类型
      */
-    void saveOrUpdates(String tableName, List<Mutation> mutations);
-
-    /**
-     * @param tableName target table
-     * @param mapper    {@link RowMapper}
-     */
-    <T> void saveOrUpdates(String tableName, T value, final RowMapper<T> mapper);
+    <T> void saveOrUpdate(String tableName, T object, final RowMapper<T> mapper);
 }

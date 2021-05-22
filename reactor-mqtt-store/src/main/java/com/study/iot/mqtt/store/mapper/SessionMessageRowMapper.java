@@ -95,7 +95,7 @@ public class SessionMessageRowMapper implements RowMapper<SessionMessage> {
     }
 
     @Override
-    public List<Mutation> mapObject(SessionMessage value) throws Exception {
+    public List<Mutation> mutations(SessionMessage value) throws Exception {
         // 持久化
         List<Mutation> mutations = Lists.newArrayList();
         // rowKey

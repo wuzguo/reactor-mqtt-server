@@ -32,5 +32,5 @@ public interface RowMapper<T> {
      * @return {@link Mutation}
      * @throws Exception
      */
-    List<Mutation> mapObject(T value) throws Exception;
+    List<Mutation> mutations(T value) throws Exception;
 }

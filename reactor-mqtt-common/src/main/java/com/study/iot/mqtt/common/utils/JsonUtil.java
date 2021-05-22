@@ -32,28 +32,28 @@ public class JsonUtil {
 
     public static final ObjectMapper MAPPER = newObjectMapper();
 
-    public static ObjectMapper init(ObjectMapper MAPPER) {
-        MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-        MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-        MAPPER.setSerializationInclusion(Include.NON_NULL);
+    public static ObjectMapper init(ObjectMapper mapper) {
+        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        mapper.setSerializationInclusion(Include.NON_NULL);
         // 不知道的属性，不异常
-        MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        MAPPER.setDateFormat(new SimpleDateFormat(DateUtil.PATTERN_TIME_ZONE));
-        MAPPER.setTimeZone(DateUtil.TIME_ZONE);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setDateFormat(new SimpleDateFormat(DateUtil.PATTERN_TIME_ZONE));
+        mapper.setTimeZone(DateUtil.TIME_ZONE);
 
         SimpleModule simpleModule = new SimpleModule("LongToStringModule");
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
         simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
         simpleModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
-        MAPPER.registerModule(simpleModule);
+        mapper.registerModule(simpleModule);
 
         JavaTimeModule timeModule = new JavaTimeModule();
         timeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateUtil.DATE_TIME_FORMATTER));
         timeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateUtil.DATE_TIME_FORMATTER));
-        MAPPER.registerModule(timeModule);
+        mapper.registerModule(timeModule);
 
-        MAPPER.findAndRegisterModules();
-        return MAPPER;
+        mapper.findAndRegisterModules();
+        return mapper;
     }
 
     private static ObjectMapper newObjectMapper() {
