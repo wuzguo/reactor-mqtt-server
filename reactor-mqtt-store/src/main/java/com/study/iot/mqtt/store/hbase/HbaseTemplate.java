@@ -33,7 +33,7 @@ public class HbaseTemplate implements HbaseOperations {
     public HbaseTemplate(@NotNull Configuration configuration) {
         try {
             ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(200, Integer.MAX_VALUE, 60L,
-                    TimeUnit.SECONDS, new SynchronousQueue<>(), Executors.defaultThreadFactory(),
+                TimeUnit.SECONDS, new SynchronousQueue<>(), DefaultThreadFactory.forName("Hbase"),
                     new ThreadPoolExecutor.AbortPolicy());
             // init pool
             poolExecutor.prestartCoreThread();
