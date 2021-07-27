@@ -16,10 +16,21 @@ public abstract class ProtocolTransport {
         this.protocol = protocol;
     }
 
-
+    /**
+     * 启动
+     *
+     * @param properties {@link ClientProperties}
+     * @param processor  {@link UnicastProcessor}
+     * @return {@link DisposableServer}
+     */
     public abstract Mono<? extends DisposableServer> start(ServerProperties properties,
         UnicastProcessor<DisposableConnection> processor);
 
-
-    public abstract Mono<DisposableConnection> connect(ClientProperties configuration);
+    /**
+     * 连接信息
+     *
+     * @param properties {@link ClientProperties}
+     * @return {@link DisposableConnection}
+     */
+    public abstract Mono<DisposableConnection> connect(ClientProperties properties);
 }

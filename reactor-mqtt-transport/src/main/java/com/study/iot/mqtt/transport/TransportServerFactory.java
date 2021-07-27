@@ -1,14 +1,15 @@
 package com.study.iot.mqtt.transport;
 
 
-import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.protocol.ProtocolFactory;
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ServerSession;
+import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.transport.connection.ServerConnection;
 import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
@@ -31,9 +32,8 @@ public class TransportServerFactory {
         // 获取DisposableServer
         List<Disposable> disposables = properties.getProtocols().stream()
             .map(protocolType -> protocolFactory.getProtocol(protocolType)
-                .get()
-                .getTransport()
-                .start(properties, unicastProcessor).subscribe()).collect(Collectors.toList());
+                .map(protocol -> protocol.getTransport().start(properties, unicastProcessor).subscribe())
+                .orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
         // 返回
         return Mono.just(this.wrapper(disposables, containerManager, messageRouter))
             .doOnError(properties.getThrowable());
