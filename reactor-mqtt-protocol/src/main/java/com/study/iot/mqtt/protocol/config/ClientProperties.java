@@ -25,7 +25,7 @@ public class ClientProperties extends ConnectProperties {
     /**
      * 心跳
      */
-    private Integer keepAliveSeconds = 60;
+    private Integer keepAliveSeconds;
 
     /**
      * 配置项目
