@@ -32,7 +32,7 @@ import org.springframework.util.Assert;
  */
 
 @UtilityClass
-public class DateUtil {
+public class DateUtils {
 
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone(ZoneOffset.UTC);
     public static final ZoneId ZONE_ID = ZoneOffset.UTC;
@@ -46,7 +46,7 @@ public class DateUtil {
      * @return LocalDate
      */
     public static LocalDate parseDateLocal(String dateStr) {
-        if (StringUtil.isBlank(dateStr)) {
+        if (StringUtils.isBlank(dateStr)) {
             return null;
         }
         return LocalDate.parse(dateStr, DATE_TIME_FORMATTER);
@@ -92,7 +92,7 @@ public class DateUtil {
     }
 
     public static Date parse(String dateStr, String pattern, TimeZone TIME_ZONE, Locale locale) {
-        if (StringUtil.isBlank(dateStr)) {
+        if (StringUtils.isBlank(dateStr)) {
             return null;
         }
         FastDateFormat df = FastDateFormat.getInstance(pattern, TIME_ZONE, locale);
@@ -124,7 +124,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date plusYears(Date date, int yearsToAdd) {
-        return DateUtil.set(date, Calendar.YEAR, yearsToAdd);
+        return DateUtils.set(date, Calendar.YEAR, yearsToAdd);
     }
 
     /**
@@ -135,7 +135,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date plusMonths(Date date, int monthsToAdd) {
-        return DateUtil.set(date, Calendar.MONTH, monthsToAdd);
+        return DateUtils.set(date, Calendar.MONTH, monthsToAdd);
     }
 
     /**
@@ -146,7 +146,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date plusWeeks(Date date, int weeksToAdd) {
-        return DateUtil.plus(date, Period.ofWeeks(weeksToAdd));
+        return DateUtils.plus(date, Period.ofWeeks(weeksToAdd));
     }
 
     /**
@@ -157,7 +157,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date plusDays(Date date, long daysToAdd) {
-        return DateUtil.plus(date, Duration.ofDays(daysToAdd));
+        return DateUtils.plus(date, Duration.ofDays(daysToAdd));
     }
 
     /**
@@ -168,7 +168,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date plusHours(Date date, long hoursToAdd) {
-        return DateUtil.plus(date, Duration.ofHours(hoursToAdd));
+        return DateUtils.plus(date, Duration.ofHours(hoursToAdd));
     }
 
     /**
@@ -179,7 +179,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date plusMinutes(Date date, long minutesToAdd) {
-        return DateUtil.plus(date, Duration.ofMinutes(minutesToAdd));
+        return DateUtils.plus(date, Duration.ofMinutes(minutesToAdd));
     }
 
     /**
@@ -190,7 +190,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date plusSeconds(Date date, long secondsToAdd) {
-        return DateUtil.plus(date, Duration.ofSeconds(secondsToAdd));
+        return DateUtils.plus(date, Duration.ofSeconds(secondsToAdd));
     }
 
     /**
@@ -201,7 +201,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date plusMillis(Date date, long millisToAdd) {
-        return DateUtil.plus(date, Duration.ofMillis(millisToAdd));
+        return DateUtils.plus(date, Duration.ofMillis(millisToAdd));
     }
 
     /**
@@ -212,7 +212,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date plusNanos(Date date, long nanosToAdd) {
-        return DateUtil.plus(date, Duration.ofNanos(nanosToAdd));
+        return DateUtils.plus(date, Duration.ofNanos(nanosToAdd));
     }
 
     /**
@@ -235,7 +235,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date minusYears(Date date, int years) {
-        return DateUtil.set(date, Calendar.YEAR, -years);
+        return DateUtils.set(date, Calendar.YEAR, -years);
     }
 
     /**
@@ -246,7 +246,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date minusMonths(Date date, int months) {
-        return DateUtil.set(date, Calendar.MONTH, -months);
+        return DateUtils.set(date, Calendar.MONTH, -months);
     }
 
     /**
@@ -257,7 +257,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date minusWeeks(Date date, int weeks) {
-        return DateUtil.minus(date, Period.ofWeeks(weeks));
+        return DateUtils.minus(date, Period.ofWeeks(weeks));
     }
 
     /**
@@ -268,7 +268,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date minusDays(Date date, long days) {
-        return DateUtil.minus(date, Duration.ofDays(days));
+        return DateUtils.minus(date, Duration.ofDays(days));
     }
 
     /**
@@ -279,7 +279,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date minusHours(Date date, long hours) {
-        return DateUtil.minus(date, Duration.ofHours(hours));
+        return DateUtils.minus(date, Duration.ofHours(hours));
     }
 
     /**
@@ -290,7 +290,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date minusMinutes(Date date, long minutes) {
-        return DateUtil.minus(date, Duration.ofMinutes(minutes));
+        return DateUtils.minus(date, Duration.ofMinutes(minutes));
     }
 
     /**
@@ -301,7 +301,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date minusSeconds(Date date, long seconds) {
-        return DateUtil.minus(date, Duration.ofSeconds(seconds));
+        return DateUtils.minus(date, Duration.ofSeconds(seconds));
     }
 
     /**
@@ -312,7 +312,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date minusMillis(Date date, long millis) {
-        return DateUtil.minus(date, Duration.ofMillis(millis));
+        return DateUtils.minus(date, Duration.ofMillis(millis));
     }
 
     /**
@@ -323,7 +323,7 @@ public class DateUtil {
      * @return 设置后的时间
      */
     public static Date minusNanos(Date date, long nanos) {
-        return DateUtil.minus(date, Duration.ofNanos(nanos));
+        return DateUtils.minus(date, Duration.ofNanos(nanos));
     }
 
     /**
@@ -382,7 +382,7 @@ public class DateUtil {
      * @return Date
      */
     public static Date toDate(LocalDateTime dateTime) {
-        return Date.from(DateUtil.toInstant(dateTime));
+        return Date.from(DateUtils.toInstant(dateTime));
     }
 
     /**

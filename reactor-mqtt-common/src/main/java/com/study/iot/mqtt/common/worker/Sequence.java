@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.common.worker;
 
-import com.study.iot.mqtt.common.utils.StringPool;
-import com.study.iot.mqtt.common.utils.StringUtil;
+import com.study.iot.mqtt.common.utils.StringPools;
+import com.study.iot.mqtt.common.utils.StringUtils;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -84,9 +84,9 @@ public class Sequence {
         StringBuilder mpid = new StringBuilder();
         mpid.append(datacenterId);
         String name = ManagementFactory.getRuntimeMXBean().getName();
-        if (StringUtil.isNoneBlank(name)) {
+        if (StringUtils.isNoneBlank(name)) {
             // GET jvmPid
-            mpid.append(name.split(StringPool.AT)[0]);
+            mpid.append(name.split(StringPools.AT)[0]);
         }
 
         // MAC + PID 的 hashcode 获取16个低位

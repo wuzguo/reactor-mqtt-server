@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.common.exception;
 
 
-import com.study.iot.mqtt.common.utils.StringUtil;
+import com.study.iot.mqtt.common.utils.StringUtils;
 
 /**
  * <B>说明：描述</B>
@@ -32,6 +32,6 @@ public class FrameworkException extends RuntimeException {
     }
 
     public FrameworkException(Throwable cause, String message, Object... args) {
-        super(StringUtil.format(message, args), cause);
+        super(StringUtils.format(message, args), cause);
     }
 }

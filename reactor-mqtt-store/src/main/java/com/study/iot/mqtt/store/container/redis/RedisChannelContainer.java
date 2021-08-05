@@ -7,7 +7,7 @@ import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
-import com.study.iot.mqtt.common.utils.ObjectUtil;
+import com.study.iot.mqtt.common.utils.ObjectUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.Disposable;
@@ -61,6 +61,6 @@ public class RedisChannelContainer implements StorageContainer<Disposable> {
 
     @Override
     public Boolean containsKey(String identity) {
-        return ObjectUtil.isNull(redisTemplate.hget(CacheGroup.CHANNEL, identity, Disposable.class));
+        return ObjectUtils.isNull(redisTemplate.hget(CacheGroup.CHANNEL, identity, Disposable.class));
     }
 }

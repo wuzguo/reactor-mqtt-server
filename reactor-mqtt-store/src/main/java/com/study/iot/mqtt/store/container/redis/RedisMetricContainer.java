@@ -5,7 +5,7 @@ import com.study.iot.mqtt.store.container.MetricContainer;
 import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
-import com.study.iot.mqtt.common.utils.ObjectUtil;
+import com.study.iot.mqtt.common.utils.ObjectUtils;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ public class RedisMetricContainer implements MetricContainer {
 
     @Override
     public Mono<Boolean> containsKey(String key) {
-        return Mono.just(ObjectUtil.isNull(redisTemplate.hget(CacheGroup.METRIC, key, LongAdder.class)));
+        return Mono.just(ObjectUtils.isNull(redisTemplate.hget(CacheGroup.METRIC, key, LongAdder.class)));
     }
 
     @Override

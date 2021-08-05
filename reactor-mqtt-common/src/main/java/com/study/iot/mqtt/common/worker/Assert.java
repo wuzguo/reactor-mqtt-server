@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.common.worker;
 
 import com.study.iot.mqtt.common.exception.FrameworkException;
-import com.study.iot.mqtt.common.utils.CollectionUtil;
-import com.study.iot.mqtt.common.utils.StringUtil;
+import com.study.iot.mqtt.common.utils.CollectionUtils;
+import com.study.iot.mqtt.common.utils.StringUtils;
 import java.util.Collection;
 import java.util.Map;
 
@@ -26,7 +26,7 @@ public final class Assert {
      */
     public static void isTrue(boolean expression, String message, Object... params) {
         if (!expression) {
-            throw new FrameworkException(StringUtil.format(message, params));
+            throw new FrameworkException(StringUtils.format(message, params));
         }
     }
 
@@ -71,7 +71,7 @@ public final class Assert {
      * @param message 消息
      */
     public static void notEmpty(String value, String message, Object... params) {
-        isTrue(StringUtil.isNotBlank(value), message, params);
+        isTrue(StringUtils.isNotBlank(value), message, params);
     }
 
     /**
@@ -82,7 +82,7 @@ public final class Assert {
      * @param message    消息
      */
     public static void notEmpty(Collection<?> collection, String message, Object... params) {
-        isTrue(CollectionUtil.isNotEmpty(collection), message, params);
+        isTrue(CollectionUtils.isNotEmpty(collection), message, params);
     }
 
     /**
@@ -93,7 +93,7 @@ public final class Assert {
      * @param message 消息
      */
     public static void notEmpty(Map<?, ?> map, String message, Object... params) {
-        isTrue(CollectionUtil.isNotEmpty(map), message, params);
+        isTrue(CollectionUtils.isNotEmpty(map), message, params);
     }
 
     /**
@@ -104,6 +104,6 @@ public final class Assert {
      * @param message 消息
      */
     public static void notEmpty(Object[] array, String message, Object... params) {
-        isTrue(!CollectionUtil.isEmpty(array), message, params);
+        isTrue(!CollectionUtils.isEmpty(array), message, params);
     }
 }

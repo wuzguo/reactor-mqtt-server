@@ -24,7 +24,7 @@ import org.springframework.lang.Nullable;
  */
 
 @UtilityClass
-public class CollectionUtil extends org.springframework.util.CollectionUtils {
+public class CollectionUtils extends org.springframework.util.CollectionUtils {
 
     public static <T> boolean isEmpty(T[] array) {
         return array == null || array.length == 0;
@@ -37,7 +37,7 @@ public class CollectionUtil extends org.springframework.util.CollectionUtils {
      * @return whether the given Collection is not empty
      */
     public static boolean isNotEmpty(@Nullable Collection<?> collection) {
-        return !CollectionUtil.isEmpty(collection);
+        return !CollectionUtils.isEmpty(collection);
     }
 
     /**
@@ -47,7 +47,7 @@ public class CollectionUtil extends org.springframework.util.CollectionUtils {
      * @return whether the given Map is not empty
      */
     public static boolean isNotEmpty(@Nullable Map<?, ?> map) {
-        return !CollectionUtil.isEmpty(map);
+        return !CollectionUtils.isEmpty(map);
     }
 
     /**
@@ -62,7 +62,7 @@ public class CollectionUtil extends org.springframework.util.CollectionUtils {
         if (array == null) {
             return false;
         }
-        return Arrays.stream(array).anyMatch(x -> ObjectUtil.nullSafeEquals(x, element));
+        return Arrays.stream(array).anyMatch(x -> ObjectUtils.nullSafeEquals(x, element));
     }
 
     /**

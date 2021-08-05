@@ -2,8 +2,8 @@ package com.study.iot.mqtt.client.connection;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.client.router.ClientMessageRouter;
-import com.study.iot.mqtt.common.utils.CollectionUtil;
-import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.common.utils.CollectionUtils;
+import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.config.ClientProperties;
@@ -98,8 +98,8 @@ public class ClientConnection implements ClientSession {
             .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE))
             .collect(Collectors.toList());
         // 如果连接的Topic不为空就发送消息
-        if (CollectionUtil.isNotEmpty(topicSubscriptions)) {
-            int messageId = IdUtil.messageId();
+        if (CollectionUtils.isNotEmpty(topicSubscriptions)) {
+            int messageId = IdUtils.messageId();
             MqttSubscribeMessage mqttMessage = MessageBuilder.buildSub(messageId, topicSubscriptions);
             disposableConnection.sendMessageRetry(messageId, mqttMessage);
         }
@@ -113,7 +113,7 @@ public class ClientConnection implements ClientSession {
                     MessageBuilder.buildPub(false, MqttQoS.AT_MOST_ONCE, retained, 1, topic, message));
             case EXACTLY_ONCE:
             case AT_LEAST_ONCE:
-                int messageId = IdUtil.messageId();
+                int messageId = IdUtils.messageId();
                 return disposableConnection.sendMessageRetry(messageId,
                     MessageBuilder.buildPub(false, mqttQoS, retained, messageId, topic, message));
             default:
@@ -143,7 +143,7 @@ public class ClientConnection implements ClientSession {
             .map(topicFilter -> new MqttTopicSubscription(topicFilter, MqttQoS.AT_MOST_ONCE))
             .collect(Collectors.toList());
         // retry
-        int messageId = IdUtil.messageId();
+        int messageId = IdUtils.messageId();
         return disposableConnection.sendMessageRetry(messageId, MessageBuilder.buildSub(messageId, topicSubscriptions));
     }
 
@@ -161,7 +161,7 @@ public class ClientConnection implements ClientSession {
     private Mono<Void> unSubscribe(List<String> topicNames) {
         this.topics.removeAll(topicNames);
         // retry
-        int messageId = IdUtil.messageId();
+        int messageId = IdUtils.messageId();
         return disposableConnection.sendMessageRetry(messageId, MessageBuilder.buildUnSub(messageId, topicNames));
     }
 

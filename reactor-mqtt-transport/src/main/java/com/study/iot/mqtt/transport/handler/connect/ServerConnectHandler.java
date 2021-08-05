@@ -3,7 +3,7 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 import com.study.iot.mqtt.auth.service.ConnectAuthentication;
 import com.study.iot.mqtt.common.message.WillMessage;
-import com.study.iot.mqtt.common.utils.StringUtil;
+import com.study.iot.mqtt.common.utils.StringUtils;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -101,7 +101,7 @@ public class ServerConnectHandler implements StrategyCapable {
         String key = mqttPayload.userName();
         String secret = mqttPayload.passwordInBytes() == null ?
             null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
-        if (StringUtil.isAnyBlank(key, secret)) {
+        if (StringUtils.isAnyBlank(key, secret)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
             connection.sendMessage(connAckMessage).subscribe();

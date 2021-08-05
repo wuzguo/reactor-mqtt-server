@@ -8,7 +8,7 @@ package com.study.iot.mqtt.common.utils;
  * @date 2021/5/7 9:29
  */
 
-public interface CharPool {
+public interface CharPools {
 
     char UPPER_A = 'A';
     char LOWER_A = 'a';

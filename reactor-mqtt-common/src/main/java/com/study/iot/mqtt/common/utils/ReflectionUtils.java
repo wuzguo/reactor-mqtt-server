@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * @date 2021/5/20 8:47
  */
 
-public class ReflectionUtil {
+public class ReflectionUtils {
 
     /**
      * 循环向上转型, 获取对象的 DeclaredMethod

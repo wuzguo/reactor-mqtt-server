@@ -2,7 +2,7 @@ package com.study.iot.mqtt.transport.listener;
 
 import com.study.iot.mqtt.akka.event.SessionEvent;
 import com.study.iot.mqtt.common.domain.SessionMessage;
-import com.study.iot.mqtt.common.utils.ObjectUtil;
+import com.study.iot.mqtt.common.utils.ObjectUtils;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
@@ -51,7 +51,7 @@ public class SessionEventListener {
                     DisposableConnection disposableConnection = (DisposableConnection) containerManager
                             .take(CacheGroup.CHANNEL).get(String.valueOf(identity));
                     // 如果有连接就执行下面的逻辑
-                    if (!ObjectUtil.isNull(disposableConnection)) {
+                    if (!ObjectUtils.isNull(disposableConnection)) {
                         // 获取消息体
                         SessionMessage sessionMessage = hbaseTemplate.get(SessionMessage.TABLE_NAME,
                                 event.getRow(), new SessionMessageMapper());

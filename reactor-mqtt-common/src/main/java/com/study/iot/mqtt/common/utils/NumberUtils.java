@@ -14,7 +14,7 @@ import org.springframework.util.NumberUtils;
  */
 
 @UtilityClass
-public class NumberUtil extends NumberUtils {
+public class NumberUtils extends org.springframework.util.NumberUtils {
 
     /**
      * All possible bytes for representing a number as a String

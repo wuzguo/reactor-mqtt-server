@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.auth.service;
 
-import com.study.iot.mqtt.common.utils.DigestUtil;
+import com.study.iot.mqtt.common.utils.DigestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
 import reactor.core.publisher.Mono;
@@ -19,7 +19,7 @@ public class DefaultConnectAuthentication implements ConnectAuthentication {
     @Override
     public Mono<Boolean> authenticate(String key, String secret) {
         log.info("mqtt server auth, key: {}, secret: {}", key, secret);
-        String md5Key = DigestUtil.md5Hex(key);
+        String md5Key = DigestUtils.md5Hex(key);
         return Mono.just(StringUtils.equals(md5Key, secret));
     }
 }

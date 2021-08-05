@@ -9,7 +9,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.experimental.UtilityClass;
 import org.springframework.lang.Nullable;
-import org.springframework.util.DigestUtils;
 
 /**
  * <B>说明：描述</B>
@@ -21,7 +20,7 @@ import org.springframework.util.DigestUtils;
 
 
 @UtilityClass
-public class DigestUtil extends DigestUtils {
+public class DigestUtils extends org.springframework.util.DigestUtils {
 
     private static final char[] HEX_CODE = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
         'f'};
@@ -33,7 +32,7 @@ public class DigestUtil extends DigestUtils {
      * @return MD5 digest as a hex string
      */
     public static String md5Hex(final String data) {
-        return DigestUtils.md5DigestAsHex(data.getBytes(Charsets.UTF_8));
+        return org.springframework.util.DigestUtils.md5DigestAsHex(data.getBytes(Charsets.UTF_8));
     }
 
     /**
@@ -43,7 +42,7 @@ public class DigestUtil extends DigestUtils {
      * @return a hexadecimal digest string
      */
     public static String md5Hex(final byte[] bytes) {
-        return DigestUtils.md5DigestAsHex(bytes);
+        return org.springframework.util.DigestUtils.md5DigestAsHex(bytes);
     }
 
     /**
@@ -53,7 +52,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha1Hex(String data) {
-        return DigestUtil.sha1Hex(data.getBytes(Charsets.UTF_8));
+        return DigestUtils.sha1Hex(data.getBytes(Charsets.UTF_8));
     }
 
     /**
@@ -63,7 +62,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha1Hex(final byte[] bytes) {
-        return DigestUtil.digestHex("SHA-1", bytes);
+        return DigestUtils.digestHex("SHA-1", bytes);
     }
 
     /**
@@ -73,7 +72,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha224Hex(String data) {
-        return DigestUtil.sha224Hex(data.getBytes(Charsets.UTF_8));
+        return DigestUtils.sha224Hex(data.getBytes(Charsets.UTF_8));
     }
 
     /**
@@ -83,7 +82,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha224Hex(final byte[] bytes) {
-        return DigestUtil.digestHex("SHA-224", bytes);
+        return DigestUtils.digestHex("SHA-224", bytes);
     }
 
     /**
@@ -93,7 +92,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha256Hex(String data) {
-        return DigestUtil.sha256Hex(data.getBytes(Charsets.UTF_8));
+        return DigestUtils.sha256Hex(data.getBytes(Charsets.UTF_8));
     }
 
     /**
@@ -103,7 +102,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha256Hex(final byte[] bytes) {
-        return DigestUtil.digestHex("SHA-256", bytes);
+        return DigestUtils.digestHex("SHA-256", bytes);
     }
 
     /**
@@ -113,7 +112,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha384Hex(String data) {
-        return DigestUtil.sha384Hex(data.getBytes(Charsets.UTF_8));
+        return DigestUtils.sha384Hex(data.getBytes(Charsets.UTF_8));
     }
 
     /**
@@ -123,7 +122,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha384Hex(final byte[] bytes) {
-        return DigestUtil.digestHex("SHA-384", bytes);
+        return DigestUtils.digestHex("SHA-384", bytes);
     }
 
     /**
@@ -133,7 +132,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha512Hex(String data) {
-        return DigestUtil.sha512Hex(data.getBytes(Charsets.UTF_8));
+        return DigestUtils.sha512Hex(data.getBytes(Charsets.UTF_8));
     }
 
     /**
@@ -143,7 +142,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String sha512Hex(final byte[] bytes) {
-        return DigestUtil.digestHex("SHA-512", bytes);
+        return DigestUtils.digestHex("SHA-512", bytes);
     }
 
     /**
@@ -170,7 +169,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacMd5Hex(String data, String key) {
-        return DigestUtil.hmacMd5Hex(data.getBytes(Charsets.UTF_8), key);
+        return DigestUtils.hmacMd5Hex(data.getBytes(Charsets.UTF_8), key);
     }
 
     /**
@@ -181,7 +180,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacMd5Hex(final byte[] bytes, String key) {
-        return DigestUtil.digestHMacHex("HmacMD5", bytes, key);
+        return DigestUtils.digestHMacHex("HmacMD5", bytes, key);
     }
 
     /**
@@ -192,7 +191,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha1Hex(String data, String key) {
-        return DigestUtil.hmacSha1Hex(data.getBytes(Charsets.UTF_8), key);
+        return DigestUtils.hmacSha1Hex(data.getBytes(Charsets.UTF_8), key);
     }
 
     /**
@@ -203,7 +202,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha1Hex(final byte[] bytes, String key) {
-        return DigestUtil.digestHMacHex("HmacSHA1", bytes, key);
+        return DigestUtils.digestHMacHex("HmacSHA1", bytes, key);
     }
 
     /**
@@ -214,7 +213,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha224Hex(String data, String key) {
-        return DigestUtil.hmacSha224Hex(data.getBytes(Charsets.UTF_8), key);
+        return DigestUtils.hmacSha224Hex(data.getBytes(Charsets.UTF_8), key);
     }
 
     /**
@@ -225,7 +224,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha224Hex(final byte[] bytes, String key) {
-        return DigestUtil.digestHMacHex("HmacSHA224", bytes, key);
+        return DigestUtils.digestHMacHex("HmacSHA224", bytes, key);
     }
 
     /**
@@ -236,7 +235,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha256Hex(String data, String key) {
-        return DigestUtil.hmacSha256Hex(data.getBytes(Charsets.UTF_8), key);
+        return DigestUtils.hmacSha256Hex(data.getBytes(Charsets.UTF_8), key);
     }
 
     /**
@@ -247,7 +246,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha256Hex(final byte[] bytes, String key) {
-        return DigestUtil.digestHMacHex("HmacSHA256", bytes, key);
+        return DigestUtils.digestHMacHex("HmacSHA256", bytes, key);
     }
 
     /**
@@ -258,7 +257,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha384Hex(String data, String key) {
-        return DigestUtil.hmacSha384Hex(data.getBytes(Charsets.UTF_8), key);
+        return DigestUtils.hmacSha384Hex(data.getBytes(Charsets.UTF_8), key);
     }
 
     /**
@@ -269,7 +268,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha384Hex(final byte[] bytes, String key) {
-        return DigestUtil.digestHMacHex("HmacSHA384", bytes, key);
+        return DigestUtils.digestHMacHex("HmacSHA384", bytes, key);
     }
 
     /**
@@ -280,7 +279,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha512Hex(String data, String key) {
-        return DigestUtil.hmacSha512Hex(data.getBytes(Charsets.UTF_8), key);
+        return DigestUtils.hmacSha512Hex(data.getBytes(Charsets.UTF_8), key);
     }
 
     /**
@@ -291,7 +290,7 @@ public class DigestUtil extends DigestUtils {
      * @return digest as a hex string
      */
     public static String hmacSha512Hex(final byte[] bytes, String key) {
-        return DigestUtil.digestHMacHex("HmacSHA512", bytes, key);
+        return DigestUtils.digestHMacHex("HmacSHA512", bytes, key);
     }
 
     /**
@@ -306,7 +305,7 @@ public class DigestUtil extends DigestUtils {
         try {
             Mac mac = Mac.getInstance(secretKey.getAlgorithm());
             mac.init(secretKey);
-            return DigestUtil.encodeHex(mac.doFinal(bytes));
+            return DigestUtils.encodeHex(mac.doFinal(bytes));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new IllegalArgumentException(e);
         }
@@ -338,7 +337,7 @@ public class DigestUtil extends DigestUtils {
         if (a == null || b == null) {
             return false;
         }
-        return DigestUtil.slowEquals(a.getBytes(Charsets.UTF_8), b.getBytes(Charsets.UTF_8));
+        return DigestUtils.slowEquals(a.getBytes(Charsets.UTF_8), b.getBytes(Charsets.UTF_8));
     }
 
     /**

@@ -28,7 +28,7 @@ import lombok.experimental.UtilityClass;
 import org.springframework.lang.Nullable;
 
 @UtilityClass
-public class JsonUtil {
+public class JsonUtils {
 
     public static final ObjectMapper MAPPER = newObjectMapper();
 
@@ -38,8 +38,8 @@ public class JsonUtil {
         mapper.setSerializationInclusion(Include.NON_NULL);
         // 不知道的属性，不异常
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.setDateFormat(new SimpleDateFormat(DateUtil.PATTERN_TIME_ZONE));
-        mapper.setTimeZone(DateUtil.TIME_ZONE);
+        mapper.setDateFormat(new SimpleDateFormat(DateUtils.PATTERN_TIME_ZONE));
+        mapper.setTimeZone(DateUtils.TIME_ZONE);
 
         SimpleModule simpleModule = new SimpleModule("LongToStringModule");
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
@@ -48,8 +48,8 @@ public class JsonUtil {
         mapper.registerModule(simpleModule);
 
         JavaTimeModule timeModule = new JavaTimeModule();
-        timeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateUtil.DATE_TIME_FORMATTER));
-        timeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateUtil.DATE_TIME_FORMATTER));
+        timeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateUtils.DATE_TIME_FORMATTER));
+        timeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateUtils.DATE_TIME_FORMATTER));
         mapper.registerModule(timeModule);
 
         mapper.findAndRegisterModules();
@@ -153,7 +153,7 @@ public class JsonUtil {
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> toMap(String value) {
-        if (StringUtil.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             return new HashMap<>();
         }
         try {
@@ -247,7 +247,7 @@ public class JsonUtil {
      * @since 0.1.0
      */
     public static <T> T readValue(String content, Class<T> type) {
-        if (StringUtil.isBlank(content)) {
+        if (StringUtils.isBlank(content)) {
             return null;
         }
         try {
@@ -266,7 +266,7 @@ public class JsonUtil {
      * @since 0.1.0
      */
     public static <T> T readValue(String content, JavaType type) {
-        if (StringUtil.isBlank(content)) {
+        if (StringUtils.isBlank(content)) {
             return null;
         }
         try {
@@ -287,7 +287,7 @@ public class JsonUtil {
      */
     public static <T> T readValue(String json, Class<?> parametrized, Class<?> parametersFor,
         Class<?>... parameterClasses) {
-        if (StringUtil.isBlank(json)) {
+        if (StringUtils.isBlank(json)) {
             return null;
         }
 
@@ -318,7 +318,7 @@ public class JsonUtil {
 
     @SuppressWarnings("rawtypes")
     public static <T> T readMap(String content, Class<? extends Map> mapClass, Class<?> keyClass, Class<?> valueClass) {
-        if (StringUtil.isBlank(content)) {
+        if (StringUtils.isBlank(content)) {
             return null;
         }
         try {
@@ -341,7 +341,7 @@ public class JsonUtil {
     }
 
     public static <T> List<T> readList(String content, Class<?> collectionClass, Class<T> elementClass) {
-        if (StringUtil.isBlank(content)) {
+        if (StringUtils.isBlank(content)) {
             return null;
         }
         try {

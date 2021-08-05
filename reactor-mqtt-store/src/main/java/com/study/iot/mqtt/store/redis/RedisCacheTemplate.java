@@ -2,10 +2,10 @@ package com.study.iot.mqtt.store.redis;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.study.iot.mqtt.common.utils.CollectionUtil;
-import com.study.iot.mqtt.common.utils.JsonUtil;
-import com.study.iot.mqtt.common.utils.ObjectUtil;
-import com.study.iot.mqtt.common.utils.StringUtil;
+import com.study.iot.mqtt.common.utils.CollectionUtils;
+import com.study.iot.mqtt.common.utils.JsonUtils;
+import com.study.iot.mqtt.common.utils.ObjectUtils;
+import com.study.iot.mqtt.common.utils.StringUtils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -82,10 +82,10 @@ public class RedisCacheTemplate {
         // 获取Key
         String fullKey = cacheOpsTemplate.getFullKey(CacheConstant.ROOT, cacheKey);
         List<T> value = cacheOpsTemplate.getList(fullKey, clazz);
-        if (CollectionUtil.isEmpty(value)) {
+        if (CollectionUtils.isEmpty(value)) {
             value = loader.get();
-            if (CollectionUtil.isNotEmpty(value)) {
-                cacheOpsTemplate.setnx(fullKey, JsonUtil.toString(value));
+            if (CollectionUtils.isNotEmpty(value)) {
+                cacheOpsTemplate.setnx(fullKey, JsonUtils.toString(value));
                 // 30 分钟失效
                 cacheOpsTemplate.expire(fullKey, 60L * 30);
             }
@@ -272,12 +272,12 @@ public class RedisCacheTemplate {
     private <T> Map<String, List<T>> hmlist(String key, Class<T> clazz, Supplier<Map<String, List<T>>> loader,
         Function<String, List<T>> function, List<String> fields) {
         List<String> values = cacheOpsTemplate.opsForHash().multiGet(key, fields);
-        if (StringUtil.isAnyNotBlank(values)) {
+        if (StringUtils.isAnyNotBlank(values)) {
             Map<String, List<T>> result = Maps.newHashMap();
             for (int i = 0; i < fields.size(); ++i) {
                 String value = values.get(i);
-                if (StringUtil.isNotBlank(value)) {
-                    result.put(fields.get(i), JsonUtil.readList(value, clazz));
+                if (StringUtils.isNotBlank(value)) {
+                    result.put(fields.get(i), JsonUtils.readList(value, clazz));
                 } else {
                     List<T> res = function.apply(fields.get(i));
                     result.put(fields.get(i), res);
@@ -289,7 +289,7 @@ public class RedisCacheTemplate {
             return result;
         } else {
             Map<String, List<T>> result = loader.get();
-            if (CollectionUtil.isNotEmpty(result)) {
+            if (CollectionUtils.isNotEmpty(result)) {
                 cacheOpsTemplate.hmset(key, result);
                 cacheOpsTemplate.expire(key, 3600L * 24);
                 return result;
@@ -313,15 +313,15 @@ public class RedisCacheTemplate {
     private <T> List<T> hmget(String key, Class<T> clazz, Supplier<Map<String, T>> loader,
         Function<String, T> function, List<String> fields) {
         List<String> values = cacheOpsTemplate.opsForHash().multiGet(key, fields);
-        if (StringUtil.isAnyNotBlank(values)) {
+        if (StringUtils.isAnyNotBlank(values)) {
             List<T> result = Lists.newArrayList();
             for (int i = 0; i < fields.size(); ++i) {
                 String value = values.get(i);
-                if (StringUtil.isNotBlank(value)) {
-                    result.add(JsonUtil.readValue(value, clazz));
+                if (StringUtils.isNotBlank(value)) {
+                    result.add(JsonUtils.readValue(value, clazz));
                 } else {
                     T res = function.apply(fields.get(i));
-                    if (ObjectUtil.isNotNull(res)) {
+                    if (ObjectUtils.isNotNull(res)) {
                         result.add(res);
                         cacheOpsTemplate.hset(key, fields.get(i), res);
                         // 24小时过期
@@ -332,7 +332,7 @@ public class RedisCacheTemplate {
             return result;
         } else {
             Map<String, T> result = loader.get();
-            if (CollectionUtil.isNotEmpty(result)) {
+            if (CollectionUtils.isNotEmpty(result)) {
                 cacheOpsTemplate.hmset(key, result);
                 cacheOpsTemplate.expire(key, 3600L * 24);
                 return Lists.newArrayList(result.values());

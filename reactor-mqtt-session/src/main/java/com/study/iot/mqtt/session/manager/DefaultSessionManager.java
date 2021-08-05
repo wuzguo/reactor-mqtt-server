@@ -9,7 +9,7 @@ import com.study.iot.mqtt.akka.event.SessionEvent;
 import com.study.iot.mqtt.akka.spring.SpringProps;
 import com.study.iot.mqtt.common.domain.ConnectSession;
 import com.study.iot.mqtt.common.domain.SessionMessage;
-import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.session.config.InstanceUtil;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
@@ -68,7 +68,7 @@ public class DefaultSessionManager implements SessionManager {
         hbaseTemplate.saveOrUpdate(SessionMessage.TABLE_NAME, message, new SessionMessageMapper());
         // 发布订阅消息
         ActorRef publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
-        SessionEvent event = new SessionEvent(this, IdUtil.idGen());
+        SessionEvent event = new SessionEvent(this, IdUtils.idGen());
         event.setIdentity(identity);
         event.setTopic(message.getTopic());
         event.setInstanceId(instanceUtil.getInstanceId());

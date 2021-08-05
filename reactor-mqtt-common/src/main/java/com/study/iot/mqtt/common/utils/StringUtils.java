@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.Assert;
 import org.springframework.util.PatternMatchUtils;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -25,7 +24,7 @@ import org.springframework.util.StringUtils;
  */
 
 @UtilityClass
-public class StringUtil extends StringUtils {
+public class StringUtils extends org.springframework.util.StringUtils {
 
     /**
      * 随机字符串因子
@@ -42,9 +41,9 @@ public class StringUtil extends StringUtils {
      */
     public static String firstCharToLower(String str) {
         char firstChar = str.charAt(0);
-        if (firstChar >= CharPool.UPPER_A && firstChar <= CharPool.UPPER_Z) {
+        if (firstChar >= CharPools.UPPER_A && firstChar <= CharPools.UPPER_Z) {
             char[] arr = str.toCharArray();
-            arr[0] += (CharPool.LOWER_A - CharPool.UPPER_A);
+            arr[0] += (CharPools.LOWER_A - CharPools.UPPER_A);
             return new String(arr);
         }
         return str;
@@ -58,9 +57,9 @@ public class StringUtil extends StringUtils {
      */
     public static String firstCharToUpper(String str) {
         char firstChar = str.charAt(0);
-        if (firstChar >= CharPool.LOWER_A && firstChar <= CharPool.LOWER_Z) {
+        if (firstChar >= CharPools.LOWER_A && firstChar <= CharPools.LOWER_Z) {
             char[] arr = str.toCharArray();
-            arr[0] -= (CharPool.LOWER_A - CharPool.UPPER_A);
+            arr[0] -= (CharPools.LOWER_A - CharPools.UPPER_A);
             return new String(arr);
         }
         return str;
@@ -88,15 +87,15 @@ public class StringUtil extends StringUtils {
      * @return 转换好的字符串
      */
     public static String toUnderline(String stringWithCamelCase) {
-        if (StringUtil.isEmpty(stringWithCamelCase)) {
-            return StringPool.EMPTY;
+        if (StringUtils.isEmpty(stringWithCamelCase)) {
+            return StringPools.EMPTY;
         }
         int len = stringWithCamelCase.length();
         StringBuilder sb = new StringBuilder(len);
         for (int i = 0; i < len; i++) {
             char c = stringWithCamelCase.charAt(i);
             if (Character.isUpperCase(c) && i > 0) {
-                sb.append(CharPool.UNDERSCORE);
+                sb.append(CharPools.UNDERSCORE);
             }
             sb.append(Character.toLowerCase(c));
         }
@@ -110,10 +109,10 @@ public class StringUtil extends StringUtils {
      * @return 转换之后的驼峰
      */
     public static String toCamelCase(String stringWithUnderline) {
-        if (StringUtil.isEmpty(stringWithUnderline)) {
-            return StringPool.EMPTY;
+        if (StringUtils.isEmpty(stringWithUnderline)) {
+            return StringPools.EMPTY;
         }
-        if (stringWithUnderline.indexOf(CharPool.UNDERSCORE) == -1) {
+        if (stringWithUnderline.indexOf(CharPools.UNDERSCORE) == -1) {
             return stringWithUnderline;
         }
         stringWithUnderline = stringWithUnderline.toLowerCase();
@@ -121,7 +120,7 @@ public class StringUtil extends StringUtils {
         char[] toArray = new char[fromArray.length];
         int j = 0;
         for (int i = 0; i < fromArray.length; i++) {
-            if (CharPool.UNDERSCORE == fromArray[i]) {
+            if (CharPools.UNDERSCORE == fromArray[i]) {
                 // 当前字符为下划线时，将指针后移一位，将紧随下划线后面一个字符转成大写并存放
                 i++;
                 if (i < fromArray.length) {
@@ -153,7 +152,7 @@ public class StringUtil extends StringUtils {
      * @see Character#isWhitespace
      */
     public static boolean isBlank(@Nullable final CharSequence cs) {
-        return !StringUtil.hasText(cs);
+        return !StringUtils.hasText(cs);
     }
 
     /**
@@ -171,7 +170,7 @@ public class StringUtil extends StringUtils {
      * @see Character#isWhitespace
      */
     public static boolean isNotBlank(@Nullable final CharSequence cs) {
-        return StringUtil.hasText(cs);
+        return StringUtils.hasText(cs);
     }
 
     /**
@@ -181,10 +180,10 @@ public class StringUtil extends StringUtils {
      * @return boolean
      */
     public static boolean isAnyBlank(final CharSequence... css) {
-        if (ObjectUtil.isEmpty(css)) {
+        if (ObjectUtils.isEmpty(css)) {
             return true;
         }
-        return Stream.of(css).anyMatch(StringUtil::isBlank);
+        return Stream.of(css).anyMatch(StringUtils::isBlank);
     }
 
     /**
@@ -194,10 +193,10 @@ public class StringUtil extends StringUtils {
      * @return boolean
      */
     public static boolean isAnyNotBlank(final CharSequence... css) {
-        if (CollectionUtil.isEmpty(css)) {
+        if (CollectionUtils.isEmpty(css)) {
             return false;
         }
-        return Arrays.stream(css).anyMatch(StringUtil::isNoneBlank);
+        return Arrays.stream(css).anyMatch(StringUtils::isNoneBlank);
     }
 
     /**
@@ -207,10 +206,10 @@ public class StringUtil extends StringUtils {
      * @return boolean
      */
     public static boolean isAnyNotBlank(Collection<String> css) {
-        if (CollectionUtil.isEmpty(css)) {
+        if (CollectionUtils.isEmpty(css)) {
             return false;
         }
-        return css.stream().anyMatch(StringUtil::isNoneBlank);
+        return css.stream().anyMatch(StringUtils::isNoneBlank);
     }
 
     /**
@@ -220,10 +219,10 @@ public class StringUtil extends StringUtils {
      * @return boolean
      */
     public static boolean isNoneBlank(final CharSequence... css) {
-        if (ObjectUtil.isEmpty(css)) {
+        if (ObjectUtils.isEmpty(css)) {
             return false;
         }
-        return Stream.of(css).allMatch(StringUtil::isNotBlank);
+        return Stream.of(css).allMatch(StringUtils::isNotBlank);
     }
 
     /**
@@ -233,7 +232,7 @@ public class StringUtil extends StringUtils {
      * @return {boolean}
      */
     public static boolean isNumeric(final CharSequence cs) {
-        if (StringUtil.isBlank(cs)) {
+        if (StringUtils.isBlank(cs)) {
             return false;
         }
         for (int i = cs.length(); --i >= 0; ) {
@@ -257,7 +256,7 @@ public class StringUtil extends StringUtils {
     public static String format(@Nullable String message, @Nullable Map<String, Object> params) {
         // message 为 null 返回空字符串
         if (message == null) {
-            return StringPool.EMPTY;
+            return StringPools.EMPTY;
         }
         // 参数为 null 或者为空
         if (params == null || params.isEmpty()) {
@@ -266,12 +265,12 @@ public class StringUtil extends StringUtils {
         // 替换变量
         StringBuilder sb = new StringBuilder((int) (message.length() * 1.5));
         int cursor = 0;
-        for (int start, end; (start = message.indexOf(StringPool.DOLLAR_LEFT_BRACE, cursor)) != -1
-            && (end = message.indexOf(CharPool.RIGHT_BRACE, start)) != -1; ) {
+        for (int start, end; (start = message.indexOf(StringPools.DOLLAR_LEFT_BRACE, cursor)) != -1
+            && (end = message.indexOf(CharPools.RIGHT_BRACE, start)) != -1; ) {
             sb.append(message, cursor, start);
             String key = message.substring(start + 2, end);
-            Object value = params.get(StringUtil.trimWhitespace(key));
-            sb.append(value == null ? StringPool.EMPTY : value);
+            Object value = params.get(StringUtils.trimWhitespace(key));
+            sb.append(value == null ? StringPools.EMPTY : value);
             cursor = end + 1;
         }
         sb.append(message.substring(cursor));
@@ -290,7 +289,7 @@ public class StringUtil extends StringUtils {
     public static String format(@Nullable String message, @Nullable Object... arguments) {
         // message 为 null 返回空字符串
         if (message == null) {
-            return StringPool.EMPTY;
+            return StringPools.EMPTY;
         }
         // 参数为 null 或者为空
         if (arguments == null || arguments.length == 0) {
@@ -300,8 +299,8 @@ public class StringUtil extends StringUtils {
         int cursor = 0;
         int index = 0;
         int argsLength = arguments.length;
-        for (int start, end; (start = message.indexOf(CharPool.LEFT_BRACE, cursor)) != -1
-            && (end = message.indexOf(CharPool.RIGHT_BRACE, start)) != -1 && index < argsLength; ) {
+        for (int start, end; (start = message.indexOf(CharPools.LEFT_BRACE, cursor)) != -1
+            && (end = message.indexOf(CharPools.RIGHT_BRACE, start)) != -1 && index < argsLength; ) {
             sb.append(message, cursor, start);
             sb.append(arguments[index]);
             cursor = end + 1;
@@ -319,7 +318,7 @@ public class StringUtil extends StringUtils {
      * @return the delimited {@code String}
      */
     public static String join(Collection<?> coll) {
-        return StringUtil.collectionToCommaDelimitedString(coll);
+        return StringUtils.collectionToCommaDelimitedString(coll);
     }
 
     /**
@@ -331,7 +330,7 @@ public class StringUtil extends StringUtils {
      * @return the delimited {@code String}
      */
     public static String join(Collection<?> coll, String delim) {
-        return StringUtil.collectionToDelimitedString(coll, delim);
+        return StringUtils.collectionToDelimitedString(coll, delim);
     }
 
     /**
@@ -342,7 +341,7 @@ public class StringUtil extends StringUtils {
      * @return the delimited {@code String}
      */
     public static String join(Object[] arr) {
-        return StringUtil.arrayToCommaDelimitedString(arr);
+        return StringUtils.arrayToCommaDelimitedString(arr);
     }
 
     /**
@@ -354,7 +353,7 @@ public class StringUtil extends StringUtils {
      * @return the delimited {@code String}
      */
     public static String join(Object[] arr, String delim) {
-        return StringUtil.arrayToDelimitedString(arr, delim);
+        return StringUtils.arrayToDelimitedString(arr, delim);
     }
 
     /**
@@ -365,7 +364,7 @@ public class StringUtil extends StringUtils {
      * @return 字符串数组
      */
     public static String[] split(@Nullable String str, @Nullable String delimiter) {
-        return StringUtil.delimitedListToStringArray(str, delimiter);
+        return StringUtils.delimitedListToStringArray(str, delimiter);
     }
 
     /**
@@ -376,7 +375,7 @@ public class StringUtil extends StringUtils {
      * @return 字符串数组
      */
     public static String[] splitTrim(@Nullable String str, @Nullable String delimiter) {
-        return StringUtil.delimitedListToStringArray(str, delimiter, " \t\n\n\f");
+        return StringUtils.delimitedListToStringArray(str, delimiter, " \t\n\n\f");
     }
 
     /**
@@ -432,7 +431,7 @@ public class StringUtil extends StringUtils {
         int radix = 1 << 4;
         int mask = radix - 1;
         do {
-            buf[--charPos] = NumberUtil.DIGITS[((int) val) & mask];
+            buf[--charPos] = NumberUtils.DIGITS[((int) val) & mask];
             val >>>= 4;
         } while (charPos > offset);
     }
@@ -444,7 +443,7 @@ public class StringUtil extends StringUtils {
      * @return 随机数
      */
     public static String random(int count) {
-        return StringUtil.random(count, RandomEnum.ALL);
+        return StringUtils.random(count, RandomEnum.ALL);
     }
 
     /**
@@ -474,7 +473,7 @@ public class StringUtil extends StringUtils {
     }
 
     public static String getDefaultIfBlank(String str, String defaultStr) {
-        return StringUtil.isBlank(str) ? defaultStr : str;
+        return StringUtils.isBlank(str) ? defaultStr : str;
     }
 
     public static String leftPad(String str, int size) {
@@ -541,7 +540,7 @@ public class StringUtil extends StringUtils {
     }
 
     public static boolean equalsIgnoreCase(CharSequence str1, CharSequence str2) {
-        return StringUtil.equalsIgnoreCase(str1, str2);
+        return StringUtils.equalsIgnoreCase(str1, str2);
     }
 }
 

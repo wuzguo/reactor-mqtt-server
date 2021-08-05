@@ -2,7 +2,7 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 import com.study.iot.mqtt.common.domain.SessionMessage;
 import com.study.iot.mqtt.common.message.RetainMessage;
-import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.session.manager.SessionManager;
@@ -61,9 +61,9 @@ public class ServerPublishHandler implements StrategyCapable {
         Connection connection = disposableConnection.getConnection();
         // 当前发送消息的客户端ID
         String identity = connection.channel().attr(AttributeKeys.identity).get();
-        SessionMessage sessionMessage = SessionMessage.builder().row(IdUtil.idGen().toString())
+        SessionMessage sessionMessage = SessionMessage.builder().row(IdUtils.idGen().toString())
             .identity(identity)
-            .sessionId(IdUtil.idGen().toString())
+            .sessionId(IdUtils.idGen().toString())
             .messageId(variableHeader.packetId())
             .topic(variableHeader.topicName())
             .retain(fixedHeader.isRetain())

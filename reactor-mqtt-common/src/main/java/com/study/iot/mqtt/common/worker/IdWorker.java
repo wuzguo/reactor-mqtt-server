@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.common.worker;
 
-import com.study.iot.mqtt.common.utils.StringPool;
+import com.study.iot.mqtt.common.utils.StringPools;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -64,7 +64,7 @@ public class IdWorker {
      */
     public static String get32UUID() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        return new UUID(random.nextLong(), random.nextLong()).toString().replace(StringPool.DASH, StringPool.EMPTY);
+        return new UUID(random.nextLong(), random.nextLong()).toString().replace(StringPools.DASH, StringPools.EMPTY);
     }
 
 }

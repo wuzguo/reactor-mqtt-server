@@ -3,7 +3,6 @@ package com.study.iot.mqtt.common.utils;
 import java.util.Optional;
 import lombok.experimental.UtilityClass;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ObjectUtils;
 
 /**
  * <B>说明：描述</B>
@@ -14,7 +13,7 @@ import org.springframework.util.ObjectUtils;
  */
 
 @UtilityClass
-public class ObjectUtil extends ObjectUtils {
+public class ObjectUtils extends org.springframework.util.ObjectUtils {
 
     /**
      * 判断对象为null
@@ -63,7 +62,7 @@ public class ObjectUtil extends ObjectUtils {
      * @return boolean
      */
     public static boolean isFalse(boolean bool) {
-        return !ObjectUtil.isTrue(bool);
+        return !ObjectUtils.isTrue(bool);
     }
 
     /**
@@ -73,7 +72,7 @@ public class ObjectUtil extends ObjectUtils {
      * @return boolean
      */
     public static boolean isFalse(@Nullable Boolean bool) {
-        return !ObjectUtil.isTrue(bool);
+        return !ObjectUtils.isTrue(bool);
     }
 
     /**
@@ -83,7 +82,7 @@ public class ObjectUtil extends ObjectUtils {
      * @return 数组是否为空
      */
     public static boolean isNotEmpty(@Nullable Object[] array) {
-        return !ObjectUtil.isEmpty(array);
+        return !ObjectUtils.isEmpty(array);
     }
 
     /**
@@ -93,7 +92,7 @@ public class ObjectUtil extends ObjectUtils {
      * @return 数组是否为空
      */
     public static boolean isNotEmpty(@Nullable Object obj) {
-        return !ObjectUtil.isEmpty(obj);
+        return !ObjectUtils.isEmpty(obj);
     }
 
     /**

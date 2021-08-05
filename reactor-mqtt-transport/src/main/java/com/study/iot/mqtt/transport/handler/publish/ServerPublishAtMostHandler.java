@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
 import com.study.iot.mqtt.common.domain.SessionMessage;
-import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.store.constant.CacheGroup;
@@ -41,7 +41,7 @@ public class ServerPublishAtMostHandler implements PublishStrategyCapable {
             .filter(disposable -> !disposable.isDispose())
             .forEach(disposable -> {
                 MqttMessage mqttMessage = MessageBuilder.buildPub(false, MqttQoS.valueOf(message.getQos()),
-                    message.getRetain(), IdUtil.messageId(), message.getTopic(), message.getCopyByteBuf());
+                    message.getRetain(), IdUtils.messageId(), message.getTopic(), message.getCopyByteBuf());
                 disposable.sendMessage(mqttMessage).subscribe();
             });
     }

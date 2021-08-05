@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.common.enums;
 
-import com.study.iot.mqtt.common.utils.StringUtil;
+import com.study.iot.mqtt.common.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -26,7 +26,7 @@ public enum CacheStrategy {
 
     public static CacheStrategy fromName(String name) {
         for (CacheStrategy strategyEnum : CacheStrategy.values()) {
-            if (StringUtil.equalsIgnoreCase(name, strategyEnum.name)) {
+            if (StringUtils.equalsIgnoreCase(name, strategyEnum.name)) {
                 return strategyEnum;
             }
         }

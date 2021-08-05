@@ -33,7 +33,7 @@ public class CacheOpsTemplate {
         if (clazz == String.class) {
             return (T) object;
         } else {
-            return JsonUtil.readValue(object, clazz);
+            return JsonUtils.readValue(object, clazz);
         }
     }
 
@@ -43,16 +43,16 @@ public class CacheOpsTemplate {
         } else if (obj instanceof String) {
             return (String) obj;
         } else {
-            return JsonUtil.toString(obj);
+            return JsonUtils.toString(obj);
         }
     }
 
     private static boolean verifyKeys(String... keys) {
-        return !CollectionUtil.isEmpty(keys) && !StringUtil.isAnyBlank(keys);
+        return !CollectionUtils.isEmpty(keys) && !StringUtils.isAnyBlank(keys);
     }
 
     private static boolean verifyValues(Object... values) {
-        return !CollectionUtil.isEmpty(values) && ObjectUtil.allNotNull(values);
+        return !CollectionUtils.isEmpty(values) && ObjectUtils.allNotNull(values);
     }
 
     private static boolean verifySimpleKeyValue(String key, Object value) {
@@ -71,7 +71,7 @@ public class CacheOpsTemplate {
     public <T> T get(String key, Class<T> clazz) {
         assertTrue(verifyKeys(key), "key is not exist");
         String json = opsForValue().get(key);
-        return StringUtil.isEmpty(json) ? null : redisStrToValue(json, clazz);
+        return StringUtils.isEmpty(json) ? null : redisStrToValue(json, clazz);
     }
 
     /**
@@ -171,7 +171,7 @@ public class CacheOpsTemplate {
     public <T> List<T> getList(String key, Class<T> elementClazz) {
         assertTrue(verifyKeys(key), "key is not exist");
         String json = getStr(key);
-        return StringUtil.isEmpty(json) ? null : JsonUtil.readList(json, elementClazz);
+        return StringUtils.isEmpty(json) ? null : JsonUtils.readList(json, elementClazz);
     }
 
     /**
@@ -343,7 +343,7 @@ public class CacheOpsTemplate {
      * @return key的剩余生存时间（-2：key不存在, -1: 未设置过期, 其他：剩余的秒）
      */
     public long ttl(String key) {
-        if (StringUtil.isBlank(key)) {
+        if (StringUtils.isBlank(key)) {
             return -2;
         }
         return redisTemplate.getExpire(key, TimeUnit.SECONDS);
@@ -406,7 +406,7 @@ public class CacheOpsTemplate {
      * 该命令用于在 key 存在时删除 key。
      */
     public Long del(String... keys) {
-        if (ObjectUtil.isEmpty(keys)) {
+        if (ObjectUtils.isEmpty(keys)) {
             return 0L;
         }
         return del0(Arrays.asList(keys));
@@ -416,11 +416,11 @@ public class CacheOpsTemplate {
      * 该命令用于在 key 存在时删除 key。
      */
     public Long del0(String cacheName, String... keys) {
-        if (ObjectUtil.isEmpty(keys)) {
+        if (ObjectUtils.isEmpty(keys)) {
             return 0L;
         }
         Set<String> keySet = Stream.of(keys)
-                .map(key -> cacheName.concat(StringPool.COLON).concat(key))
+                .map(key -> cacheName.concat(StringPools.COLON).concat(key))
                 .collect(Collectors.toSet());
         return del0(keySet);
     }
@@ -429,7 +429,7 @@ public class CacheOpsTemplate {
      * 该命令用于在 key 存在时删除 key。
      */
     public Long del0(Collection<String> keys) {
-        if (CollectionUtil.isEmpty(keys)) {
+        if (CollectionUtils.isEmpty(keys)) {
             return 0L;
         }
         return redisTemplate.delete(keys);
@@ -439,11 +439,11 @@ public class CacheOpsTemplate {
      * 该命令用于在 key 存在时删除 key。
      */
     public Long del0(String cacheName, Collection<String> keys) {
-        if (ObjectUtil.isEmpty(keys)) {
+        if (ObjectUtils.isEmpty(keys)) {
             return 0L;
         }
         Set<String> keySet = keys.stream()
-                .map(key -> cacheName.concat(StringPool.COLON).concat(key))
+                .map(key -> cacheName.concat(StringPools.COLON).concat(key))
                 .collect(Collectors.toSet());
         return del0(keySet);
     }
@@ -470,7 +470,7 @@ public class CacheOpsTemplate {
      * 同时将多个 field-value (域-值)对设置到哈希表 key 中。
      */
     public void hmset(String key, Map<String, ?> objects) {
-        assertTrue(verifyKeys(key) && !CollectionUtil.isEmpty(objects), "key & value is not exist");
+        assertTrue(verifyKeys(key) && !CollectionUtils.isEmpty(objects), "key & value is not exist");
         Map<String, String> values = new HashMap<>(objects.size(), 1);
         objects.forEach((k, v) -> {
             values.put(k, valueToRedisStr(v));
@@ -493,7 +493,7 @@ public class CacheOpsTemplate {
     public <T> T hget(String key, String field, Class<T> clazz, Supplier<T> loader) {
         assertTrue(verifyKeys(key) && verifyKeys(field), "keys & fields is not exist");
         String json = opsForHash().get(key, field);
-        if (StringUtil.isBlank(json)) {
+        if (StringUtils.isBlank(json)) {
             T value = loader.get();
             if (value != null) {
                 this.hsetnx(key, field, value);
@@ -543,7 +543,7 @@ public class CacheOpsTemplate {
         List<String> values = opsForHash().multiGet(key, Arrays.asList(fields));
         Map<String, T> result = Maps.newHashMap();
         for (int i = 0; i < fields.length; i++) {
-            if (StringUtil.isNotBlank(values.get(i))) {
+            if (StringUtils.isNotBlank(values.get(i))) {
                 result.put(fields[i], redisStrToValue(values.get(i), clazz));
             }
         }
@@ -557,11 +557,11 @@ public class CacheOpsTemplate {
         assertTrue(verifyKeys(key) && verifyKeys(fields), "keys & fields is not exist");
         List<String> values = opsForHash().multiGet(key, Arrays.asList(fields));
         // 如果为空利用加载器加载
-        if (StringUtil.isAnyNotBlank(values)) {
+        if (StringUtils.isAnyNotBlank(values)) {
             Map<String, T> result = Maps.newHashMap();
             for (int i = 0; i < fields.length; i++) {
                 String value = values.get(i);
-                if (StringUtil.isNotBlank(value)) {
+                if (StringUtils.isNotBlank(value)) {
                     result.put(fields[i], redisStrToValue(value, clazz));
                 }
             }
@@ -627,7 +627,7 @@ public class CacheOpsTemplate {
     public <T> Set<T> smembers(String key, Class<T> elementClazz) {
         assertTrue(verifyKeys(key) && elementClazz != null, "keys && elementClazz is not exist");
         Set<String> members = opsForSet().members(key);
-        if (!CollectionUtil.isEmpty(members)) {
+        if (!CollectionUtils.isEmpty(members)) {
             return members.stream().map(v -> redisStrToValue(v, elementClazz)).collect(Collectors.toSet());
         }
         return Collections.emptySet();
@@ -655,6 +655,6 @@ public class CacheOpsTemplate {
 
     public String getFullKey(String cacheName, String cacheKey) {
         assertTrue(verifyKeys(cacheName, cacheKey), "cacheName & cacheKey is empty.");
-        return cacheName.concat(StringPool.COLON).concat(cacheKey);
+        return cacheName.concat(StringPools.COLON).concat(cacheKey);
     }
 }

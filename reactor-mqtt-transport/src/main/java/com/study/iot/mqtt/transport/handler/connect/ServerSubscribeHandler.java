@@ -3,7 +3,7 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 import com.study.iot.mqtt.akka.event.SubscribeEvent;
 import com.study.iot.mqtt.common.message.RetainMessage;
-import com.study.iot.mqtt.common.utils.IdUtil;
+import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -70,7 +70,7 @@ public class ServerSubscribeHandler implements StrategyCapable {
         Set<String> topicNames = subscriptions.stream().map(MqttTopicSubscription::topicName)
             .collect(Collectors.toSet());
         // 发布订阅
-        SubscribeEvent event = new SubscribeEvent(this, IdUtil.idGen());
+        SubscribeEvent event = new SubscribeEvent(this, IdUtils.idGen());
         event.setTopicNames(topicNames);
         event.setInstanceId(instanceUtil.getInstanceId());
         event.setIdentity(disposableConnection.getConnection().channel().attr(AttributeKeys.identity).get());
@@ -88,7 +88,7 @@ public class ServerSubscribeHandler implements StrategyCapable {
                         retainMessage.getTopic(), retainMessage.getCopyByteBuf());
                     disposableConnection.sendMessage(mqttMessage).subscribe();
                 } else {
-                    int connMessageId = IdUtil.messageId();
+                    int connMessageId = IdUtils.messageId();
                     // retry
                     MqttPublishMessage mqttMessage = MessageBuilder.buildPub(true, header.qosLevel(),
                         header.isRetain(), connMessageId, retainMessage.getTopic(), retainMessage.getCopyByteBuf());

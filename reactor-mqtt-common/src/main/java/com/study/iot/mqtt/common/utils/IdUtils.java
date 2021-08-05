@@ -13,7 +13,7 @@ import lombok.experimental.UtilityClass;
  */
 
 @UtilityClass
-public class IdUtil {
+public class IdUtils {
 
     private final LongAdder longAdder = new LongAdder();
 
