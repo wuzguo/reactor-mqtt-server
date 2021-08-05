@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
 
-import com.study.iot.mqtt.auth.service.ConnectAuthentication;
+import com.study.iot.mqtt.auth.service.Authentication;
 import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.common.utils.StringUtils;
 import com.study.iot.mqtt.protocol.AttributeKeys;
@@ -51,7 +51,7 @@ public class ServerConnectHandler implements StrategyCapable {
     private ContainerManager containerManager;
 
     @Autowired
-    private ConnectAuthentication authentication;
+    private Authentication authentication;
 
     @Autowired
     private SessionManager sessionManager;

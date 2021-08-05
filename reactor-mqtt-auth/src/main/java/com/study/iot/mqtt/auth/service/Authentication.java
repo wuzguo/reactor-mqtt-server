@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @date 2021/4/30 8:17
  */
 
-public interface ConnectAuthentication {
+public interface Authentication {
 
     /**
      * 认证验证

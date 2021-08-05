@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
  */
 
 @Slf4j
-public class DefaultConnectAuthentication implements ConnectAuthentication {
+public class DefaultAuthentication implements Authentication {
 
     @Override
     public Mono<Boolean> authenticate(String key, String secret) {
