@@ -56,10 +56,19 @@ public class JsonUtil {
         return mapper;
     }
 
+    /**
+     * 初始化 ObjectMapper
+     *
+     * @return {@link ObjectMapper}
+     */
     private static ObjectMapper newObjectMapper() {
         return init(new ObjectMapper());
     }
 
+    /**
+     * @param value {@link Object}
+     * @return {@link String}
+     */
     public static String writerWithDefaultPrettyPrinter(Object value) {
         try {
             return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(value);
@@ -95,8 +104,8 @@ public class JsonUtil {
     /**
      * 将对象序列化成json字符串
      *
-     * @param object javaBean
-     * @return jsonString json字符串
+     * @param object {@link Object}
+     * @return String json字符串
      */
     @Nullable
     public static String toJson(@Nullable Object object) {
@@ -120,6 +129,10 @@ public class JsonUtil {
 
     /**
      * 对象转换为map，如果是字符串，先转成json对象再转为map
+     *
+     * @param value {@link Object}
+     * @return {@link Map}
+     * @throws IllegalArgumentException
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> toMap(Object value) throws IllegalArgumentException {
@@ -134,6 +147,9 @@ public class JsonUtil {
 
     /**
      * 返回结果不为空
+     *
+     * @param value {@link String}
+     * @return {@link Map}
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> toMap(String value) {
@@ -151,7 +167,7 @@ public class JsonUtil {
      * 读取为指定类型
      *
      * @param content json 流（特殊处理：输入null返回null）
-     * @return
+     * @return {@link JsonNode}
      * @since 0.1.0
      */
     public static JsonNode readTree(InputStream content) {
@@ -170,7 +186,7 @@ public class JsonUtil {
      *
      * @param content json 流（特殊处理：输入null返回null）
      * @param type    目标类型
-     * @return
+     * @return {@link T}
      * @since 0.1.0
      */
     public static <T> T readValue(InputStream content, Class<T> type) {
@@ -189,7 +205,7 @@ public class JsonUtil {
      *
      * @param data json 流（特殊处理：输入null返回null）
      * @param type 目标类型
-     * @return
+     * @return {@link T}
      * @since 0.1.0
      */
     public static <T> T readValue(byte[] data, Class<T> type) {
@@ -208,7 +224,7 @@ public class JsonUtil {
      *
      * @param content       json 流（特殊处理：输入null返回null）
      * @param typeReference 泛型
-     * @return
+     * @return {@link T}
      * @since 0.1.0
      */
     public static <T> T readValue(InputStream content, TypeReference<T> typeReference) {
@@ -227,7 +243,7 @@ public class JsonUtil {
      *
      * @param content json字符串（特殊处理：输入null返回null）
      * @param type    目标类型
-     * @return
+     * @return {@link T}
      * @since 0.1.0
      */
     public static <T> T readValue(String content, Class<T> type) {
@@ -246,7 +262,7 @@ public class JsonUtil {
      *
      * @param content json字符串（特殊处理：输入null返回null）
      * @param type    目标类型
-     * @return
+     * @return {@link T}
      * @since 0.1.0
      */
     public static <T> T readValue(String content, JavaType type) {
@@ -261,8 +277,13 @@ public class JsonUtil {
     }
 
     /**
-     * 范型readValue json ==> Pager&lt;MyBean&gt;: readValue(json, Pager.class, MyBean.class)<br> json ==>
-     * List<Set<Integer>>: readValue(json, List.class, Integer.class)<br>
+     * 读取值
+     * @param json 字符串
+     * @param parametrized {@link Class}
+     * @param parametersFor {@link Class}
+     * @param parameterClasses {@link Class}
+     * @param <T> 泛型
+     * @return {@link T}
      */
     public static <T> T readValue(String json, Class<?> parametrized, Class<?> parametersFor,
         Class<?>... parameterClasses) {
@@ -336,11 +357,13 @@ public class JsonUtil {
     }
 
     /**
-     * 转换为目标类，如果value是字符串，将被认为是json串<br> 所以特别注意：'"abc"'是json字符串，目标类型是String时，转换结果为'abc'而不是'"abc"'<br>
+     * 转换为目标类，如果value是字符串，将被认为是json串<br>
+     * 所以特别注意：'"abc"'是json字符串，目标类型是String时，
+     * 转换结果为'abc'而不是'"abc"'<br>
      *
-     * @param value
-     * @param clazz
-     * @return
+     * @param value {@link Object}
+     * @param clazz {@link Class}
+     * @return {@link T}
      * @throws IllegalArgumentException
      */
     @SuppressWarnings("unchecked")
