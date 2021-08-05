@@ -35,10 +35,14 @@ import org.springframework.util.Assert;
 public class DateUtils {
 
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone(ZoneOffset.UTC);
+
     public static final ZoneId ZONE_ID = ZoneOffset.UTC;
+
     public static final String PATTERN_TIME_ZONE = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
     // This class is immutable and thread-safe.
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     private static final Map<String, TimeZone> mapTimeZone = Maps.newConcurrentMap();
 
     /**
