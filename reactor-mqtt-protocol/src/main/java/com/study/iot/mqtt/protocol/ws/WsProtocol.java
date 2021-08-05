@@ -19,7 +19,7 @@ public class WsProtocol implements Protocol {
 
     @Override
     public Boolean support(ProtocolType protocolType) {
-        return protocolType == ProtocolType.WEB_SOCKET;
+        return protocolType == ProtocolType.WS;
     }
 
     @Override
