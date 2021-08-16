@@ -4,6 +4,13 @@ import com.study.iot.mqtt.store.strategy.CacheCapable;
 import java.util.List;
 import reactor.core.Disposable;
 
+/**
+ * <B>说明：说明</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:16
+ */
 
 public interface TopicContainer extends CacheCapable {
 

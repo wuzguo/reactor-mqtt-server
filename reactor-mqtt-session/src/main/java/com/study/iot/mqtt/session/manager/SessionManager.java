@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.session.manager;
 
-import com.study.iot.mqtt.common.domain.BaseMessage;
 import com.study.iot.mqtt.common.domain.ConnectSession;
 import com.study.iot.mqtt.common.domain.SessionMessage;
 

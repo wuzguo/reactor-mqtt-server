@@ -8,6 +8,14 @@ import com.study.iot.mqtt.common.annocation.ProtocolType;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:16
+ */
+
 public class ProtocolFactory {
 
     private List<Protocol> protocols = Lists.newArrayList();

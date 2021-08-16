@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationContextAware;
 @AllArgsConstructor
 public class WillStrategyContainer implements ApplicationContextAware {
 
-    private static final Map<String, Map<MqttQoS, Class<? extends WillCapable>>> container = Maps.newConcurrentMap();
+    private static final Map<String, Map<MqttQoS, Class<? extends WillCapable>>> CONTAINER = Maps.newConcurrentMap();
 
     private final ApplicationContext applicationContext;
 
@@ -42,14 +42,14 @@ public class WillStrategyContainer implements ApplicationContextAware {
                 WillStrategyService WillStrategyService = strategyClass.getAnnotation(WillStrategyService.class);
 
                 String group = WillStrategyService.group();
-                Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
+                Map<MqttQoS, Class<? extends WillCapable>> storage = CONTAINER.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
 
                 MqttQoS value = WillStrategyService.type();
                 storage.putIfAbsent(value, strategyClass);
-                container.put(group, storage);
+                CONTAINER.put(group, storage);
             }));
     }
 
@@ -62,17 +62,17 @@ public class WillStrategyContainer implements ApplicationContextAware {
      * @return {@link WillCapable} 结果
      */
     public <T extends WillCapable> T getStrategy(String group, MqttQoS value) {
-        Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
+        Map<MqttQoS, Class<? extends WillCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
             throw new BeanDefinitionValidationException(String
-                .format("WillStrategyService group '%s' not found in value container", group));
+                .format("group '%s' not found in value container", group));
 
         }
 
         Class<? extends WillCapable> strategy = storage.get(value);
         if (strategy == null) {
             throw new BeanDefinitionValidationException(String
-                .format("WillStrategyService value '%s' not found in value group '%s'", value, group));
+                .format("value '%s' not found in value group '%s'", value, group));
 
         }
         return (T) applicationContext.getBean(strategy);
@@ -88,7 +88,7 @@ public class WillStrategyContainer implements ApplicationContextAware {
      * @return {@link WillCapable} 结果
      */
     public <T extends WillCapable> T findStrategy(String group, MqttQoS value) {
-        Map<MqttQoS, Class<? extends WillCapable>> storage = container.get(group);
+        Map<MqttQoS, Class<? extends WillCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
             return null;
         }

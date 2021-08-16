@@ -11,6 +11,13 @@ import java.util.Optional;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:20
+ */
 @Slf4j
 @Getter
 public class ServerMessageRouter {

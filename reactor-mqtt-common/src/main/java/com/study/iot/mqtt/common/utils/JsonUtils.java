@@ -27,6 +27,14 @@ import java.util.Map;
 import lombok.experimental.UtilityClass;
 import org.springframework.lang.Nullable;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:06
+ */
+
 @UtilityClass
 public class JsonUtils {
 

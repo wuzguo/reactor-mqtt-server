@@ -6,7 +6,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * ignite属性配置
+ * <B>说明：ignite属性配置</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:16
  */
 
 @Data

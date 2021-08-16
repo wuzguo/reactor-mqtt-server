@@ -15,6 +15,13 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.UnicastProcessor;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:20
+ */
 
 public class TransportServerFactory {
 

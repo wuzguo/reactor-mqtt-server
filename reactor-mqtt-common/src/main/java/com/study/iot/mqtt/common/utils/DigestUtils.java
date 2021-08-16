@@ -18,7 +18,6 @@ import org.springframework.lang.Nullable;
  * @date 2021/5/7 9:29
  */
 
-
 @UtilityClass
 public class DigestUtils extends org.springframework.util.DigestUtils {
 

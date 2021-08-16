@@ -17,7 +17,7 @@ import lombok.Getter;
 public enum ProtocolType {
 
     MQTT(0, "MQTT"),
-    WS(2, "Websocket"),
+    WS(2, "WebSocket"),
     COAP(3, "CoAP"),
     HTTP(4, "Http"),
     XMPP(5, "XMPP");

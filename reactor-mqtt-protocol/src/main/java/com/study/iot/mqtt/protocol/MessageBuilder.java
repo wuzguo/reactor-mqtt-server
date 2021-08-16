@@ -28,6 +28,13 @@ import io.netty.handler.codec.mqtt.MqttVersion;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:06
+ */
 
 @UtilityClass
 public final class MessageBuilder {

@@ -30,7 +30,11 @@ import org.springframework.context.annotation.Configuration;
 import reactor.core.Disposable;
 
 /**
- * 自动配置apache ignite
+ * <B>说明：自动配置apache ignite</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:16
  */
 
 @Configuration

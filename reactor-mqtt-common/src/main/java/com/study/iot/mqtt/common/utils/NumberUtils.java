@@ -3,7 +3,6 @@ package com.study.iot.mqtt.common.utils;
 import com.google.common.base.Charsets;
 import lombok.experimental.UtilityClass;
 import org.springframework.lang.Nullable;
-import org.springframework.util.NumberUtils;
 
 /**
  * <B>说明：描述</B>

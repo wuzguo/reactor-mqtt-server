@@ -20,6 +20,13 @@ import reactor.netty.DisposableServer;
 import reactor.netty.tcp.TcpClient;
 import reactor.netty.tcp.TcpServer;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:06
+ */
 
 @Slf4j
 public class WsTransport extends ProtocolTransport {
