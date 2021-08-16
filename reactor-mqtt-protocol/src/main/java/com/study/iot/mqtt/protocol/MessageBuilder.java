@@ -30,7 +30,7 @@ import lombok.experimental.UtilityClass;
 
 
 @UtilityClass
-public class MessageBuilder {
+public final class MessageBuilder {
 
     public static MqttPublishMessage buildPub(boolean isDup, MqttQoS qoS, boolean isRetain, int messageId, String topic,
         byte[] message) {

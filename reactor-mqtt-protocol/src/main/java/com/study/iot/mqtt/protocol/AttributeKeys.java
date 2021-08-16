@@ -22,7 +22,7 @@ public class AttributeKeys {
 
     public AttributeKey<String> identity = AttributeKey.valueOf("identity");
 
-    public AttributeKey<Integer> keepalive = AttributeKey.valueOf("keepalive");
+    public AttributeKey<Integer> keepalive = AttributeKey.valueOf("keep_alive");
 
     public AttributeKey<WillMessage> willMessage = AttributeKey.valueOf("will_message");
 

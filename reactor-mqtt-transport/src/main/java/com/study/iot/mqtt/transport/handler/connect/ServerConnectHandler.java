@@ -99,8 +99,7 @@ public class ServerConnectHandler implements StrategyCapable {
 
         // 用户名和密码
         String key = mqttPayload.userName();
-        String secret = mqttPayload.passwordInBytes() == null ?
-            null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
+        String secret = mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtils.isAnyBlank(key, secret)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
