@@ -8,6 +8,14 @@ import akka.actor.Props;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 
+/**
+ * <B>说明：描述</B>
+ *
+ * @author zak.wu
+ * @version 1.0.0
+ * @date 2021/8/16 15:06
+ */
+
 public class SpringExtension extends AbstractExtensionId<SpringExtension.SpringExt> {
 
     private SpringExtension() {
