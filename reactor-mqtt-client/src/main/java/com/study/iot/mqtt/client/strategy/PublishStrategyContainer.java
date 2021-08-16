@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationContextAware;
 @AllArgsConstructor
 public class PublishStrategyContainer  implements ApplicationContextAware {
 
-    private static final Map<String, Map<MqttQoS, Class<? extends PublishStrategyCapable>>> container = Maps
+    private static final Map<String, Map<MqttQoS, Class<? extends PublishStrategyCapable>>> CONTAINER = Maps
         .newConcurrentMap();
 
     private final ApplicationContext applicationContext;
@@ -33,24 +33,24 @@ public class PublishStrategyContainer  implements ApplicationContextAware {
 
     private void initializingContainer(ApplicationContext applicationContext) {
         Optional.of(applicationContext.getBeansWithAnnotation(PublishStrategyService.class))
-            .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
-                if (!PublishStrategyCapable.class.isAssignableFrom(v.getClass())) {
+            .ifPresent(annotationBeans -> annotationBeans.forEach((beanName, instance) -> {
+                if (!PublishStrategyCapable.class.isAssignableFrom(instance.getClass())) {
                     throw new BeanDefinitionValidationException(String
-                        .format("%s must implemented interface PublishStrategyCapable.", v.getClass()));
+                        .format("%s must implemented interface PublishStrategyCapable.", instance.getClass()));
                 }
 
-                Class<? extends PublishStrategyCapable> strategyClass = (Class<? extends PublishStrategyCapable>) v.getClass();
+                Class<? extends PublishStrategyCapable> strategyClass = (Class<? extends PublishStrategyCapable>) instance.getClass();
                 PublishStrategyService strategyService = strategyClass.getAnnotation(PublishStrategyService.class);
 
                 String group = strategyService.group();
-                Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = container.get(group);
+                Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = CONTAINER.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
 
                 MqttQoS value = strategyService.type();
                 storage.putIfAbsent(value, strategyClass);
-                container.put(group, storage);
+                CONTAINER.put(group, storage);
             }));
     }
 
@@ -63,18 +63,14 @@ public class PublishStrategyContainer  implements ApplicationContextAware {
      * @return {@link PublishStrategyCapable} 结果
      */
     public <T extends PublishStrategyCapable> T getStrategy(String group, MqttQoS value) {
-        Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = container.get(group);
+        Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
-            throw new BeanDefinitionValidationException(String
-                .format("WillStrategyService group '%s' not found in value container", group));
-
+            throw new BeanDefinitionValidationException(String.format("group '%s' not found in value container", group));
         }
 
         Class<? extends PublishStrategyCapable> strategy = storage.get(value);
         if (strategy == null) {
-            throw new BeanDefinitionValidationException(String
-                .format("WillStrategyService value '%s' not found in value group '%s'", value, group));
-
+            throw new BeanDefinitionValidationException(String.format("value '%s' not found in value group '%s'", value, group));
         }
         return (T) applicationContext.getBean(strategy);
     }
@@ -89,7 +85,7 @@ public class PublishStrategyContainer  implements ApplicationContextAware {
      * @return {@link PublishStrategyCapable} 结果
      */
     public <T extends PublishStrategyCapable> T findStrategy(String group, MqttQoS value) {
-        Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = container.get(group);
+        Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
             return null;
         }
