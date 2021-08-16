@@ -168,7 +168,7 @@ public class ServerConnectHandler implements StrategyCapable {
         // 心跳超时关闭
         connection.onReadIdle(keepAliveSeconds * 1000L, connection::dispose);
         // 设置连接保持时间
-        connection.channel().attr(AttributeKeys.keepalived).set(keepAliveSeconds);
+        connection.channel().attr(AttributeKeys.keepalive).set(keepAliveSeconds);
         // 设置设备标识
         connection.channel().attr(AttributeKeys.identity).set(identity);
         // 设置 connection
