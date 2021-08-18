@@ -61,6 +61,7 @@ public class MqttServerRunner implements ApplicationRunner {
         // 配置启动的协议
         Set<ProtocolProperties> protocols = Sets.newHashSet();
         protocols.add(ProtocolProperties.builder().port(properties.getPort()).type(ProtocolType.MQTT).build());
+        protocols.add(ProtocolProperties.builder().port(properties.getWsPort()).type(ProtocolType.WS).build());
         // 启动服务
         ServerSession server = new TransportServer().create(serverProperties, protocols)
             .start(containerManager, messageRouter).block();
