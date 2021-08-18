@@ -1,8 +1,10 @@
 package com.study.iot.mqtt.client.handler.connect;
 
+import com.study.iot.mqtt.client.strategy.ConnectCapable;
 import com.study.iot.mqtt.client.strategy.PublishCapable;
 import com.study.iot.mqtt.client.strategy.PublishStrategyContainer;
 import com.study.iot.mqtt.client.strategy.StrategyCapable;
+import com.study.iot.mqtt.client.strategy.StrategyEnum;
 import com.study.iot.mqtt.client.strategy.StrategyGroup;
 import com.study.iot.mqtt.client.strategy.StrategyService;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -24,8 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.CLIENT, type = MqttMessageType.PUBLISH)
-public class ClientPublishHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.CLIENT, type = StrategyEnum.PUBLISH)
+public class ClientPublishHandler implements ConnectCapable {
 
     @Autowired
     private PublishStrategyContainer strategyContainer;
