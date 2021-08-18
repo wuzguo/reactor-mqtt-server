@@ -1,7 +1,6 @@
 package com.study.iot.mqtt.store.container;
 
-import com.study.iot.mqtt.common.enums.CacheStrategy;
-import java.io.Serializable;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -17,9 +16,9 @@ public interface ContainerManager {
     /**
      * 初始化
      *
-     * @param strategy {@link CacheStrategy}
+     * @param strategy {@link CacheEnum}
      */
-    void strategy(@NotNull CacheStrategy strategy);
+    void strategy(@NotNull CacheEnum strategy);
 
     /**
      * 获取连接对象

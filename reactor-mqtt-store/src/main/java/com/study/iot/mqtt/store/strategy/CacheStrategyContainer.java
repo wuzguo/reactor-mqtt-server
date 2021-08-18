@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.store.strategy;
 
 import com.google.common.collect.Maps;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationContextAware;
 @AllArgsConstructor
 public class CacheStrategyContainer implements ApplicationContextAware {
 
-    private static final Map<String, Map<CacheStrategy, Class<? extends CacheCapable>>> container = Maps
+    private static final Map<String, Map<CacheEnum, Class<? extends CacheCapable>>> container = Maps
         .newConcurrentMap();
 
     private final ApplicationContext applicationContext;
@@ -43,12 +43,12 @@ public class CacheStrategyContainer implements ApplicationContextAware {
                 CacheStrategyService cacheStrategyService = strategyClass.getAnnotation(CacheStrategyService.class);
 
                 String group = cacheStrategyService.group();
-                Map<CacheStrategy, Class<? extends CacheCapable>> storage = container.get(group);
+                Map<CacheEnum, Class<? extends CacheCapable>> storage = container.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
 
-                CacheStrategy value = cacheStrategyService.type();
+                CacheEnum value = cacheStrategyService.type();
                 storage.putIfAbsent(value, strategyClass);
                 container.put(group, storage);
             }));
@@ -62,8 +62,8 @@ public class CacheStrategyContainer implements ApplicationContextAware {
      * @param <T>   泛型
      * @return {@link CacheCapable} 结果
      */
-    public <T extends CacheCapable> T getStrategy(String group, CacheStrategy value) {
-        Map<CacheStrategy, Class<? extends CacheCapable>> storage = container.get(group);
+    public <T extends CacheCapable> T getStrategy(String group, CacheEnum value) {
+        Map<CacheEnum, Class<? extends CacheCapable>> storage = container.get(group);
         if (storage == null) {
             throw new BeanDefinitionValidationException(String
                 .format("StrategyService group '%s' not found in value container", group));
@@ -88,8 +88,8 @@ public class CacheStrategyContainer implements ApplicationContextAware {
      * @param <T>   泛型
      * @return {@link CacheCapable} 结果
      */
-    public <T extends CacheCapable> T findStrategy(String group, CacheStrategy value) {
-        Map<CacheStrategy, Class<? extends CacheCapable>> storage = container.get(group);
+    public <T extends CacheCapable> T findStrategy(String group, CacheEnum value) {
+        Map<CacheEnum, Class<? extends CacheCapable>> storage = container.get(group);
         if (storage == null) {
             return null;
         }

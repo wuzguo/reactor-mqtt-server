@@ -3,7 +3,7 @@ package com.study.iot.mqtt.store.container.memory;
 import com.google.common.collect.Maps;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.MetricContainer;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.Map;
 import java.util.Optional;
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
  * @date 2021/5/12 9:28
  */
 
-@CacheStrategyService(group = CacheGroup.METRIC, type = CacheStrategy.MEMORY)
+@CacheStrategyService(group = CacheGroup.METRIC, type = CacheEnum.MEMORY)
 public class MemoryMetricContainer implements MetricContainer {
 
     private final Map<String, LongAdder> mapMetric = Maps.newConcurrentMap();

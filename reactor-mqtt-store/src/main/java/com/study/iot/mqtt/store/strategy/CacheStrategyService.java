@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.store.strategy;
 
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -31,9 +31,9 @@ public @interface CacheStrategyService {
     /**
      * 策略
      *
-     * @return {@link CacheStrategy}
+     * @return {@link CacheEnum}
      */
-    CacheStrategy type();
+    CacheEnum type();
 
     /**
      * 策略组

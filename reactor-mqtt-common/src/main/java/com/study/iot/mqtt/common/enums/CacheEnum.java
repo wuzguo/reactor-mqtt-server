@@ -14,7 +14,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum CacheStrategy {
+public enum CacheEnum {
 
     MEMORY(0, "memory"),
     IGNITE(1, "ignite"),
@@ -24,10 +24,10 @@ public enum CacheStrategy {
 
     private String name;
 
-    public static CacheStrategy from(String name) {
-        for (CacheStrategy strategyEnum : CacheStrategy.values()) {
-            if (StringUtils.equalsIgnoreCase(name, strategyEnum.name)) {
-                return strategyEnum;
+    public static CacheEnum from(String name) {
+        for (CacheEnum cacheEnum : CacheEnum.values()) {
+            if (StringUtils.equalsIgnoreCase(name, cacheEnum.name)) {
+                return cacheEnum;
             }
         }
         return null;

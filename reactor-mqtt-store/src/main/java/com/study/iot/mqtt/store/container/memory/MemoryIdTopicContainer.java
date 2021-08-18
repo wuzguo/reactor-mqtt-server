@@ -2,7 +2,7 @@ package com.study.iot.mqtt.store.container.memory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
@@ -18,7 +18,7 @@ import java.util.Optional;
  * @date 2021/5/21 15:55
  */
 
-@CacheStrategyService(group = CacheGroup.ID_TOPIC, type = CacheStrategy.MEMORY)
+@CacheStrategyService(group = CacheGroup.ID_TOPIC, type = CacheEnum.MEMORY)
 public class MemoryIdTopicContainer implements StorageContainer<String> {
 
     private final Map<String, List<String>> messages = Maps.newConcurrentMap();

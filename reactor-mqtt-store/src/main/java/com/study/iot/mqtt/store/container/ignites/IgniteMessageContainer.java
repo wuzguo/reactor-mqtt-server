@@ -4,7 +4,7 @@ import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.store.properties.IgniteProperties;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
 import java.util.List;
 import javax.annotation.Resource;
@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
  */
 
 @ConditionalOnBean(value = IgniteProperties.class)
-@CacheStrategyService(group = CacheGroup.MESSAGE, type = CacheStrategy.IGNITE)
+@CacheStrategyService(group = CacheGroup.MESSAGE, type = CacheEnum.IGNITE)
 public class IgniteMessageContainer implements StorageContainer<RetainMessage> {
 
     @Resource

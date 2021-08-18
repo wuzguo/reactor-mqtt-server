@@ -8,7 +8,7 @@ package com.study.iot.mqtt.common.enums;
  * @date 2021/5/7 9:29
  */
 
-public enum RandomEnums {
+public enum RandomEnum {
     INT,
     STRING,
     ALL

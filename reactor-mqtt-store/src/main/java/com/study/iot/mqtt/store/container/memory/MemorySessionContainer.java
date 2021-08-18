@@ -2,9 +2,8 @@ package com.study.iot.mqtt.store.container.memory;
 
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.StorageContainer;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,7 +14,7 @@ import java.util.List;
  * @date 2021/5/20 9:15
  */
 
-@CacheStrategyService(group = CacheGroup.SESSION, type = CacheStrategy.MEMORY)
+@CacheStrategyService(group = CacheGroup.SESSION, type = CacheEnum.MEMORY)
 public class MemorySessionContainer  implements StorageContainer<Object> {
 
     @Override

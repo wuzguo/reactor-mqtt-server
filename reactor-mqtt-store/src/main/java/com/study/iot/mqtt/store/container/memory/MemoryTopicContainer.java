@@ -6,7 +6,7 @@ import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.store.container.path.CacheTopicManager;
 import com.study.iot.mqtt.store.strategy.CacheStrategyService;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import java.util.List;
 import reactor.core.Disposable;
 
@@ -18,7 +18,7 @@ import reactor.core.Disposable;
  * @date 2021/5/7 16:18
  */
 
-@CacheStrategyService(group = CacheGroup.TOPIC, type = CacheStrategy.MEMORY)
+@CacheStrategyService(group = CacheGroup.TOPIC, type = CacheEnum.MEMORY)
 public class MemoryTopicContainer implements TopicContainer {
 
     private final CacheTopicManager topicManager = new CacheTopicManager();

@@ -1,10 +1,7 @@
 package com.study.iot.mqtt.protocol.config;
 
 
-import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.common.domain.ProtocolProperties;
-import com.study.iot.mqtt.common.enums.CacheStrategy;
-import java.util.Set;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -54,5 +51,5 @@ public class ServerProperties extends ConnectProperties {
     /**
      * 缓存策略
      */
-    private CacheStrategy strategy;
+    private CacheEnum strategy;
 }

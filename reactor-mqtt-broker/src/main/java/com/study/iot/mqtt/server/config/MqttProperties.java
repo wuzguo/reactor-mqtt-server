@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.server.config;
 
-import com.study.iot.mqtt.common.enums.CacheStrategy;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -58,10 +58,10 @@ public class MqttProperties {
      * 缓存策略，默认为 memory
      */
     @Value("${spring.cache.mode: memory}")
-    private CacheStrategy strategy;
+    private CacheEnum strategy;
 
     public void setStrategy(String strategy) {
-        this.strategy = CacheStrategy.from(strategy);
+        this.strategy = CacheEnum.from(strategy);
     }
 
     /**

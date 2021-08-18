@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.common.utils;
 
 import com.google.common.base.Charsets;
-import com.study.iot.mqtt.common.enums.RandomEnums;
+import com.study.iot.mqtt.common.enums.RandomEnum;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -443,7 +443,7 @@ public class StringUtils extends org.springframework.util.StringUtils {
      * @return 随机数
      */
     public static String random(int count) {
-        return StringUtils.random(count, RandomEnums.ALL);
+        return StringUtils.random(count, RandomEnum.ALL);
     }
 
     /**
@@ -453,7 +453,7 @@ public class StringUtils extends org.springframework.util.StringUtils {
      * @param randomEnum 随机数类别
      * @return 随机数
      */
-    public static String random(int count, RandomEnums randomEnum) {
+    public static String random(int count, RandomEnum randomEnum) {
         if (count == 0) {
             return "";
         }
@@ -461,9 +461,9 @@ public class StringUtils extends org.springframework.util.StringUtils {
         final ThreadLocalRandom random = ThreadLocalRandom.current();
         char[] buffer = new char[count];
         for (int i = 0; i < count; i++) {
-            if (RandomEnums.INT == randomEnum) {
+            if (RandomEnum.INT == randomEnum) {
                 buffer[i] = INT_STR.charAt(random.nextInt(INT_STR.length()));
-            } else if (RandomEnums.STRING == randomEnum) {
+            } else if (RandomEnum.STRING == randomEnum) {
                 buffer[i] = STR_STR.charAt(random.nextInt(STR_STR.length()));
             } else {
                 buffer[i] = ALL_STR.charAt(random.nextInt(ALL_STR.length()));
