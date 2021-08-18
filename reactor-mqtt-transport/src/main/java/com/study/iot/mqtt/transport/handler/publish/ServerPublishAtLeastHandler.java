@@ -8,8 +8,9 @@ import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
+import com.study.iot.mqtt.transport.strategy.PublishCapable;
+import com.study.iot.mqtt.transport.strategy.StrategyEnum;
+import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
@@ -27,8 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.AT_LEAST_ONCE)
-public class ServerPublishAtLeastHandler implements PublishStrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER_PUBLISH, type = StrategyEnum.AT_LEAST_ONCE)
+public class ServerPublishAtLeastHandler implements PublishCapable {
 
     @Autowired
     private ContainerManager containerManager;

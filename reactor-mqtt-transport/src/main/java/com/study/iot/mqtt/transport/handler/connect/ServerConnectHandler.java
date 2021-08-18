@@ -15,7 +15,8 @@ import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.StrategyCapable;
+import com.study.iot.mqtt.transport.strategy.ConnectCapable;
+import com.study.iot.mqtt.transport.strategy.StrategyEnum;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnectMessage;
@@ -24,7 +25,6 @@ import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
 import io.netty.handler.codec.mqtt.MqttConnectVariableHeader;
 import io.netty.handler.codec.mqtt.MqttIdentifierRejectedException;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttUnacceptableProtocolVersionException;
 import io.netty.util.Attribute;
 import io.netty.util.CharsetUtil;
@@ -44,8 +44,8 @@ import reactor.netty.Connection;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.CONNECT)
-public class ServerConnectHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.CONNECT)
+public class ServerConnectHandler implements ConnectCapable {
 
     @Autowired
     private ContainerManager containerManager;
@@ -99,7 +99,8 @@ public class ServerConnectHandler implements StrategyCapable {
 
         // 用户名和密码
         String key = mqttPayload.userName();
-        String secret = mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
+        String secret =
+            mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtils.isAnyBlank(key, secret)) {
             MqttConnAckMessage connAckMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);

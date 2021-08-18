@@ -3,9 +3,9 @@ package com.study.iot.mqtt.transport.router;
 
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.StrategyCapable;
+import com.study.iot.mqtt.transport.strategy.ConnectCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
-import com.study.iot.mqtt.transport.strategy.WillStrategyContainer;
+import com.study.iot.mqtt.transport.strategy.StrategyEnum;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import java.util.Optional;
 import lombok.Getter;
@@ -24,11 +24,8 @@ public class ServerMessageRouter {
 
     private final StrategyContainer container;
 
-    private final WillStrategyContainer willContainer;
-
-    public ServerMessageRouter(StrategyContainer container, WillStrategyContainer willContainer) {
+    public ServerMessageRouter(StrategyContainer container) {
         this.container = container;
-        this.willContainer = willContainer;
     }
 
     public void handle(MqttMessage message, DisposableConnection disposableConnection) {
@@ -39,7 +36,7 @@ public class ServerMessageRouter {
             return;
         }
 
-        Optional.ofNullable(container.findStrategy(StrategyGroup.SERVER, message.fixedHeader().messageType()))
-            .ifPresent(capable -> ((StrategyCapable) capable).handle(disposableConnection, message));
+        Optional.ofNullable(container.findStrategy(StrategyGroup.SERVER, StrategyEnum.valueOf(message.fixedHeader().messageType())))
+            .ifPresent(capable -> ((ConnectCapable) capable).handle(disposableConnection, message));
     }
 }

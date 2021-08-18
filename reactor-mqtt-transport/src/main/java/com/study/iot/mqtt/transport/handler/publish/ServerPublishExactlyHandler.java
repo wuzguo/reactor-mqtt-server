@@ -5,10 +5,10 @@ import com.study.iot.mqtt.common.message.TransportMessage;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyService;
+import com.study.iot.mqtt.transport.strategy.PublishCapable;
+import com.study.iot.mqtt.transport.strategy.StrategyEnum;
+import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttQoS;
 
 /**
  * <B>说明：描述</B>
@@ -18,8 +18,8 @@ import io.netty.handler.codec.mqtt.MqttQoS;
  * @date 2021/5/7 13:54
  */
 
-@PublishStrategyService(group = StrategyGroup.SERVER_PUBLISH, type = MqttQoS.EXACTLY_ONCE)
-public class ServerPublishExactlyHandler implements PublishStrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER_PUBLISH, type = StrategyEnum.EXACTLY_ONCE)
+public class ServerPublishExactlyHandler implements PublishCapable {
 
     @Override
     public void handle(DisposableConnection disposableConnection, SessionMessage message) {

@@ -9,8 +9,9 @@ import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
 import com.study.iot.mqtt.store.mapper.SessionMessageMapper;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyCapable;
-import com.study.iot.mqtt.transport.strategy.PublishStrategyContainer;
+import com.study.iot.mqtt.transport.strategy.PublishCapable;
+import com.study.iot.mqtt.transport.strategy.StrategyContainer;
+import com.study.iot.mqtt.transport.strategy.StrategyEnum;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ import java.util.Optional;
 public class SessionEventListener {
 
     @Autowired
-    private PublishStrategyContainer strategyContainer;
+    private StrategyContainer strategyContainer;
 
     @Autowired
     private ContainerManager containerManager;
@@ -57,8 +58,8 @@ public class SessionEventListener {
                                 event.getRow(), new SessionMessageMapper());
                         // 又来一个策略模式
                         Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH,
-                                MqttQoS.valueOf(sessionMessage.getQos())))
-                                .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(disposableConnection, sessionMessage));
+                                StrategyEnum.valueOf(MqttQoS.valueOf(sessionMessage.getQos()))))
+                                .ifPresent(capable -> ((PublishCapable) capable).handle(disposableConnection, sessionMessage));
                     }
                 });
     }

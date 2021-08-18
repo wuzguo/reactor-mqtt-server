@@ -11,12 +11,12 @@ import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.StrategyCapable;
+import com.study.iot.mqtt.transport.strategy.ConnectCapable;
+import com.study.iot.mqtt.transport.strategy.StrategyEnum;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +32,8 @@ import reactor.netty.Connection;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.PUBLISH)
-public class ServerPublishHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.PUBLISH)
+public class ServerPublishHandler implements ConnectCapable {
 
     @Autowired
     private ContainerManager containerManager;

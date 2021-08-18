@@ -7,10 +7,10 @@ import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.StrategyCapable;
+import com.study.iot.mqtt.transport.strategy.ConnectCapable;
+import com.study.iot.mqtt.transport.strategy.StrategyEnum;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttUnsubAckMessage;
 import io.netty.handler.codec.mqtt.MqttUnsubscribeMessage;
 import java.util.Optional;
@@ -26,8 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.UNSUBSCRIBE)
-public class ServerUnSubscribeHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.UNSUBSCRIBE)
+public class ServerUnSubscribeHandler implements ConnectCapable {
 
     @Autowired
     private ContainerManager containerManager;

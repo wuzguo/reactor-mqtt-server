@@ -39,7 +39,7 @@ public @interface StrategyService {
     /**
      * 策略
      *
-     * @return {@link MqttMessageType}
+     * @return {@link StrategyEnum}
      */
-    MqttMessageType type();
+    StrategyEnum type();
 }

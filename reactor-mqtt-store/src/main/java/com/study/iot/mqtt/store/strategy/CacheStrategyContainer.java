@@ -57,7 +57,7 @@ public class CacheStrategyContainer implements ApplicationContextAware {
     /**
      * 获取策略类型，抛出异常
      *
-     * @param group {@link Group}
+     * @param group {@link String}
      * @param value value Id
      * @param <T>   泛型
      * @return {@link CacheCapable} 结果

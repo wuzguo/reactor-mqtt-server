@@ -21,8 +21,7 @@ import org.springframework.context.ApplicationContextAware;
 @AllArgsConstructor
 public class StrategyContainer implements ApplicationContextAware {
 
-    private static final Map<String, Map<MqttMessageType, Class<? extends StrategyCapable>>> CONTAINER = Maps
-        .newConcurrentMap();
+    private static final Map<String, Map<StrategyEnum, Class<? extends StrategyCapable>>> CONTAINER = Maps.newConcurrentMap();
 
     private final ApplicationContext applicationContext;
 
@@ -43,12 +42,12 @@ public class StrategyContainer implements ApplicationContextAware {
                 StrategyService strategyService = strategyClass.getAnnotation(StrategyService.class);
 
                 String group = strategyService.group();
-                Map<MqttMessageType, Class<? extends StrategyCapable>> storage = CONTAINER.get(group);
+                Map<StrategyEnum, Class<? extends StrategyCapable>> storage = CONTAINER.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
 
-                MqttMessageType value = strategyService.type();
+                StrategyEnum value = strategyService.type();
                 storage.putIfAbsent(value, strategyClass);
                 CONTAINER.put(group, storage);
             }));
@@ -62,8 +61,8 @@ public class StrategyContainer implements ApplicationContextAware {
      * @param <T>   泛型
      * @return {@link StrategyCapable} 结果
      */
-    public <T extends StrategyCapable> T getStrategy(String group, MqttMessageType value) {
-        Map<MqttMessageType, Class<? extends StrategyCapable>> storage = CONTAINER.get(group);
+    public <T extends StrategyCapable> T getStrategy(String group, StrategyEnum value) {
+        Map<StrategyEnum, Class<? extends StrategyCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
             throw new BeanDefinitionValidationException(String
                 .format("group '%s' not found in value container", group));
@@ -88,8 +87,8 @@ public class StrategyContainer implements ApplicationContextAware {
      * @param <T>   泛型
      * @return {@link StrategyCapable} 结果
      */
-    public <T extends StrategyCapable> T findStrategy(String group, MqttMessageType value) {
-        Map<MqttMessageType, Class<? extends StrategyCapable>> storage = CONTAINER.get(group);
+    public <T extends StrategyCapable> T findStrategy(String group, StrategyEnum value) {
+        Map<StrategyEnum, Class<? extends StrategyCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
             return null;
         }

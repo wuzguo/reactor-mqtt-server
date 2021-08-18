@@ -2,10 +2,10 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.StrategyCapable;
+import com.study.iot.mqtt.transport.strategy.ConnectCapable;
+import com.study.iot.mqtt.transport.strategy.StrategyEnum;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -17,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.PINGRESP)
-public class ServerPingRespHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.PINGRESP)
+public class ServerPingRespHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {

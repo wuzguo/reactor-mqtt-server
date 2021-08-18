@@ -14,11 +14,11 @@ import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.transport.annotation.MqttMetric;
 import com.study.iot.mqtt.transport.constant.MetricMatterName;
 import com.study.iot.mqtt.transport.constant.StrategyGroup;
-import com.study.iot.mqtt.transport.strategy.StrategyCapable;
+import com.study.iot.mqtt.transport.strategy.ConnectCapable;
+import com.study.iot.mqtt.transport.strategy.StrategyEnum;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.handler.codec.mqtt.MqttSubAckMessage;
@@ -40,8 +40,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = MqttMessageType.SUBSCRIBE)
-public class ServerSubscribeHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.SUBSCRIBE)
+public class ServerSubscribeHandler implements ConnectCapable {
 
     @Autowired
     private ContainerManager containerManager;

@@ -12,7 +12,7 @@ import io.netty.handler.codec.mqtt.MqttQoS;
  * @date 2021/5/7 11:50
  */
 
-public interface WillCapable {
+public interface WillCapable extends StrategyCapable {
 
     /**
      * 处理消息
