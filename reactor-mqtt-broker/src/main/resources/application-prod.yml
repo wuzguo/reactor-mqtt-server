@@ -16,6 +16,12 @@ spring:
       host: localhost
       # 端口
       port: 1884
+      # WS端口
+      ws-port: 1882
+      # CoAP端口
+      co-port: 1884
+      # XMPP 端口
+      xm-port: 1886
       # 心跳时间(秒)
       heart: 100000
       #开启日志
