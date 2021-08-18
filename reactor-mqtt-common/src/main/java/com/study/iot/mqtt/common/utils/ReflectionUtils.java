@@ -1,8 +1,15 @@
 package com.study.iot.mqtt.common.utils;
 
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.BeansException;
+import org.springframework.cglib.core.CodeGenerationException;
+import org.springframework.lang.Nullable;
 
 /**
  * <B>说明：描述</B>
@@ -120,5 +127,91 @@ public class ReflectionUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 获取 所有 field 属性上的注解
+     *
+     * @param clazz           类
+     * @param fieldName       属性名
+     * @param annotationClass 注解
+     * @param <T>             注解泛型
+     * @return 注解
+     */
+    @Nullable
+    public static <T extends Annotation> T getAnnotation(Class<?> clazz, String fieldName, Class<T> annotationClass) {
+        Field field = getField(clazz, fieldName);
+        if (field == null) {
+            return null;
+        }
+        return field.getAnnotation(annotationClass);
+    }
+
+
+    /**
+     * 获取 类属性
+     *
+     * @param clazz     类信息
+     * @param fieldName 属性名
+     * @return Field
+     */
+    @Nullable
+    public static Field getField(Class<?> clazz, String fieldName) {
+        while (clazz != Object.class) {
+            try {
+                return clazz.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取 Bean 的所有 get方法
+     *
+     * @param type 类
+     * @return PropertyDescriptor数组
+     */
+    public static PropertyDescriptor[] getBeanGetters(Class type) {
+        return getPropertiesHelper(type, true, false);
+    }
+
+    /**
+     * 获取 Bean 的所有 set方法
+     *
+     * @param type 类
+     * @return PropertyDescriptor数组
+     */
+    public static PropertyDescriptor[] getBeanSetters(Class type) {
+        return getPropertiesHelper(type, false, true);
+    }
+
+    /**
+     * 获取 Bean 的所有 PropertyDescriptor
+     *
+     * @param type  类
+     * @param read  读取方法
+     * @param write 写方法
+     * @return PropertyDescriptor数组
+     */
+    public static PropertyDescriptor[] getPropertiesHelper(Class type, boolean read, boolean write) {
+        try {
+            PropertyDescriptor[] all = BeanUtils.getPropertyDescriptors(type);
+            if (read && write) {
+                return all;
+            } else {
+                List<PropertyDescriptor> properties = new ArrayList<>(all.length);
+                for (PropertyDescriptor pd : all) {
+                    if ((read && pd.getReadMethod() != null)
+                        || (write && pd.getWriteMethod() != null)) {
+                        properties.add(pd);
+                    }
+                }
+                return properties.toArray(new PropertyDescriptor[0]);
+            }
+        } catch (BeansException ex) {
+            throw new CodeGenerationException(ex);
+        }
     }
 }

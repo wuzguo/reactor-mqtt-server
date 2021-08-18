@@ -13,6 +13,7 @@ import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import java.util.Optional;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -43,15 +44,9 @@ public class MqttServerRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        // 配置启动的协议
-        Set<ProtocolProperties> protocols = Sets.newHashSet();
-        protocols.add(ProtocolProperties.builder().port(properties.getPort()).type(ProtocolType.MQTT).build());
-        protocols.add(ProtocolProperties.builder().port(properties.getWsPort()).type(ProtocolType.WS).build());
-
         // 配置文件
         ServerProperties serverProperties = ServerProperties.builder()
             .host(properties.getHost()).port(properties.getPort())
-            .protocols(protocols)
             .strategy(properties.getStrategy())
             .sendBufSize(32 * 1024)
             .revBufSize(32 * 1024)
@@ -62,6 +57,12 @@ public class MqttServerRunner implements ApplicationRunner {
             .isLog(properties.getEnableLog())
             .throwable(e -> log.error("starting mqtt server exception：{}", e.getMessage()))
             .build();
+
+        // 配置启动的协议
+        Set<ServerProperties> protocols = Sets.newHashSet();
+        protocols.add();
+        //  protocols.add(ProtocolProperties.builder().port(properties.getWsPort()).type(ProtocolType.WS).build());
+
         // 启动服务
         ServerSession server = new TransportServer().create(serverProperties)
             .start(containerManager, messageRouter).block();

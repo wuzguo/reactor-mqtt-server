@@ -36,10 +36,13 @@ public class TransportServerFactory {
 
     public Mono<ServerSession> start(ServerProperties properties, ContainerManager containerManager,
         ServerMessageRouter messageRouter) {
-        // 获取DisposableServer
+        // 获取 DisposableServer
         List<Disposable> disposables = properties.getProtocols().stream()
             .map(protocolProperties -> protocolFactory.getProtocol(protocolProperties.getType())
-                .map(protocol -> protocol.getTransport().start(properties, unicastProcessor).subscribe())
+                .map(protocol -> {
+                    properties.setPort(protocolProperties.getPort());
+                    return protocol.getTransport().start(properties, unicastProcessor).subscribe();
+                })
                 .orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
         // 返回
         return Mono.just(this.wrapper(disposables, containerManager, messageRouter))
