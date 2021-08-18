@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.protocol.ws;
+package com.study.iot.mqtt.protocol.proto.ws;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.common.annocation.ProtocolType;

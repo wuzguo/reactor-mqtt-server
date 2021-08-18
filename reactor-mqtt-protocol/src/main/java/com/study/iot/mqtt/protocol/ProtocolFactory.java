@@ -3,10 +3,10 @@ package com.study.iot.mqtt.protocol;
 
 import com.google.common.collect.Lists;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
-import com.study.iot.mqtt.protocol.coap.CoapProtocol;
-import com.study.iot.mqtt.protocol.mqtt.MqttProtocol;
-import com.study.iot.mqtt.protocol.ws.WsProtocol;
-import com.study.iot.mqtt.protocol.xmpp.XmppProtocol;
+import com.study.iot.mqtt.protocol.proto.coap.CoapProtocol;
+import com.study.iot.mqtt.protocol.proto.mqtt.MqttProtocol;
+import com.study.iot.mqtt.protocol.proto.ws.WsProtocol;
+import com.study.iot.mqtt.protocol.proto.xmpp.XmppProtocol;
 import java.util.List;
 import java.util.Optional;
 

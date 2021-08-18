@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.protocol.coap;
+package com.study.iot.mqtt.protocol.proto.coap;
 
 import com.study.iot.mqtt.protocol.Protocol;
 import com.study.iot.mqtt.protocol.ProtocolTransport;

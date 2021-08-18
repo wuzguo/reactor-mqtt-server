@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.protocol.xmpp;
+package com.study.iot.mqtt.protocol.proto.xmpp;
 
 import com.study.iot.mqtt.protocol.Protocol;
 import com.study.iot.mqtt.protocol.ProtocolTransport;

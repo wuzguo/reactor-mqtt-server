@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.protocol.mqtt;
+package com.study.iot.mqtt.protocol.proto.mqtt;
 
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.protocol.coap;
+package com.study.iot.mqtt.protocol.proto.xmpp;
 
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import lombok.Data;
@@ -10,13 +10,12 @@ import lombok.experimental.SuperBuilder;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/8/18 11:02
+ * @date 2021/8/18 11:03
  */
 
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class CoapServerProperties extends ServerProperties {
-
+public class XmppServerProperties extends ServerProperties {
 
 }
