@@ -1,7 +1,6 @@
 package com.study.iot.mqtt.client.config;
 
 import com.study.iot.mqtt.client.router.ClientMessageRouter;
-import com.study.iot.mqtt.client.strategy.PublishStrategyContainer;
 import com.study.iot.mqtt.client.strategy.StrategyContainer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -23,12 +22,6 @@ public class ClientAutoConfiguration {
     @ConditionalOnMissingBean
     public StrategyContainer strategyContainer(ApplicationContext applicationContext) {
         return new StrategyContainer(applicationContext);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public PublishStrategyContainer publishStrategyContainer(ApplicationContext applicationContext) {
-        return new PublishStrategyContainer(applicationContext);
     }
 
     @Bean

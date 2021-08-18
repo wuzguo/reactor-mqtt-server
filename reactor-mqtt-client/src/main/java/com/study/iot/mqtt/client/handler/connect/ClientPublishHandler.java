@@ -2,8 +2,7 @@ package com.study.iot.mqtt.client.handler.connect;
 
 import com.study.iot.mqtt.client.strategy.ConnectCapable;
 import com.study.iot.mqtt.client.strategy.PublishCapable;
-import com.study.iot.mqtt.client.strategy.PublishStrategyContainer;
-import com.study.iot.mqtt.client.strategy.StrategyCapable;
+import com.study.iot.mqtt.client.strategy.StrategyContainer;
 import com.study.iot.mqtt.client.strategy.StrategyEnum;
 import com.study.iot.mqtt.client.strategy.StrategyGroup;
 import com.study.iot.mqtt.client.strategy.StrategyService;
@@ -11,7 +10,6 @@ import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ClientPublishHandler implements ConnectCapable {
 
     @Autowired
-    private PublishStrategyContainer strategyContainer;
+    private StrategyContainer strategyContainer;
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
@@ -39,7 +37,8 @@ public class ClientPublishHandler implements ConnectCapable {
         MqttFixedHeader header = message.fixedHeader();
         byte[] bytes = copyByteBuf(mqttMessage.payload());
         // 又来一个策略模式
-        Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.CLIENT_PUBLISH, header.qosLevel()))
+        Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.CLIENT_PUBLISH,
+                StrategyEnum.valueOf(header.qosLevel())))
             .ifPresent(capable -> ((PublishCapable) capable).handle(disposableConnection, mqttMessage, bytes));
     }
 

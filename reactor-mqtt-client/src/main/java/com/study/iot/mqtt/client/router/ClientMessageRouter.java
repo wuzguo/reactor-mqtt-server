@@ -1,8 +1,9 @@
 package com.study.iot.mqtt.client.router;
 
 
-import com.study.iot.mqtt.client.strategy.StrategyCapable;
+import com.study.iot.mqtt.client.strategy.ConnectCapable;
 import com.study.iot.mqtt.client.strategy.StrategyContainer;
+import com.study.iot.mqtt.client.strategy.StrategyEnum;
 import com.study.iot.mqtt.client.strategy.StrategyGroup;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -37,7 +38,8 @@ public class ClientMessageRouter {
         }
 
         // 策略分发
-        Optional.ofNullable(container.findStrategy(StrategyGroup.CLIENT, message.fixedHeader().messageType()))
-            .ifPresent(capable -> ((StrategyCapable) capable).handle(disposableConnection, message));
+        Optional.ofNullable(container.findStrategy(StrategyGroup.CLIENT,
+                StrategyEnum.valueOf(message.fixedHeader().messageType())))
+            .ifPresent(capable -> ((ConnectCapable) capable).handle(disposableConnection, message));
     }
 }
