@@ -32,13 +32,13 @@ public class WillStrategyContainer implements ApplicationContextAware {
 
     private void initializingContainer(ApplicationContext applicationContext) {
         Optional.of(applicationContext.getBeansWithAnnotation(WillStrategyService.class))
-            .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
-                if (!WillCapable.class.isAssignableFrom(v.getClass())) {
+            .ifPresent(annotationBeans -> annotationBeans.forEach((beanName, instance) -> {
+                if (!WillCapable.class.isAssignableFrom(instance.getClass())) {
                     throw new BeanDefinitionValidationException(String
-                        .format("%s must implemented interface WillCapable.", v.getClass()));
+                        .format("%s must implemented interface WillCapable.", instance.getClass()));
                 }
 
-                Class<? extends WillCapable> strategyClass = (Class<? extends WillCapable>) v.getClass();
+                Class<? extends WillCapable> strategyClass = (Class<? extends WillCapable>) instance.getClass();
                 WillStrategyService WillStrategyService = strategyClass.getAnnotation(WillStrategyService.class);
 
                 String group = WillStrategyService.group();

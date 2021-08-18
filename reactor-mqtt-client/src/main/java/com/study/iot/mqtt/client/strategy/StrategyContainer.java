@@ -33,13 +33,13 @@ public class StrategyContainer implements ApplicationContextAware {
 
     private void initializingContainer(ApplicationContext applicationContext) {
         Optional.of(applicationContext.getBeansWithAnnotation(StrategyService.class))
-            .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
-                if (!StrategyCapable.class.isAssignableFrom(v.getClass())) {
+            .ifPresent(annotationBeans -> annotationBeans.forEach((beanName, instance) -> {
+                if (!StrategyCapable.class.isAssignableFrom(instance.getClass())) {
                     throw new BeanDefinitionValidationException(String
-                        .format("%s must implemented interface StrategyCapable.", v.getClass()));
+                        .format("%s must implemented interface StrategyCapable.", instance.getClass()));
                 }
 
-                Class<? extends StrategyCapable> strategyClass = (Class<? extends StrategyCapable>) v.getClass();
+                Class<? extends StrategyCapable> strategyClass = (Class<? extends StrategyCapable>) instance.getClass();
                 StrategyService strategyService = strategyClass.getAnnotation(StrategyService.class);
 
                 String group = strategyService.group();

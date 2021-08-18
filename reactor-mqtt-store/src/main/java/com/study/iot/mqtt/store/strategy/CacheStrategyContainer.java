@@ -33,13 +33,13 @@ public class CacheStrategyContainer implements ApplicationContextAware {
 
     private void initializingContainer(ApplicationContext applicationContext) {
         Optional.of(applicationContext.getBeansWithAnnotation(CacheStrategyService.class))
-            .ifPresent(annotationBeans -> annotationBeans.forEach((k, v) -> {
-                if (!CacheCapable.class.isAssignableFrom(v.getClass())) {
+            .ifPresent(annotationBeans -> annotationBeans.forEach((beanName, instance) -> {
+                if (!CacheCapable.class.isAssignableFrom(instance.getClass())) {
                     throw new BeanDefinitionValidationException(String
-                        .format("%s must implemented interface CacheCapable.", v.getClass()));
+                        .format("%s must implemented interface CacheCapable.", instance.getClass()));
                 }
 
-                Class<? extends CacheCapable> strategyClass = (Class<? extends CacheCapable>) v.getClass();
+                Class<? extends CacheCapable> strategyClass = (Class<? extends CacheCapable>) instance.getClass();
                 CacheStrategyService cacheStrategyService = strategyClass.getAnnotation(CacheStrategyService.class);
 
                 String group = cacheStrategyService.group();

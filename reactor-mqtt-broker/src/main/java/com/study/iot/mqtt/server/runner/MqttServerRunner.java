@@ -56,9 +56,9 @@ public class MqttServerRunner implements ApplicationRunner {
             .throwable(e -> log.error("starting mqtt server exception：{}", e.getMessage()))
             .build();
         // 启动服务
-        ServerSession serverSession = new TransportServer().create(serverProperties)
+        ServerSession server = new TransportServer().create(serverProperties)
             .start(containerManager, messageRouter).block();
-        Optional.ofNullable(serverSession)
+        Optional.ofNullable(server)
             .ifPresent(session -> session.getConnections().subscribe(disposables -> disposables.stream()
                 .map(disposable -> (DisposableConnection) disposable)
                 .forEach(DisposableConnection::destroy)));
