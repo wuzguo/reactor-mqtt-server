@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @date 2021/5/14 15:49
  */
 
-public class IdWorker {
+public final class IdWorker {
 
     /**
      * 主机和进程的机器码

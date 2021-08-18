@@ -14,8 +14,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * @date 2021/5/14 15:47
  */
 
-public class SystemClock {
+public final class SystemClock {
+
     private final long period;
+
     private final AtomicLong now;
 
     private SystemClock(long period) {

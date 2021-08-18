@@ -46,7 +46,7 @@ public class MqttProperties {
     private CacheStrategy strategy;
 
     public void setStrategy(String strategy) {
-        this.strategy = CacheStrategy.fromName(strategy);
+        this.strategy = CacheStrategy.from(strategy);
     }
 
     /**

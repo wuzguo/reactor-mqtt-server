@@ -37,5 +37,4 @@ public class TransportClientFactory {
         ClientMessageRouter messageRouter) {
         return new ClientConnection(connection, properties, messageRouter);
     }
-
 }

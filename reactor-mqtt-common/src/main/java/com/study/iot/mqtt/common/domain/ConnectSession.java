@@ -69,7 +69,6 @@ public class ConnectSession implements Serializable {
         messages.add(message);
     }
 
-
     public void poll() {
         messages.poll();
     }

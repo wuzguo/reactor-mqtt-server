@@ -24,7 +24,7 @@ public enum CacheStrategy {
 
     private String name;
 
-    public static CacheStrategy fromName(String name) {
+    public static CacheStrategy from(String name) {
         for (CacheStrategy strategyEnum : CacheStrategy.values()) {
             if (StringUtils.equalsIgnoreCase(name, strategyEnum.name)) {
                 return strategyEnum;
