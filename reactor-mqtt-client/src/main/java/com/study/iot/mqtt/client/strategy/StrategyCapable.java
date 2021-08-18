@@ -1,9 +1,6 @@
 package com.study.iot.mqtt.client.strategy;
 
 
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
-import io.netty.handler.codec.mqtt.MqttMessage;
-
 /**
  * <B>说明：描述</B>
  *
@@ -14,11 +11,4 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 
 public interface StrategyCapable {
 
-    /**
-     * 处理消息
-     *
-     * @param connection {@link DisposableConnection}
-     * @param message    {@link MqttMessage}
-     */
-    void handle(DisposableConnection connection, MqttMessage message);
 }

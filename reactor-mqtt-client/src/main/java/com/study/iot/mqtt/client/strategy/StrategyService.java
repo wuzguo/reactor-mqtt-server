@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.client.strategy;
 
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -39,7 +38,7 @@ public @interface StrategyService {
     /**
      * 策略
      *
-     * @return {@link MqttMessageType}
+     * @return {@link StrategyEnum}
      */
-    MqttMessageType type();
+    StrategyEnum type();
 }

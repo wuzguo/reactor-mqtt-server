@@ -1,14 +1,14 @@
 package com.study.iot.mqtt.client.handler.connect;
 
 
-import com.study.iot.mqtt.client.strategy.StrategyCapable;
+import com.study.iot.mqtt.client.strategy.ConnectCapable;
+import com.study.iot.mqtt.client.strategy.StrategyEnum;
 import com.study.iot.mqtt.client.strategy.StrategyGroup;
 import com.study.iot.mqtt.client.strategy.StrategyService;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.CLIENT, type = MqttMessageType.PUBREL)
-public class ClientPubRelHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.CLIENT, type = StrategyEnum.PUBREL)
+public class ClientPubRelHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {

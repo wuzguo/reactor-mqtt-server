@@ -10,15 +10,7 @@ package com.study.iot.mqtt.client.strategy;
 
 public interface StrategyGroup {
 
-    String SERVER = "mqtt.server";
-
     String CLIENT = "mqtt.client";
 
-    String SERVER_PUBLISH = "mqtt.server.publish";
-
     String CLIENT_PUBLISH = "mqtt.client.publish";
-
-    String WILL_SERVER = "will.server";
-
-    String WILL_CLIENT = "will.client";
 }

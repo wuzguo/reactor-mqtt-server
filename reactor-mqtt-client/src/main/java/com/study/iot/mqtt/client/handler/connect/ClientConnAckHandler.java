@@ -1,6 +1,7 @@
 package com.study.iot.mqtt.client.handler.connect;
 
-import com.study.iot.mqtt.client.strategy.StrategyCapable;
+import com.study.iot.mqtt.client.strategy.ConnectCapable;
+import com.study.iot.mqtt.client.strategy.StrategyEnum;
 import com.study.iot.mqtt.client.strategy.StrategyGroup;
 import com.study.iot.mqtt.client.strategy.StrategyService;
 import com.study.iot.mqtt.protocol.AttributeKeys;
@@ -9,7 +10,6 @@ import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -21,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.CLIENT, type = MqttMessageType.CONNACK)
-public class ClientConnAckHandler implements StrategyCapable {
+@StrategyService(group = StrategyGroup.CLIENT, type = StrategyEnum.CONNACK)
+public class ClientConnAckHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {

@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.client.handler.connect;
 
-import com.study.iot.mqtt.client.strategy.PublishStrategyCapable;
+import com.study.iot.mqtt.client.strategy.PublishCapable;
 import com.study.iot.mqtt.client.strategy.PublishStrategyContainer;
 import com.study.iot.mqtt.client.strategy.StrategyCapable;
 import com.study.iot.mqtt.client.strategy.StrategyGroup;
@@ -38,7 +38,7 @@ public class ClientPublishHandler implements StrategyCapable {
         byte[] bytes = copyByteBuf(mqttMessage.payload());
         // 又来一个策略模式
         Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.CLIENT_PUBLISH, header.qosLevel()))
-            .ifPresent(capable -> ((PublishStrategyCapable) capable).handle(disposableConnection, mqttMessage, bytes));
+            .ifPresent(capable -> ((PublishCapable) capable).handle(disposableConnection, mqttMessage, bytes));
     }
 
     /**

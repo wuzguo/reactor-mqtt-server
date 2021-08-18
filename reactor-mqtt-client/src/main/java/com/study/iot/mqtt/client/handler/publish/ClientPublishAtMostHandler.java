@@ -1,8 +1,10 @@
 package com.study.iot.mqtt.client.handler.publish;
 
-import com.study.iot.mqtt.client.strategy.PublishStrategyCapable;
+import com.study.iot.mqtt.client.strategy.PublishCapable;
 import com.study.iot.mqtt.client.strategy.PublishStrategyService;
+import com.study.iot.mqtt.client.strategy.StrategyEnum;
 import com.study.iot.mqtt.client.strategy.StrategyGroup;
+import com.study.iot.mqtt.client.strategy.StrategyService;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
@@ -19,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@PublishStrategyService(group = StrategyGroup.CLIENT_PUBLISH, type = MqttQoS.AT_MOST_ONCE)
-public class ClientPublishAtMostHandler implements PublishStrategyCapable {
+@StrategyService(group = StrategyGroup.CLIENT_PUBLISH, type = StrategyEnum.AT_MOST_ONCE)
+public class ClientPublishAtMostHandler implements PublishCapable {
 
     @Override
     public void handle(DisposableConnection connection, MqttPublishMessage message, byte[] bytes) {

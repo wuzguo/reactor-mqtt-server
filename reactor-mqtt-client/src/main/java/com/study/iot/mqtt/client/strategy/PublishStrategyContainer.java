@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationContextAware;
 @AllArgsConstructor
 public class PublishStrategyContainer  implements ApplicationContextAware {
 
-    private static final Map<String, Map<MqttQoS, Class<? extends PublishStrategyCapable>>> CONTAINER = Maps
+    private static final Map<String, Map<MqttQoS, Class<? extends PublishCapable>>> CONTAINER = Maps
         .newConcurrentMap();
 
     private final ApplicationContext applicationContext;
@@ -34,16 +34,16 @@ public class PublishStrategyContainer  implements ApplicationContextAware {
     private void initializingContainer(ApplicationContext applicationContext) {
         Optional.of(applicationContext.getBeansWithAnnotation(PublishStrategyService.class))
             .ifPresent(annotationBeans -> annotationBeans.forEach((beanName, instance) -> {
-                if (!PublishStrategyCapable.class.isAssignableFrom(instance.getClass())) {
+                if (!PublishCapable.class.isAssignableFrom(instance.getClass())) {
                     throw new BeanDefinitionValidationException(String
                         .format("%s must implemented interface PublishStrategyCapable.", instance.getClass()));
                 }
 
-                Class<? extends PublishStrategyCapable> strategyClass = (Class<? extends PublishStrategyCapable>) instance.getClass();
+                Class<? extends PublishCapable> strategyClass = (Class<? extends PublishCapable>) instance.getClass();
                 PublishStrategyService strategyService = strategyClass.getAnnotation(PublishStrategyService.class);
 
                 String group = strategyService.group();
-                Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = CONTAINER.get(group);
+                Map<MqttQoS, Class<? extends PublishCapable>> storage = CONTAINER.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
@@ -60,15 +60,15 @@ public class PublishStrategyContainer  implements ApplicationContextAware {
      * @param group {@link String}
      * @param value value Id
      * @param <T>   泛型
-     * @return {@link PublishStrategyCapable} 结果
+     * @return {@link PublishCapable} 结果
      */
-    public <T extends PublishStrategyCapable> T getStrategy(String group, MqttQoS value) {
-        Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = CONTAINER.get(group);
+    public <T extends PublishCapable> T getStrategy(String group, MqttQoS value) {
+        Map<MqttQoS, Class<? extends PublishCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
             throw new BeanDefinitionValidationException(String.format("group '%s' not found in value container", group));
         }
 
-        Class<? extends PublishStrategyCapable> strategy = storage.get(value);
+        Class<? extends PublishCapable> strategy = storage.get(value);
         if (strategy == null) {
             throw new BeanDefinitionValidationException(String.format("value '%s' not found in value group '%s'", value, group));
         }
@@ -82,15 +82,15 @@ public class PublishStrategyContainer  implements ApplicationContextAware {
      * @param group {@link String}
      * @param value value Id
      * @param <T>   泛型
-     * @return {@link PublishStrategyCapable} 结果
+     * @return {@link PublishCapable} 结果
      */
-    public <T extends PublishStrategyCapable> T findStrategy(String group, MqttQoS value) {
-        Map<MqttQoS, Class<? extends PublishStrategyCapable>> storage = CONTAINER.get(group);
+    public <T extends PublishCapable> T findStrategy(String group, MqttQoS value) {
+        Map<MqttQoS, Class<? extends PublishCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
             return null;
         }
 
-        Class<? extends PublishStrategyCapable> strategy = storage.get(value);
+        Class<? extends PublishCapable> strategy = storage.get(value);
         if (strategy == null) {
             return null;
         }

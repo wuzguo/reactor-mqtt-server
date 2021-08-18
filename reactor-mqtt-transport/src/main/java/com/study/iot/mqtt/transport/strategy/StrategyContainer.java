@@ -1,7 +1,6 @@
 package com.study.iot.mqtt.transport.strategy;
 
 import com.google.common.collect.Maps;
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
