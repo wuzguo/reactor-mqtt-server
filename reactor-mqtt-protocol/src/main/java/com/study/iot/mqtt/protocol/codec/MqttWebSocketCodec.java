@@ -17,8 +17,8 @@ import java.util.List;
 public class MqttWebSocketCodec extends MessageToMessageCodec<BinaryWebSocketFrame, ByteBuf> {
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list)
-        throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
+        // 为空直接返回
         if (byteBuf == null) {
             return;
         }
@@ -26,8 +26,7 @@ public class MqttWebSocketCodec extends MessageToMessageCodec<BinaryWebSocketFra
     }
 
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, BinaryWebSocketFrame webSocketFrame,
-        List<Object> list) throws Exception {
+    protected void decode(ChannelHandlerContext channelHandlerContext, BinaryWebSocketFrame webSocketFrame, List<Object> list) throws Exception {
         list.add(webSocketFrame.content().retain());
     }
 }
