@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public class ProtocolFactory {
 
-    private List<Protocol> protocols = Lists.newArrayList();
+    private final List<Protocol> protocols = Lists.newArrayList();
 
     public ProtocolFactory() {
         protocols.add(new MqttProtocol());

@@ -1,15 +1,17 @@
 package com.study.iot.mqtt.server.runner;
 
 import com.google.common.collect.Sets;
-import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
+import com.study.iot.mqtt.common.domain.ProtocolProperties;
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.server.config.MqttProperties;
+import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.transport.TransportServer;
 import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -41,10 +43,15 @@ public class MqttServerRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        // 配置启动的协议
+        Set<ProtocolProperties> protocols = Sets.newHashSet();
+        protocols.add(ProtocolProperties.builder().port(properties.getPort()).type(ProtocolType.MQTT).build());
+        protocols.add(ProtocolProperties.builder().port(properties.getWsPort()).type(ProtocolType.WS).build());
+
         // 配置文件
         ServerProperties serverProperties = ServerProperties.builder()
             .host(properties.getHost()).port(properties.getPort())
-            .protocols(Sets.newHashSet(ProtocolType.MQTT))
+            .protocols(protocols)
             .strategy(properties.getStrategy())
             .sendBufSize(32 * 1024)
             .revBufSize(32 * 1024)

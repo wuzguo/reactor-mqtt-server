@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.protocol.config;
 
 
-import com.study.iot.mqtt.common.annocation.ProtocolType;
+import com.study.iot.mqtt.common.domain.ProtocolProperties;
 import com.study.iot.mqtt.common.enums.CacheStrategy;
 import java.util.Set;
 import lombok.Data;
@@ -55,5 +55,5 @@ public class ServerProperties extends ConnectProperties {
     /**
      * 协议
      */
-    private Set<ProtocolType> protocols;
+    private Set<ProtocolProperties> protocols;
 }

@@ -38,7 +38,7 @@ public class TransportServerFactory {
         ServerMessageRouter messageRouter) {
         // 获取DisposableServer
         List<Disposable> disposables = properties.getProtocols().stream()
-            .map(protocolType -> protocolFactory.getProtocol(protocolType)
+            .map(protocolProperties -> protocolFactory.getProtocol(protocolProperties.getType())
                 .map(protocol -> protocol.getTransport().start(properties, unicastProcessor).subscribe())
                 .orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
         // 返回

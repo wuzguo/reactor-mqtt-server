@@ -25,9 +25,24 @@ public class MqttProperties {
     private String host;
 
     /**
-     * 端口号
+     * MQTT端口号
      */
     private Integer port;
+
+    /**
+     * Websocket端口号
+     */
+    private Integer wsPort;
+
+    /**
+     * XMPP端口号
+     */
+    private Integer xmPort;
+
+    /**
+     * COAP端口号
+     */
+    private Integer coPort;
 
     /**
      * 开启日志
