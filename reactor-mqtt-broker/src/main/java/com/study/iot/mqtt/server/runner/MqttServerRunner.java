@@ -13,7 +13,6 @@ import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import java.util.Optional;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -46,7 +45,8 @@ public class MqttServerRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         // 配置文件
         ServerProperties serverProperties = ServerProperties.builder()
-            .host(properties.getHost()).port(properties.getPort())
+            .host(properties.getHost())
+            .port(properties.getPort())
             .strategy(properties.getStrategy())
             .sendBufSize(32 * 1024)
             .revBufSize(32 * 1024)
@@ -59,12 +59,10 @@ public class MqttServerRunner implements ApplicationRunner {
             .build();
 
         // 配置启动的协议
-        Set<ServerProperties> protocols = Sets.newHashSet();
-        protocols.add();
-        //  protocols.add(ProtocolProperties.builder().port(properties.getWsPort()).type(ProtocolType.WS).build());
-
+        Set<ProtocolProperties> protocols = Sets.newHashSet();
+        protocols.add(ProtocolProperties.builder().port(properties.getPort()).type(ProtocolType.MQTT).build());
         // 启动服务
-        ServerSession server = new TransportServer().create(serverProperties)
+        ServerSession server = new TransportServer().create(serverProperties, protocols)
             .start(containerManager, messageRouter).block();
         Optional.ofNullable(server)
             .ifPresent(session -> session.getConnections().subscribe(disposables -> disposables.stream()

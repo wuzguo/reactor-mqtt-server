@@ -1,6 +1,8 @@
 package com.study.iot.mqtt.transport;
 
 
+import com.study.iot.mqtt.common.domain.ProtocolProperties;
+import com.study.iot.mqtt.common.utils.BeanUtils;
 import com.study.iot.mqtt.protocol.ProtocolFactory;
 import com.study.iot.mqtt.protocol.config.ServerProperties;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -10,6 +12,7 @@ import com.study.iot.mqtt.transport.connection.ServerConnection;
 import com.study.iot.mqtt.transport.router.ServerMessageRouter;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
@@ -34,14 +37,15 @@ public class TransportServerFactory {
         unicastProcessor = UnicastProcessor.create();
     }
 
-    public Mono<ServerSession> start(ServerProperties properties, ContainerManager containerManager,
-        ServerMessageRouter messageRouter) {
+    public Mono<ServerSession> start(ServerProperties properties, Set<ProtocolProperties> protocols,
+        ContainerManager containerManager, ServerMessageRouter messageRouter) {
         // 获取 DisposableServer
-        List<Disposable> disposables = properties.getProtocols().stream()
+        List<Disposable> disposables = protocols.stream()
             .map(protocolProperties -> protocolFactory.getProtocol(protocolProperties.getType())
                 .map(protocol -> {
-                    properties.setPort(protocolProperties.getPort());
-                    return protocol.getTransport().start(properties, unicastProcessor).subscribe();
+                    ServerProperties serverProperties = BeanUtils.copy(properties, ServerProperties.class);
+                    serverProperties.setPort(protocolProperties.getPort());
+                   return protocol.getTransport().start(serverProperties, unicastProcessor).subscribe();
                 })
                 .orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
         // 返回
