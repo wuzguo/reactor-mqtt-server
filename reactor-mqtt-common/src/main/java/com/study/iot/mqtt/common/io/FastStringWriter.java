@@ -9,7 +9,7 @@ import java.util.Arrays;
  * <B>说明：FastStringWriter，更改于 jdk CharArrayWriter</B>
  * 1. 去掉了锁 2. 初始容量由 32 改为 64
  *
- * @author zak.wu
+ * @author L.cm
  * @version 1.0.0
  * @date 2021/5/20 8:47
  */

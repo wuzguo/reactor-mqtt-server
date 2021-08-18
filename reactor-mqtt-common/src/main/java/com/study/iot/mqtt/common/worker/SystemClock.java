@@ -40,7 +40,7 @@ public final class SystemClock {
 
     private void scheduleClockUpdating() {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
-            Thread thread = new Thread(runnable, "System Clock");
+            Thread thread = new Thread(runnable, "system clock");
             thread.setDaemon(true);
             return thread;
         });

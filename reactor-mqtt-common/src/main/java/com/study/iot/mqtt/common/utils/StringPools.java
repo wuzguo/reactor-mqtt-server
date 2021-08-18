@@ -3,7 +3,7 @@ package com.study.iot.mqtt.common.utils;
 /**
  * <B>说明：描述</B>
  *
- * @author zak.wu
+ * @author L.cm
  * @version 1.0.0
  * @date 2021/5/7 9:29
  */

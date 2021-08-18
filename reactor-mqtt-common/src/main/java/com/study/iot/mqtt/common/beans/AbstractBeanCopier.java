@@ -32,7 +32,7 @@ import org.springframework.lang.Nullable;
  * <B>说明：cspring cglib 魔改</B>
  * 1. 支持链式 bean，支持 map 2. ClassLoader 跟 target 保持一致
  *
- * @author zak.wu
+ * @author L.cm
  * @version 1.0.0
  * @date 2021/5/20 8:47
  */

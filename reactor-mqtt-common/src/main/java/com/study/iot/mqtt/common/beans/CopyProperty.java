@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * <B>说明：copy 字段 配置</B>
  *
- * @author zak.wu
+ * @author L.cm
  * @version 1.0.0
  * @date 2021/5/20 8:47
  */

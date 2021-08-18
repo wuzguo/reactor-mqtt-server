@@ -12,7 +12,7 @@ import org.springframework.lang.Nullable;
 /**
  * <B>说明：Lambda 受检异常处理</B>
  *
- * @author zak.wu
+ * @author L.cm
  * @version 1.0.0
  * @date 2021/5/20 8:47
  */

@@ -20,7 +20,7 @@ import org.springframework.lang.Nullable;
 /**
  * <B>说明：实体工具类</B>
  *
- * @author zak.wu
+ * @author L.cm
  * @version 1.0.0
  * @date 2021/5/20 8:47
  */
@@ -43,15 +43,15 @@ public class BeanUtils extends org.springframework.beans.BeanUtils {
     /**
      * 实例化对象
      *
-     * @param clazzStr 类名
+     * @param clazz 类名
      * @param <T>      泛型标记
      * @return 对象
      */
-    public static <T> T newInstance(String clazzStr) {
+    public static <T> T newInstance(String clazz) {
         ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
         try {
-            Class<?> clazz = ClassUtils.forName(clazzStr, classLoader);
-            return newInstance(clazz);
+            Class<?> cls = ClassUtils.forName(clazz, classLoader);
+            return newInstance(cls);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
