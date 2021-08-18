@@ -41,9 +41,9 @@ public final class MessageBuilder {
 
     public static MqttPublishMessage buildPub(boolean isDup, MqttQoS qoS, boolean isRetain, int messageId, String topic,
         byte[] message) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH, isDup, qoS, isRetain, 0);
-        MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(topic, messageId);
-        return new MqttPublishMessage(mqttFixedHeader, mqttPublishVariableHeader, Unpooled.wrappedBuffer(message));
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH, isDup, qoS, isRetain, 0);
+        MqttPublishVariableHeader variableHeader = new MqttPublishVariableHeader(topic, messageId);
+        return new MqttPublishMessage(fixedHeader, variableHeader, Unpooled.wrappedBuffer(message));
     }
 
     public static MqttMessage buildPing(MqttMessageType messageType, boolean isDup, MqttQoS qosLevel,
@@ -53,9 +53,9 @@ public final class MessageBuilder {
 
 
     public static MqttPubAckMessage buildPubAck(boolean isDup, MqttQoS qoS, boolean isRetain, int messageId) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBACK, isDup, qoS, isRetain, 2);
-        MqttMessageIdVariableHeader mqttMessageIdVariableHeader = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttPubAckMessage(mqttFixedHeader, mqttMessageIdVariableHeader);
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBACK, isDup, qoS, isRetain, 2);
+        MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
+        return new MqttPubAckMessage(fixedHeader, variableHeader);
     }
 
     public static MqttConnAckMessage buildConnAck(MqttConnectReturnCode mqttConnectReturnCode, boolean sessionPresent) {
@@ -63,25 +63,25 @@ public final class MessageBuilder {
     }
 
     public static MqttPubAckMessage buildPubRec(int messageId) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC, false, MqttQoS.AT_LEAST_ONCE,
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC, false, MqttQoS.AT_LEAST_ONCE,
             false, 0x02);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttPubAckMessage(mqttFixedHeader, variableHeader);
+        return new MqttPubAckMessage(fixedHeader, variableHeader);
     }
 
     public static MqttPubAckMessage buildPubRel(int messageId) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL, false, MqttQoS.AT_LEAST_ONCE,
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL, false, MqttQoS.AT_LEAST_ONCE,
             false, 0x02);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttPubAckMessage(mqttFixedHeader, variableHeader);
+        return new MqttPubAckMessage(fixedHeader, variableHeader);
     }
 
 
     public static MqttPubAckMessage buildPubComp(int messageId) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBCOMP, false, MqttQoS.AT_MOST_ONCE,
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBCOMP, false, MqttQoS.AT_MOST_ONCE,
             false, 0x02);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttPubAckMessage(mqttFixedHeader, variableHeader);
+        return new MqttPubAckMessage(fixedHeader, variableHeader);
     }
 
     public static MqttSubAckMessage buildFailureSubAck(int messageId, List<Integer> qos) {
@@ -89,60 +89,60 @@ public final class MessageBuilder {
     }
 
     public static MqttSubAckMessage buildSubAck(int messageId, List<Integer> qos, MqttQoS mqttQoS) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.SUBACK, false, mqttQoS, false, 0);
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.SUBACK, false, mqttQoS, false, 0);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
         MqttSubAckPayload payload = new MqttSubAckPayload(qos);
-        return new MqttSubAckMessage(mqttFixedHeader, variableHeader, payload);
+        return new MqttSubAckMessage(fixedHeader, variableHeader, payload);
     }
 
     public static MqttSubAckMessage buildSubAck(int messageId, List<Integer> qos) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.SUBACK, false, MqttQoS.AT_MOST_ONCE,
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.SUBACK, false, MqttQoS.AT_MOST_ONCE,
             false, 0);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
         MqttSubAckPayload payload = new MqttSubAckPayload(qos);
-        return new MqttSubAckMessage(mqttFixedHeader, variableHeader, payload);
+        return new MqttSubAckMessage(fixedHeader, variableHeader, payload);
     }
 
 
     public static MqttUnsubAckMessage buildUnsubAck(int messageId) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.UNSUBACK, false, MqttQoS.AT_MOST_ONCE,
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.UNSUBACK, false, MqttQoS.AT_MOST_ONCE,
             false, 0x02);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttUnsubAckMessage(mqttFixedHeader, variableHeader);
+        return new MqttUnsubAckMessage(fixedHeader, variableHeader);
     }
 
     public static MqttConnAckMessage buildConnectAck(MqttConnectReturnCode connectReturnCode) {
-        MqttConnAckVariableHeader mqttConnAckVariableHeader = new MqttConnAckVariableHeader(connectReturnCode, true);
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(
+        MqttConnAckVariableHeader variableHeader = new MqttConnAckVariableHeader(connectReturnCode, true);
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(
             MqttMessageType.CONNACK, false, MqttQoS.AT_MOST_ONCE, false, 0x02);
-        return new MqttConnAckMessage(mqttFixedHeader, mqttConnAckVariableHeader);
+        return new MqttConnAckMessage(fixedHeader, variableHeader);
     }
 
     public static MqttSubscribeMessage buildSub(int messageId, List<MqttTopicSubscription> topicSubscriptions) {
-        MqttSubscribePayload mqttSubscribePayload = new MqttSubscribePayload(topicSubscriptions);
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.SUBSCRIBE, false, MqttQoS.AT_LEAST_ONCE,
+        MqttSubscribePayload payload = new MqttSubscribePayload(topicSubscriptions);
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.SUBSCRIBE, false, MqttQoS.AT_LEAST_ONCE,
             false, 0);
-        MqttMessageIdVariableHeader mqttMessageIdVariableHeader = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttSubscribeMessage(mqttFixedHeader, mqttMessageIdVariableHeader, mqttSubscribePayload);
+        MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
+        return new MqttSubscribeMessage(fixedHeader, variableHeader, payload);
     }
 
     public static MqttUnsubscribeMessage buildUnSub(int messageId, List<String> topics) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.UNSUBSCRIBE, false, MqttQoS.AT_LEAST_ONCE,
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.UNSUBSCRIBE, false, MqttQoS.AT_LEAST_ONCE,
             false, 0x02);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
-        return new MqttUnsubscribeMessage(mqttFixedHeader, variableHeader, new MqttUnsubscribePayload(topics));
+        return new MqttUnsubscribeMessage(fixedHeader, variableHeader, new MqttUnsubscribePayload(topics));
     }
 
     public static MqttConnectMessage buildConnect(String identity, String willTopic, String willMessage,
         String username, String password, boolean isUsername, boolean isPassword, boolean isWill, int willQos,
         int keepAliveTimeSeconds) {
-        MqttConnectVariableHeader mqttConnectVariableHeader = new MqttConnectVariableHeader(
+        MqttConnectVariableHeader variableHeader = new MqttConnectVariableHeader(
             MqttVersion.MQTT_3_1_1.protocolName(), MqttVersion.MQTT_3_1_1.protocolLevel(), isUsername, isPassword,
             false, willQos, isWill, false, keepAliveTimeSeconds);
-        MqttConnectPayload mqttConnectPayload = new MqttConnectPayload(identity, willTopic,
+        MqttConnectPayload payload = new MqttConnectPayload(identity, willTopic,
             isWill ? willMessage.getBytes() : null, username, isPassword ? password.getBytes() : null);
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT, false, MqttQoS.AT_MOST_ONCE,
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT, false, MqttQoS.AT_MOST_ONCE,
             false, 10);
-        return new MqttConnectMessage(mqttFixedHeader, mqttConnectVariableHeader, mqttConnectPayload);
+        return new MqttConnectMessage(fixedHeader, variableHeader, payload);
     }
 }
