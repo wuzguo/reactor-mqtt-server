@@ -36,7 +36,8 @@ public class ServerMessageRouter {
             return;
         }
 
-        Optional.ofNullable(container.findStrategy(StrategyGroup.SERVER, StrategyEnum.valueOf(message.fixedHeader().messageType())))
+        // 消息分发
+        Optional.ofNullable(container.find(StrategyGroup.SERVER, StrategyEnum.valueOf(message.fixedHeader().messageType())))
             .ifPresent(capable -> ((ConnectCapable) capable).handle(disposableConnection, message));
     }
 }

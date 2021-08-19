@@ -37,7 +37,7 @@ public class ClientPublishHandler implements ConnectCapable {
         MqttFixedHeader header = message.fixedHeader();
         byte[] bytes = copyByteBuf(mqttMessage.payload());
         // 又来一个策略模式
-        Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.CLIENT_PUBLISH,
+        Optional.ofNullable(strategyContainer.find(StrategyGroup.CLIENT_PUBLISH,
                 StrategyEnum.valueOf(header.qosLevel())))
             .ifPresent(capable -> ((PublishCapable) capable).handle(disposableConnection, mqttMessage, bytes));
     }

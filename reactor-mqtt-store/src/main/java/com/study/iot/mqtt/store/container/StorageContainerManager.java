@@ -28,16 +28,16 @@ public class StorageContainerManager implements ContainerManager {
 
     @Override
     public <T> StorageContainer<T> take(String cacheGroup) {
-        return container.getStrategy(cacheGroup, cacheEnum);
+        return container.get(cacheGroup, cacheEnum);
     }
 
     @Override
     public TopicContainer topic(String cacheGroup) {
-        return container.getStrategy(cacheGroup, cacheEnum);
+        return container.get(cacheGroup, cacheEnum);
     }
 
     @Override
     public MetricContainer metric(String cacheGroup) {
-        return container.getStrategy(cacheGroup, cacheEnum);
+        return container.get(cacheGroup, cacheEnum);
     }
 }

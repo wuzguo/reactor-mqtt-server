@@ -57,7 +57,7 @@ public class SessionEventListener {
                         SessionMessage sessionMessage = hbaseTemplate.get(SessionMessage.TABLE_NAME,
                                 event.getRow(), new SessionMessageMapper());
                         // 又来一个策略模式
-                        Optional.ofNullable(strategyContainer.findStrategy(StrategyGroup.SERVER_PUBLISH,
+                        Optional.ofNullable(strategyContainer.find(StrategyGroup.SERVER_PUBLISH,
                                 StrategyEnum.valueOf(MqttQoS.valueOf(sessionMessage.getQos()))))
                                 .ifPresent(capable -> ((PublishCapable) capable).handle(disposableConnection, sessionMessage));
                     }

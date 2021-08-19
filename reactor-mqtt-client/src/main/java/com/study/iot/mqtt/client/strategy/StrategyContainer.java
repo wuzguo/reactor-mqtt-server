@@ -1,9 +1,11 @@
 package com.study.iot.mqtt.client.strategy;
 
 import com.google.common.collect.Maps;
+import com.study.iot.mqtt.common.enums.CacheEnum;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionValidationException;
 import org.springframework.context.ApplicationContext;
@@ -17,11 +19,11 @@ import org.springframework.context.ApplicationContextAware;
  * @date 2021/4/22 9:13
  */
 
+@Slf4j
 @AllArgsConstructor
 public class StrategyContainer implements ApplicationContextAware {
 
-    private static final Map<String, Map<StrategyEnum, Class<? extends StrategyCapable>>> container = Maps
-        .newConcurrentMap();
+    private static final Map<String, Map<StrategyEnum, Class<? extends StrategyCapable>>> CONTAINER = Maps.newConcurrentMap();
 
     private final ApplicationContext applicationContext;
 
@@ -34,6 +36,7 @@ public class StrategyContainer implements ApplicationContextAware {
         Optional.of(applicationContext.getBeansWithAnnotation(StrategyService.class))
             .ifPresent(annotationBeans -> annotationBeans.forEach((beanName, instance) -> {
                 if (!StrategyCapable.class.isAssignableFrom(instance.getClass())) {
+                    log.error("{} must implemented interface StrategyCapable.", instance.getClass());
                     throw new BeanDefinitionValidationException(String
                         .format("%s must implemented interface StrategyCapable.", instance.getClass()));
                 }
@@ -42,14 +45,14 @@ public class StrategyContainer implements ApplicationContextAware {
                 StrategyService strategyService = strategyClass.getAnnotation(StrategyService.class);
 
                 String group = strategyService.group();
-                Map<StrategyEnum, Class<? extends StrategyCapable>> storage = container.get(group);
+                Map<StrategyEnum, Class<? extends StrategyCapable>> storage = CONTAINER.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
 
                 StrategyEnum value = strategyService.type();
                 storage.putIfAbsent(value, strategyClass);
-                container.put(group, storage);
+                CONTAINER.put(group, storage);
             }));
     }
 
@@ -57,13 +60,14 @@ public class StrategyContainer implements ApplicationContextAware {
      * 获取策略类型，抛出异常
      *
      * @param group {@link String}
-     * @param value value Id
+     * @param value {@link CacheEnum}
      * @param <T>   泛型
      * @return {@link StrategyCapable} 结果
      */
-    public <T extends StrategyCapable> T getStrategy(String group, StrategyEnum value) {
-        Map<StrategyEnum, Class<? extends StrategyCapable>> storage = container.get(group);
+    public <T extends StrategyCapable> T get(String group, StrategyEnum value) {
+        Map<StrategyEnum, Class<? extends StrategyCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
+            log.error("group '{}' not found in value container", group);
             throw new BeanDefinitionValidationException(String
                 .format("StrategyService group '%s' not found in value container", group));
 
@@ -71,6 +75,7 @@ public class StrategyContainer implements ApplicationContextAware {
 
         Class<? extends StrategyCapable> strategy = storage.get(value);
         if (strategy == null) {
+            log.error("value '{}' not found in value group '{}'", value, group);
             throw new BeanDefinitionValidationException(String
                 .format("StrategyService value '%s' not found in value group '%s'", value, group));
 
@@ -83,18 +88,20 @@ public class StrategyContainer implements ApplicationContextAware {
      * 获取策略类型，不抛出异常
      *
      * @param group {@link String}
-     * @param value value Id
+     * @param value {@link CacheEnum}
      * @param <T>   泛型
      * @return {@link StrategyCapable} 结果
      */
-    public <T extends StrategyCapable> T findStrategy(String group, StrategyEnum value) {
-        Map<StrategyEnum, Class<? extends StrategyCapable>> storage = container.get(group);
+    public <T extends StrategyCapable> T find(String group, StrategyEnum value) {
+        Map<StrategyEnum, Class<? extends StrategyCapable>> storage = CONTAINER.get(group);
         if (storage == null) {
+            log.error("group '{}' not found in value container", group);
             return null;
         }
 
         Class<? extends StrategyCapable> strategy = storage.get(value);
         if (strategy == null) {
+            log.error("find strategy is null, value: {}, group: {}", value, group);
             return null;
         }
 

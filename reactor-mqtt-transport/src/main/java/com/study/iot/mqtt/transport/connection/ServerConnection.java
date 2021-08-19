@@ -13,7 +13,6 @@ import com.study.iot.mqtt.transport.strategy.WillCapable;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.Attribute;
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +89,7 @@ public class ServerConnection implements ServerSession {
                 .ifPresent(disposables -> disposables.forEach(disposable -> {
                     MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                     Optional.ofNullable(
-                        messageRouter.getContainer().findStrategy(StrategyGroup.WILL_SERVER, StrategyEnum.valueOf(qoS)))
+                        messageRouter.getContainer().find(StrategyGroup.WILL_SERVER, StrategyEnum.valueOf(qoS)))
                         .ifPresent(capable -> ((WillCapable) capable)
                             .handle((DisposableConnection) disposable, qoS, willMessage));
                 })));
