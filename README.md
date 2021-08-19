@@ -1,4 +1,4 @@
-# 基于Reactor的响应式MQTT Broker项目
+# 基于Reactor的MQTT Broker项目
 
 ### 一、简介
 
