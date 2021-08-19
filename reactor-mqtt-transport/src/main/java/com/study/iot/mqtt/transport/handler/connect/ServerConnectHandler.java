@@ -61,66 +61,65 @@ public class ServerConnectHandler implements ConnectCapable {
 
     @Override
     @MqttMetric(MetricMatterName.TOTAL_CONNECTION_COUNT)
-    public void handle(DisposableConnection connection, MqttMessage message) {
-        log.info("server connect message: {}, connection: {}", message, connection);
-        MqttConnectMessage connectMessage = (MqttConnectMessage) message;
+    public void handle(DisposableConnection connection, MqttMessage mqttMessage) {
+        log.info("server connect message: {}, connection: {}", mqttMessage, connection);
+        MqttConnectMessage message = (MqttConnectMessage) mqttMessage;
 
         // 消息解码器出现异常
-        if (connectMessage.decoderResult().isFailure()) {
-            Throwable cause = connectMessage.decoderResult().cause();
+        if (message.decoderResult().isFailure()) {
+            Throwable cause = message.decoderResult().cause();
             if (cause instanceof MqttUnacceptableProtocolVersionException) {
                 // 不支持的协议版本
-                MqttConnAckMessage connAckMessage = MessageBuilder
+                MqttConnAckMessage ackMessage = MessageBuilder
                     .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_UNACCEPTABLE_PROTOCOL_VERSION, false);
-                connection.sendMessage(connAckMessage).subscribe();
+                connection.sendMessage(ackMessage).subscribe();
                 connection.dispose();
                 return;
             } else if (cause instanceof MqttIdentifierRejectedException) {
                 // 不合格的设备ID
-                MqttConnAckMessage connAckMessage = MessageBuilder
+                MqttConnAckMessage ackMessage = MessageBuilder
                     .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false);
-                connection.sendMessage(connAckMessage).subscribe();
+                connection.sendMessage(ackMessage).subscribe();
                 connection.dispose();
                 return;
             }
         }
 
-        MqttConnectVariableHeader variableHeader = connectMessage.variableHeader();
-        MqttConnectPayload mqttPayload = connectMessage.payload();
+        MqttConnectVariableHeader variableHeader = message.variableHeader();
+        MqttConnectPayload payload = message.payload();
         StorageContainer<Serializable> storageContainer = containerManager.take(CacheGroup.CHANNEL);
-        String identity = mqttPayload.clientIdentifier();
+        String identity = payload.clientIdentifier();
         if (storageContainer.containsKey(identity)) {
-            MqttConnAckMessage connAckMessage = MessageBuilder
+            MqttConnAckMessage ackMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false);
-            connection.sendMessage(connAckMessage).subscribe();
+            connection.sendMessage(ackMessage).subscribe();
             connection.dispose();
             return;
         }
 
         // 用户名和密码
-        String key = mqttPayload.userName();
-        String secret =
-            mqttPayload.passwordInBytes() == null ? null : new String(mqttPayload.passwordInBytes(), CharsetUtil.UTF_8);
+        String key = payload.userName();
+        String secret = payload.passwordInBytes() == null ? null : new String(payload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtils.isAnyBlank(key, secret)) {
-            MqttConnAckMessage connAckMessage = MessageBuilder
+            MqttConnAckMessage ackMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
-            connection.sendMessage(connAckMessage).subscribe();
+            connection.sendMessage(ackMessage).subscribe();
             connection.dispose();
             return;
         }
 
-        // 验证账号密码
+        // 认证账号和密码
         authentication.authenticate(key, secret).doOnError((throwable) -> {
             log.error("auth server check error: {}", throwable.getMessage());
-            MqttConnAckMessage connAckMessage = MessageBuilder
+            MqttConnAckMessage ackMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED, false);
-            connection.sendMessage(connAckMessage).subscribe();
+            connection.sendMessage(ackMessage).subscribe();
             connection.dispose();
         }).subscribe((success) -> {
             if (!success) {
-                MqttConnAckMessage connAckMessage = MessageBuilder
+                MqttConnAckMessage ackMessage = MessageBuilder
                     .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
-                connection.sendMessage(connAckMessage).subscribe();
+                connection.sendMessage(ackMessage).subscribe();
                 connection.dispose();
                 return;
             }
@@ -131,8 +130,8 @@ public class ServerConnectHandler implements ConnectCapable {
             acceptConnect(connection, identity, variableHeader.keepAliveTimeSeconds());
             // 如果有遗嘱消息，这里需要处理
             if (variableHeader.isWillFlag()) {
-                setWillMessage(connection, mqttPayload.willTopic(), variableHeader.isWillRetain(),
-                    mqttPayload.willMessageInBytes(), variableHeader.willQos());
+                setWillMessage(connection, payload.willTopic(), variableHeader.isWillRetain(),
+                    payload.willMessageInBytes(), variableHeader.willQos());
             }
         });
     }
@@ -143,7 +142,7 @@ public class ServerConnectHandler implements ConnectCapable {
      *
      * @param connection 连接
      * @param topicName  Topic
-     * @param retain     retain
+     * @param isRetain     保留消息
      * @param message    消息
      * @param qoS        QOS
      */

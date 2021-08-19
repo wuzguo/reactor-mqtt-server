@@ -17,7 +17,7 @@ public interface ConnectCapable extends StrategyCapable {
      * 处理消息
      *
      * @param connection {@link DisposableConnection}
-     * @param message    {@link MqttMessage}
+     * @param mqttMessage    {@link MqttMessage}
      */
-    void handle(DisposableConnection connection, MqttMessage message);
+    void handle(DisposableConnection connection, MqttMessage mqttMessage);
 }

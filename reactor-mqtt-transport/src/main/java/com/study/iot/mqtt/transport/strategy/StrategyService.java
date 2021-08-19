@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.transport.strategy;
 
-import io.netty.handler.codec.mqtt.MqttMessageType;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
