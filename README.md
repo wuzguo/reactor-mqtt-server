@@ -143,7 +143,7 @@ spring:
     # 缓存类型，支持：memory、ignite、redis
     mode: memory
   hbase:
-	# Hbase 配置
+  	# Hbase 配置
     master: hadoop001:16010
     # ZK集群
     quorum: hadoop001,hadoop002,hadoop003
@@ -209,7 +209,7 @@ spring:
     # 持久化磁盘存储路径
     persistence-store-path: ./mqtt-broker/persistence
   redis:
-	# Redis 地址
+    # Redis 地址
     host: 10.20.1.182
     # Redis 端口
     port: 6379
