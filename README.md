@@ -135,12 +135,12 @@ server:
   
 spring:
   akka:
-	# Akka 系统名称
+    # Akka 系统名称
     system-name: reactorActorSystem
     # 配置文件
     config: application.conf
   cache:
-	# 缓存类型，支持：memory、ignite、redis
+    # 缓存类型，支持：memory、ignite、redis
     mode: memory
   hbase:
 	# Hbase 配置
