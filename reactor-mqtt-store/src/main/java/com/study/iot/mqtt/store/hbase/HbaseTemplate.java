@@ -1,6 +1,7 @@
 package com.study.iot.mqtt.store.hbase;
 
 import com.google.common.collect.Lists;
+import com.study.iot.mqtt.common.utils.Exceptions;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.SynchronousQueue;
@@ -35,7 +36,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 @Slf4j
 public class HbaseTemplate implements HbaseOperations {
 
-    private volatile Connection connection;
+    private final Connection connection;
 
     private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(100, Integer.MAX_VALUE, 60L,
         TimeUnit.SECONDS, new SynchronousQueue<>(), DefaultThreadFactory.forName("Hbase"),
@@ -48,7 +49,8 @@ public class HbaseTemplate implements HbaseOperations {
             // 获取连接
             this.connection = ConnectionFactory.createConnection(configuration, POOL_EXECUTOR);
         } catch (IOException e) {
-            log.error("hbase connection资源池创建失败");
+            log.error("hbase connection error: {}", Exceptions.getStackTraceAsString(e));
+            throw new HbaseSystemException(e);
         }
     }
 
@@ -56,8 +58,9 @@ public class HbaseTemplate implements HbaseOperations {
     public <T> T execute(@NotBlank String tableName, @NotNull TableCallback<T> action) {
         try (Table table = this.connection.getTable(TableName.valueOf(tableName))) {
             return action.doInTable(table);
-        } catch (Throwable throwable) {
-            throw new HbaseSystemException(throwable);
+        } catch (Throwable e) {
+            log.error("hbase execute error: {}", Exceptions.getStackTraceAsString(e));
+            throw new HbaseSystemException(e);
         }
     }
 
@@ -131,9 +134,9 @@ public class HbaseTemplate implements HbaseOperations {
         try (BufferedMutator mutator = this.connection.getBufferedMutator(
             mutatorParams.writeBufferSize(3 * 1024 * 1024))) {
             action.doInMutator(mutator);
-        } catch (Throwable throwable) {
-            log.error("error: {}", throwable.getMessage());
-            throw new HbaseSystemException(throwable);
+        } catch (Throwable e) {
+            log.error("hbase execute error: {}", Exceptions.getStackTraceAsString(e));
+            throw new HbaseSystemException(e);
         }
     }
 
@@ -142,7 +145,7 @@ public class HbaseTemplate implements HbaseOperations {
         try {
             this.saveOrUpdate(tableName, mapper.mutations(value));
         } catch (Exception e) {
-            log.error("error: {}", e.getMessage());
+            log.error("hbase save or update error: {}", Exceptions.getStackTraceAsString(e));
             throw new HbaseSystemException(e);
         }
     }
