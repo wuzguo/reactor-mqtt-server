@@ -1,10 +1,10 @@
 # 基于Reactor的响应式MQTT Broker项目
 
-### 简介
+### 一、简介
 
 这是个人学习MQTT协议的项目，主要记录学习过程中所写的代码，仅供参考。
 
-### 模块及说明
+### 二、模块及说明
 
 - reactor-mqtt-akka： 使用AKKA进行集群内实例间通讯和集群实例管理。
 - reactor-mqtt-api：服务提供的RESTful的API接口。
@@ -36,7 +36,7 @@
 [INFO] 
 ```
 
-### 依赖工具
+### 三、依赖工具和中间件
 
 要运行本项目首先要保证安装以下工具，基础工具安装步骤请自行百度。
 
@@ -50,37 +50,29 @@
 - akka 2.5.19
 - guava 30.1.1
 
-### 功能简介
+### 四、功能简介
 
-本项目主要是为了熟悉物联网领域常用的协议而建的项目，计划实现行业内常用的协议，如MQTT、Websocket、coAP、XMPP、Http等。
+1. 本项目主要是为了熟悉物联网领域常用的协议而建的项目，计划实现行业内常用的协议，如MQTT、Websocket、coAP、XMPP等物联网行业常用协议。
 
-MQTT 协议文档：http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html
+    MQTT 协议文档：http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html
 
-MQTT协议中文文档：http://mqtt.p2hp.com/mqtt311
+    MQTT协议中文文档：http://mqtt.p2hp.com/mqtt311
 
+2. 本项目采用集群部署，支持集群内Seesion共享，采用AKKA进行集群内实例间通讯和集群实例管理。
 
+    akka官方文档：https://akka.io/docs/
 
-本项目采用集群部署，支持集群内Seesion共享，采用AKKA进行集群内实例间通讯和集群实例管理。
+    akka中文文档：https://github.com/guobinhit/akka-guide
 
-akka官方文档：https://akka.io/docs/
+3. 本项目采用HBase存储消息，Redis存储连接信息。
 
-akka中文文档：https://github.com/guobinhit/akka-guide
-
-
-
-本项目采用HBase存储消息，Redis存储连接信息。
-
-
-
-### 架构图
+### 五、项目架构图
 
 **暂缺**
 
+### 六、使用说明
 
-
-### 使用说明
-
-#### 安装并启动Hbase
+#### 6.1 安装并启动Hbase
 
 1. 配置文件配置完成后，执行 start-hbase.sh 脚本。
 
@@ -122,7 +114,7 @@ Took 0.0075 seconds
 hbase(main):022:0>
 ```
 
-#### 启动Broker服务
+#### 6.2 启动Broker服务
 
 直接运行 reactor-mqtt-broker 模块中的 BrokerApplication 主程序即可启动。当控制台出现以下信息时表示启动成功：
 
@@ -132,7 +124,7 @@ c.s.iot.mqtt.server.BrokerApplication    : Started BrokerApplication in 8.496 se
 c.s.i.mqtt.protocol.mqtt.MqttTransport   : mqtt protocol host: localhost port: 1800
 ```
 
-#### 连接服务端
+#### 6.3 连接服务端
 
 1. 使用自带的Client连接
 
@@ -152,13 +144,15 @@ c.s.i.mqtt.protocol.mqtt.MqttTransport   : connected successes
 
 ![](/images/3.png)
 
-#### 发布订阅消息
+#### 6.4 发布订阅消息
 
 连接成功后可以通过客户端工具的Topic正常发布消息。也可以使用  reactor-mqtt-client 模块中运行 TestProducer类发布消息。
 
 ![](/images/1.png)
 
-### 已实现功能
+### 七、功能说明
+
+#### 7.1 已实现功能
 
 1. MQTT Broker 的基本逻辑。
 2. MQTT Broker 实例间通Topic发布订阅消息。
@@ -171,27 +165,28 @@ c.s.i.mqtt.protocol.mqtt.MqttTransport   : connected successes
 9. 认证模块。
 10. metric基础模块。
 
-### 待实现功能
+#### 7.2 待实现功能
 
 1. MQTT Broker 功能完成，集群内Session共享。
 2. MQTT 消息队列支持，保证消息的有序性。
 3. 连接对象的存储。
-4. AKKA集群内实例掉线后的处理。
+4. Akka集群内实例掉线后的处理。
 5. metric功能完善。
 6. coAP、XMPP、Websocket协议支持。
 7. 代码优化，重构。
-8. 测试。
+8. 功能测试和压力测试。
 
-### 说明
+### 八、说明
 
 本项目没有经过严格的功能测试，没有压力测试，没有上过生产，请谨慎使用。
 
-### 持续更新...
+### 九、持续更新...
 
 根据学习进度，持续更新....
 
-### 纠错
+### 十、纠错
 
 欢迎大家指出不足，如有任何疑问，请邮件联系 wuzguo@gmail.com 或者直接修复并提交 Pull Request。
 
-### 参考项目
+### 十一、参考项目
+
