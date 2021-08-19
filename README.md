@@ -58,9 +58,48 @@ akka中文文档：https://github.com/guobinhit/akka-guide
 
 ### 使用说明
 
+#### 安装并启动Hbase
+
+1. 配置文件配置完成后，执行 start-hbase.sh 脚本。
+
+```shell
+[zak@hadoop001 hbase-2.2.5]$ bin/start-hbase.sh 
+hadoop001: running regionserver, logging to /opt/module/hbase-2.2.5/bin/../logs/hbase-zak-regionserver-hadoop001.out
+hadoop002: running regionserver, logging to /opt/module/hbase-2.2.5/bin/../logs/hbase-zak-regionserver-hadoop002.out
+hadoop003: running regionserver, logging to /opt/module/hbase-2.2.5/bin/../logs/hbase-zak-regionserver-hadoop003.out
+```
+2. 启动成功后，可以在浏览器中查看。
+![](/images/0.png)
+
+3. 使用Hbase客户端连接Hbase并创建表**reactor-mqtt-message**和列族**message**。
+
+```shell
+[zak@hadoop003 bin]$ ./hbase shell
+HBase Shell
+Use "help" to get list of supported commands.
+Use "exit" to quit this interactive shell.
+For Reference, please visit: http://hbase.apache.org/2.0/book.html#shell
+Version 2.2.5, rf76a601273e834267b55c0cda12474590283fd4c, 2020年 05月 21日 星期四 18:34:40 CST
+Took 0.0027 seconds                                                                                                                   
+hbase(main):001:0> list
+
+hbase(main):020:0> create 'reactor-mqtt-message', 'message'
+Created table reactors
+Took 0.7811 seconds                                                                                                                   
+=> Hbase::Table - reactors
+hbase(main):021:0> list
+TABLE                                                                                                                                 
+reactors                                                                                                                               
+user                                                                                                                                   
+2 row(s)
+Took 0.0075 seconds                                                                                                                   
+=> ["reactors", "user"]
+hbase(main):022:0>
+```
+
 #### 启动Broker服务
 
-​	直接运行 reactor-mqtt-broker 模块中的 BrokerApplication 主程序即可启动。当控制台出现以下信息时表示启动成功：
+直接运行 reactor-mqtt-broker 模块中的 BrokerApplication 主程序即可启动。当控制台出现以下信息时表示启动成功：
 
 ```shell
 o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port(s): 8800
