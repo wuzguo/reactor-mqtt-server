@@ -2,8 +2,10 @@ package com.study.iot.mqtt.protocol.config;
 
 
 import com.study.iot.mqtt.common.enums.CacheEnum;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -16,6 +18,8 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ServerProperties extends ConnectProperties {
 

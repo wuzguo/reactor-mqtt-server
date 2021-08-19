@@ -4,9 +4,11 @@ package com.study.iot.mqtt.protocol.config;
 import com.study.iot.mqtt.common.annocation.ProtocolType;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import java.util.function.Consumer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -19,6 +21,8 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ClientProperties extends ConnectProperties {
 

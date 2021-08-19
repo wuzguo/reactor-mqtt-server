@@ -1,6 +1,7 @@
 package com.study.iot.mqtt.protocol.proto.mqtt;
 
 import com.study.iot.mqtt.protocol.config.ServerProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -15,6 +16,7 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MqttServerProperties extends ServerProperties {
 
