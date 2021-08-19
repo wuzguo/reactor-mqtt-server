@@ -124,7 +124,100 @@ c.s.iot.mqtt.server.BrokerApplication    : Started BrokerApplication in 8.496 se
 c.s.i.mqtt.protocol.mqtt.MqttTransport   : mqtt protocol host: localhost port: 1800
 ```
 
-#### 6.3 连接服务端
+#### 6.4 重要配置文件说明
+
+```yaml
+# 开发环境配置
+
+server:
+  # Http协议端口
+  port: 8800 
+  
+spring:
+  akka:
+  	# Akka 系统名称
+    system-name: reactorActorSystem
+    # 配置文件
+    config: application.conf
+  cache:
+  	# 缓存类型，支持：memory、ignite、redis
+    mode: memory
+  hbase:
+  	# Hbase 配置
+    master: hadoop001:16010
+    # ZK集群
+    quorum: hadoop001,hadoop002,hadoop003
+    # HDFS 上存储的路径
+    root-dir: hdfs://hadoop001:9000/hbase
+    # HBase 的根 ZNode
+    znode-parent: /hbase
+    # 客户端端口
+    client-port: 2181 
+    # Session 超时时间
+    session-timeout: 60000
+    # RPC 超时时间
+    rpc-timeout: 60000
+    # 操作超时时间
+    operation-timeout: 30000
+    # Scanner超时时间
+    scanner-timeout: 200000
+    # SSL 是否启用
+    ssl-enabled: false
+    # 是否启用分布式
+    distributed: true
+  mqtt:
+    broker:
+      # 主机地址
+      host: localhost 
+      # MQTT端口
+      port: 1800
+      # Websocket端口
+      ws-port: 1802
+      # CoAP端口
+      co-port: 1804
+      # XMPP 端口
+      xm-port: 1806
+      # 心跳时间(秒)
+      heart: 100000
+      #开启日志
+      enable-log: true
+      #开启SSL
+      enable-ssl: false
+      #队列长度
+      backlog: 128
+      # 连接保活
+      keep-alive: false
+      # 开启Epoll模式, linux下建议开启
+      use-epoll: false
+  ignite:
+    # broker唯一标识
+    instance-name: reactor-mqtt-broker
+    # 开启组播方式集群
+    enable-multicast-group: false
+    # 组播地址
+    multicast-group: 239.255.255.255
+    #IP地址
+    static-ip-addresses: 127.0.0.1:47500..47509
+    # 持久化缓存内存初始化大小(MB)
+    persistence-initial-size: 64
+    # 持久化缓存占用内存最大值(MB)
+    persistence-max-size: 128
+    # 非持久化缓存内存初始化大小(MB)
+    not-persistence-initial-size: 64
+    # 非持久化缓存占用内存最大值(MB)
+    not-persistence-max-size: 128
+    # 持久化磁盘存储路径
+    persistence-store-path: ./mqtt-broker/persistence
+  redis:
+  	# Redis 地址
+    host: 10.20.1.182
+    # Redis 端口
+    port: 6379
+    # 数据库
+    database: 0
+```
+
+#### 6.4 连接服务端
 
 1. 使用自带的Client连接
 
@@ -144,7 +237,7 @@ c.s.i.mqtt.protocol.mqtt.MqttTransport   : connected successes
 
 ![](/images/3.png)
 
-#### 6.4 发布订阅消息
+#### 6.5 发布订阅消息
 
 连接成功后可以通过客户端工具的Topic正常发布消息。也可以使用  reactor-mqtt-client 模块中运行 TestProducer类发布消息。
 
