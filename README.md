@@ -143,7 +143,7 @@ spring:
     # 缓存类型，支持：memory、ignite、redis
     mode: memory
   hbase:
-  	# Hbase 配置
+    # Hbase 配置
     master: hadoop001:16010
     # ZK集群
     quorum: hadoop001,hadoop002,hadoop003
