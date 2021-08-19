@@ -1,21 +1,28 @@
 package com.study.iot.mqtt.store.hbase;
 
 import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.client.BufferedMutator;
+import org.apache.hadoop.hbase.client.BufferedMutatorParams;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Mutation;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <B>说明：描述</B>
@@ -30,15 +37,16 @@ public class HbaseTemplate implements HbaseOperations {
 
     private volatile Connection connection;
 
+    private static final ThreadPoolExecutor POOL_EXECUTOR = new ThreadPoolExecutor(100, Integer.MAX_VALUE, 60L,
+        TimeUnit.SECONDS, new SynchronousQueue<>(), DefaultThreadFactory.forName("Hbase"),
+        new ThreadPoolExecutor.AbortPolicy());
+
     public HbaseTemplate(@NotNull Configuration configuration) {
         try {
-            ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(200, Integer.MAX_VALUE, 60L,
-                TimeUnit.SECONDS, new SynchronousQueue<>(), DefaultThreadFactory.forName("Hbase"),
-                    new ThreadPoolExecutor.AbortPolicy());
             // init pool
-            poolExecutor.prestartCoreThread();
+            POOL_EXECUTOR.prestartCoreThread();
             // 获取连接
-            this.connection = ConnectionFactory.createConnection(configuration, poolExecutor);
+            this.connection = ConnectionFactory.createConnection(configuration, POOL_EXECUTOR);
         } catch (IOException e) {
             log.error("hbase connection资源池创建失败");
         }
@@ -101,7 +109,7 @@ public class HbaseTemplate implements HbaseOperations {
 
     @Override
     public <T> T get(String tableName, final String rowName, final String familyName, final String qualifier,
-                     final TableMapper<T> mapper) {
+        final TableMapper<T> mapper) {
         return this.execute(tableName, table -> {
             Get get = new Get(Bytes.toBytes(rowName));
             if (StringUtils.isNotBlank(familyName)) {
@@ -120,7 +128,8 @@ public class HbaseTemplate implements HbaseOperations {
     @Override
     public void execute(@NotBlank String tableName, @NotNull MutatorCallback action) {
         BufferedMutatorParams mutatorParams = new BufferedMutatorParams(TableName.valueOf(tableName));
-        try (BufferedMutator mutator = this.connection.getBufferedMutator(mutatorParams.writeBufferSize(3 * 1024 * 1024))) {
+        try (BufferedMutator mutator = this.connection.getBufferedMutator(
+            mutatorParams.writeBufferSize(3 * 1024 * 1024))) {
             action.doInMutator(mutator);
         } catch (Throwable throwable) {
             log.error("error: {}", throwable.getMessage());
