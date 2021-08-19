@@ -1,4 +1,4 @@
-# MQTT 学习项目
+# 基于Reactor的响应式MQTT Broker项目
 
 ### 简介
 
@@ -41,11 +41,14 @@
 要运行本项目首先要保证安装以下工具，基础工具安装步骤请自行百度。
 
 - JDK 1.8+
+- SpringBoot 2.0+
 - Maven 3+
 - Netty 4.1+
 - Ignite 2.6+
-- Hbase 2.0 +
-- redis 
+- Hbase 2.0+
+- redis 3.0+
+- akka 2.5.19
+- guava 30.1.1
 
 ### 功能简介
 
