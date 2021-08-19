@@ -27,8 +27,8 @@ public class ClientConnAckHandler implements ConnectCapable {
     @Override
     public void handle(DisposableConnection disposableConnection, MqttMessage message) {
         log.info("client ConnAck message: {}, connection: {}", message, disposableConnection);
-        MqttConnAckMessage mqttConnAckMessage = (MqttConnAckMessage) message;
-        MqttConnAckVariableHeader variableHeader = mqttConnAckMessage.variableHeader();
+        MqttConnAckMessage ackMessage = (MqttConnAckMessage) message;
+        MqttConnAckVariableHeader variableHeader = ackMessage.variableHeader();
         // 取消重发
         if (variableHeader.connectReturnCode().equals(MqttConnectReturnCode.CONNECTION_ACCEPTED)) {
             disposableConnection.getConnection().channel().attr(AttributeKeys.closeConnection).get().dispose();
