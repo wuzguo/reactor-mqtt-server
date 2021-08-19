@@ -40,7 +40,7 @@ public class HbaseAutoConfiguration {
 
     private static final String HBASE_CLIENT_SCANNER_TIMEOUT_PERIOD = "hbase.client.scanner.timeout.period";
 
-    private static final String HBASE_ZOOKEEPER_PROPERTY_CLIENTPORT = "hbase.zookeeper.property.clientPort";
+    private static final String HBASE_ZOOKEEPER_PROPERTY_CLIENT_PORT = "hbase.zookeeper.property.clientPort";
 
     private static final String HBASE_REST_SSL_ENABLED = "hbase.rest.ssl.enabled";
 
@@ -63,7 +63,7 @@ public class HbaseAutoConfiguration {
         configuration.set(HBASE_RPC_TIMEOUT, String.valueOf(hbaseProperties.getRpcTimeout()));
         configuration.set(HBASE_CLIENT_OPERATION_TIMEOUT, String.valueOf(hbaseProperties.getOperationTimeout()));
         configuration.set(HBASE_CLIENT_SCANNER_TIMEOUT_PERIOD, String.valueOf(hbaseProperties.getScannerTimeout()));
-        configuration.set(HBASE_ZOOKEEPER_PROPERTY_CLIENTPORT, String.valueOf(hbaseProperties.getClientPort()));
+        configuration.set(HBASE_ZOOKEEPER_PROPERTY_CLIENT_PORT, String.valueOf(hbaseProperties.getClientPort()));
         configuration.set(HBASE_REST_SSL_ENABLED, hbaseProperties.getSslEnabled().toString());
         configuration.set(HBASE_CLUSTER_DISTRIBUTED, hbaseProperties.getDistributed().toString());
         return new HbaseTemplate(configuration);

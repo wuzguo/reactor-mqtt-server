@@ -29,7 +29,7 @@ spring:
       #开启SSL
       enable-ssl: false
       #队列长度
-      back-log: 128
+      backlog: 128
       # 连接保活
       keep-alive: false
       # 开启Epoll模式, linux下建议开启

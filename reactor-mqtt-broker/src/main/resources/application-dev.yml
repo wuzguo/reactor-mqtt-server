@@ -10,7 +10,7 @@ spring:
     mode: memory
   hbase:
     master: hadoop001:16010
-    quorum: hadoop001:2181,hadoop002:2181,hadoop003:2181
+    quorum: hadoop001,hadoop002,hadoop003
     root-dir: hdfs://hadoop001:9000/hbase
     znode-parent: /hbase
     client-port: 2181
@@ -39,7 +39,7 @@ spring:
       #开启SSL
       enable-ssl: false
       #队列长度
-      back-log: 128
+      backlog: 128
       # 连接保活
       keep-alive: false
       # 开启Epoll模式, linux下建议开启
