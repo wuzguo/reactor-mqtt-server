@@ -17,6 +17,25 @@
 - reactor-mqtt-transport：消息处理模块。
 - reactor-mqtt-session：MQTT session管理模块。
 
+```shell
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] reactor-mqtt-server                                                [pom]
+[INFO] reactor-mqtt-common                                                [jar]
+[INFO] reactor-mqtt-auth                                                  [jar]
+[INFO] reactor-mqtt-protocol                                              [jar]
+[INFO] reactor-mqtt-akka                                                  [jar]
+[INFO] reactor-mqtt-store                                                 [jar]
+[INFO] reactor-mqtt-session                                               [jar]
+[INFO] reactor-mqtt-transport                                             [jar]
+[INFO] reactor-mqtt-api                                                   [jar]
+[INFO] reactor-mqtt-broker                                                [jar]
+[INFO] reactor-mqtt-client                                                [jar]
+[INFO] 
+```
+
 ### 依赖工具
 
 要运行本项目首先要保证安装以下工具，基础工具安装步骤请自行百度。
@@ -64,6 +83,7 @@ akka中文文档：https://github.com/guobinhit/akka-guide
 
 ```shell
 [zak@hadoop001 hbase-2.2.5]$ bin/start-hbase.sh 
+......
 hadoop001: running regionserver, logging to /opt/module/hbase-2.2.5/bin/../logs/hbase-zak-regionserver-hadoop001.out
 hadoop002: running regionserver, logging to /opt/module/hbase-2.2.5/bin/../logs/hbase-zak-regionserver-hadoop002.out
 hadoop003: running regionserver, logging to /opt/module/hbase-2.2.5/bin/../logs/hbase-zak-regionserver-hadoop003.out
@@ -75,6 +95,7 @@ hadoop003: running regionserver, logging to /opt/module/hbase-2.2.5/bin/../logs/
 
 ```shell
 [zak@hadoop003 bin]$ ./hbase shell
+......
 HBase Shell
 Use "help" to get list of supported commands.
 Use "exit" to quit this interactive shell.
@@ -82,18 +103,19 @@ For Reference, please visit: http://hbase.apache.org/2.0/book.html#shell
 Version 2.2.5, rf76a601273e834267b55c0cda12474590283fd4c, 2020年 05月 21日 星期四 18:34:40 CST
 Took 0.0027 seconds                                                                                                                   
 hbase(main):001:0> list
-
+......
 hbase(main):020:0> create 'reactor-mqtt-message', 'message'
-Created table reactors
+Created table reactor-mqtt-message
 Took 0.7811 seconds                                                                                                                   
-=> Hbase::Table - reactors
+=> Hbase::Table - reactor-mqtt-message
+......
 hbase(main):021:0> list
 TABLE                                                                                                                                 
-reactors                                                                                                                               
+reactor-mqtt-message                                                                                                                   
 user                                                                                                                                   
 2 row(s)
 Took 0.0075 seconds                                                                                                                   
-=> ["reactors", "user"]
+=> ["reactor-mqtt-message", "user"]
 hbase(main):022:0>
 ```
 
@@ -160,8 +182,6 @@ c.s.i.mqtt.protocol.mqtt.MqttTransport   : connected successes
 ### 说明
 
 本项目没有经过严格的功能测试，没有压力测试，没有上过生产，请谨慎使用。
-
-
 
 ### 持续更新...
 
