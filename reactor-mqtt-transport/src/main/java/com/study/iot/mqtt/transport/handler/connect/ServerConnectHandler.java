@@ -150,7 +150,7 @@ public class ServerConnectHandler implements ConnectCapable {
         byte[] message, int qoS) {
         WillMessage willMessage = WillMessage.builder().copyByteBuf(message)
             .qos(qoS).isRetain(isRetain).topic(topicName).build();
-        // 设置遗嘱消息
+        // 设置遗嘱消息，这里可以放在缓存中去
         connection.getConnection().channel().attr(AttributeKeys.willMessage).set(willMessage);
     }
 
