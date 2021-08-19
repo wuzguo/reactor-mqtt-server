@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0.0
  * @date 2021/8/16 15:20
  */
+
 @Slf4j
 @Getter
 public class ServerMessageRouter {
@@ -37,7 +38,7 @@ public class ServerMessageRouter {
         }
 
         // 消息分发
-        Optional.ofNullable(container.find(StrategyGroup.SERVER, StrategyEnum.valueOf(message.fixedHeader().messageType())))
+        Optional.ofNullable(container.find(StrategyGroup.CONNECT, StrategyEnum.valueOf(message.fixedHeader().messageType())))
             .ifPresent(capable -> ((ConnectCapable) capable).handle(disposableConnection, message));
     }
 }

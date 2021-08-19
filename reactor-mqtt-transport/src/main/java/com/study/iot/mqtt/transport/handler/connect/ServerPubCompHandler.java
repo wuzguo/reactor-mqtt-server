@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.PUBCOMP)
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.PUBCOMP)
 public class ServerPubCompHandler implements ConnectCapable {
 
     @Override

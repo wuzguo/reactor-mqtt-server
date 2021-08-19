@@ -44,7 +44,7 @@ import reactor.netty.Connection;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.CONNECT)
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.CONNECT)
 public class ServerConnectHandler implements ConnectCapable {
 
     @Autowired

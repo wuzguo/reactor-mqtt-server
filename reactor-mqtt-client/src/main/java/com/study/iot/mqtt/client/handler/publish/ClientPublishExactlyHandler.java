@@ -19,7 +19,7 @@ import io.netty.handler.codec.mqtt.MqttPublishVariableHeader;
  * @date 2021/5/7 13:54
  */
 
-@StrategyService(group = StrategyGroup.CLIENT_PUBLISH, type = StrategyEnum.EXACTLY_ONCE)
+@StrategyService(group = StrategyGroup.PUBLISH, type = StrategyEnum.EXACTLY_ONCE)
 public class ClientPublishExactlyHandler implements PublishCapable {
 
     @Override

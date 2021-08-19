@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER_PUBLISH, type = StrategyEnum.AT_LEAST_ONCE)
+@StrategyService(group = StrategyGroup.PUBLISH, type = StrategyEnum.AT_LEAST_ONCE)
 public class ServerPublishAtLeastHandler implements PublishCapable {
 
     @Autowired

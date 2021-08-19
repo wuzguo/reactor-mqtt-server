@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.CLIENT, type = StrategyEnum.PUBLISH)
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.PUBLISH)
 public class ClientPublishHandler implements ConnectCapable {
 
     @Autowired
@@ -37,7 +37,7 @@ public class ClientPublishHandler implements ConnectCapable {
         MqttFixedHeader header = message.fixedHeader();
         byte[] bytes = copyByteBuf(mqttMessage.payload());
         // 又来一个策略模式
-        Optional.ofNullable(strategyContainer.find(StrategyGroup.CLIENT_PUBLISH,
+        Optional.ofNullable(strategyContainer.find(StrategyGroup.PUBLISH,
                 StrategyEnum.valueOf(header.qosLevel())))
             .ifPresent(capable -> ((PublishCapable) capable).handle(disposableConnection, mqttMessage, bytes));
     }

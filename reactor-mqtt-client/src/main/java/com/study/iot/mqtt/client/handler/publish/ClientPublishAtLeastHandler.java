@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.CLIENT_PUBLISH, type = StrategyEnum.AT_LEAST_ONCE)
+@StrategyService(group = StrategyGroup.PUBLISH, type = StrategyEnum.AT_LEAST_ONCE)
 public class ClientPublishAtLeastHandler implements PublishCapable {
 
     @Override

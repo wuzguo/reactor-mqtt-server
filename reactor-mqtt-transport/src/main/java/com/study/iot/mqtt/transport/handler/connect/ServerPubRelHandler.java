@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.PUBREL)
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.PUBREL)
 public class ServerPubRelHandler implements ConnectCapable {
 
     @Autowired

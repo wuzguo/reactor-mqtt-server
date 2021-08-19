@@ -38,7 +38,7 @@ public class ClientMessageRouter {
         }
 
         // 策略分发
-        Optional.ofNullable(container.find(StrategyGroup.CLIENT,
+        Optional.ofNullable(container.find(StrategyGroup.CONNECT,
                 StrategyEnum.valueOf(message.fixedHeader().messageType())))
             .ifPresent(capable -> ((ConnectCapable) capable).handle(disposableConnection, message));
     }

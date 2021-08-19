@@ -18,7 +18,7 @@ import io.netty.handler.codec.mqtt.MqttMessage;
  * @date 2021/5/7 13:54
  */
 
-@StrategyService(group = StrategyGroup.SERVER_PUBLISH, type = StrategyEnum.EXACTLY_ONCE)
+@StrategyService(group = StrategyGroup.PUBLISH, type = StrategyEnum.EXACTLY_ONCE)
 public class ServerPublishExactlyHandler implements PublishCapable {
 
     @Override

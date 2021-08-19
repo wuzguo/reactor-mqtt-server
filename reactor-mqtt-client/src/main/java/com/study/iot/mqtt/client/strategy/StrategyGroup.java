@@ -10,7 +10,13 @@ package com.study.iot.mqtt.client.strategy;
 
 public interface StrategyGroup {
 
-    String CLIENT = "mqtt.client";
+    /**
+     * 连接消息
+     */
+    String CONNECT = "mqtt.connect";
 
-    String CLIENT_PUBLISH = "mqtt.client.publish";
+    /**
+     * 发布消息
+     */
+    String PUBLISH = "mqtt.publish";
 }

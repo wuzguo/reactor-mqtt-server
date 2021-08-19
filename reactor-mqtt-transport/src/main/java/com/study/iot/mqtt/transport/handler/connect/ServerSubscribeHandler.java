@@ -40,7 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.SUBSCRIBE)
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.SUBSCRIBE)
 public class ServerSubscribeHandler implements ConnectCapable {
 
     @Autowired

@@ -10,15 +10,18 @@ package com.study.iot.mqtt.transport.constant;
 
 public interface StrategyGroup {
 
-    String SERVER = "mqtt.server";
+    /**
+     * 连接消息
+     */
+    String CONNECT = "mqtt.connect";
 
-    String CLIENT = "mqtt.client";
+    /**
+     * 发布消息
+     */
+    String PUBLISH = "mqtt.publish";
 
-    String SERVER_PUBLISH = "mqtt.server.publish";
-
-    String CLIENT_PUBLISH = "mqtt.client.publish";
-
-    String WILL_SERVER = "will.server";
-
-    String WILL_CLIENT = "will.client";
+    /**
+     * 遗嘱消息
+     */
+    String WILL = "mqtt.will";
 }

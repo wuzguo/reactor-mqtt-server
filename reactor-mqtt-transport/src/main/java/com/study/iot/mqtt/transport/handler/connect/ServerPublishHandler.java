@@ -32,7 +32,7 @@ import reactor.netty.Connection;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.PUBLISH)
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.PUBLISH)
 public class ServerPublishHandler implements ConnectCapable {
 
     @Autowired

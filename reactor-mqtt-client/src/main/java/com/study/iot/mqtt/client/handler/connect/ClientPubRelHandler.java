@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.CLIENT, type = StrategyEnum.PUBREL)
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.PUBREL)
 public class ClientPubRelHandler implements ConnectCapable {
 
     @Override

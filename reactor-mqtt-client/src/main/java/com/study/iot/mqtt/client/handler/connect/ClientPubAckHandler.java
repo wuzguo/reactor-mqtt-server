@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.CLIENT, type = StrategyEnum.PUBACK)
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.PUBACK)
 public class ClientPubAckHandler implements ConnectCapable {
 
     @Override

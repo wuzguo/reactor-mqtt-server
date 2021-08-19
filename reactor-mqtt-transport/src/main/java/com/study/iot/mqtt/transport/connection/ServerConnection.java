@@ -89,7 +89,7 @@ public class ServerConnection implements ServerSession {
                 .ifPresent(disposables -> disposables.forEach(disposable -> {
                     MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
                     Optional.ofNullable(
-                        messageRouter.getContainer().find(StrategyGroup.WILL_SERVER, StrategyEnum.valueOf(qoS)))
+                        messageRouter.getContainer().find(StrategyGroup.WILL, StrategyEnum.valueOf(qoS)))
                         .ifPresent(capable -> ((WillCapable) capable)
                             .handle((DisposableConnection) disposable, qoS, willMessage));
                 })));

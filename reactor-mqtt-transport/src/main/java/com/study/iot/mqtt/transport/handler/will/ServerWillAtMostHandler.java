@@ -19,7 +19,7 @@ import io.netty.handler.codec.mqtt.MqttQoS;
  * @date 2021/5/7 13:54
  */
 
-@StrategyService(group = StrategyGroup.WILL_SERVER, type = StrategyEnum.AT_MOST_ONCE)
+@StrategyService(group = StrategyGroup.WILL, type = StrategyEnum.AT_MOST_ONCE)
 public class ServerWillAtMostHandler implements WillCapable {
 
     @Override

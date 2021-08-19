@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.SERVER, type = StrategyEnum.UNSUBSCRIBE)
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.UNSUBSCRIBE)
 public class ServerUnSubscribeHandler implements ConnectCapable {
 
     @Autowired
