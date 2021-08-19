@@ -116,15 +116,16 @@ hbase(main):022:0>
 
 #### 6.2 启动Broker服务
 
-直接运行 reactor-mqtt-broker 模块中的 BrokerApplication 主程序即可启动。当控制台出现以下信息时表示启动成功：
+直接运行 **reactor-mqtt-broker** 模块中的 BrokerApplication 主程序即可启动。当控制台出现以下信息时表示启动成功：
 
 ```shell
 o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port(s): 8800
-c.s.iot.mqtt.server.BrokerApplication    : Started BrokerApplication in 8.496 seconds (JVM running for 9.526)
-c.s.i.mqtt.protocol.mqtt.MqttTransport   : mqtt protocol host: localhost port: 1800
+c.s.iot.mqtt.server.BrokerApplication    : Started BrokerApplication in 5.993 seconds (JVM running for 6.847)
+c.s.i.m.p.proto.mqtt.MqttTransport       : mqtt protocol host: localhost port: 1800
+c.s.i.m.protocol.proto.ws.WsTransport    : websocket protocol host: localhost port: 1802
 ```
 
-#### 6.4 重要配置文件说明
+#### 6.3 重要配置文件说明
 
 ```yaml
 # 开发环境配置
@@ -223,7 +224,7 @@ spring:
 
 直接在 reactor-mqtt-client 模块中运行 TestConsumer类即可。当控制台打印以下日志时说明连接成功：
 
-```sh
+```shell
 c.s.i.mqtt.protocol.mqtt.MqttTransport   : connected successes
 ```
 
@@ -243,7 +244,7 @@ c.s.i.mqtt.protocol.mqtt.MqttTransport   : connected successes
 
 ![](/images/1.png)
 
-### 七、功能说明
+### 七、主要功能说明
 
 #### 7.1 已实现功能
 
