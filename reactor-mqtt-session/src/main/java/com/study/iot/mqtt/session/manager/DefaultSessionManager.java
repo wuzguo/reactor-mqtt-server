@@ -15,11 +15,15 @@ import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
 import com.study.iot.mqtt.store.mapper.SessionMessageMapper;
+import java.util.Collections;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 
 /**
  * <B>说明：描述</B>
@@ -29,8 +33,9 @@ import java.util.Collections;
  * @date 2021/5/18 13:46
  */
 
+@Slf4j
 @Component
-public class DefaultSessionManager implements SessionManager {
+public class DefaultSessionManager implements SessionManager, InitializingBean, ApplicationContextAware {
 
     @Autowired
     private ActorSystem actorSystem;
@@ -47,10 +52,13 @@ public class DefaultSessionManager implements SessionManager {
     @Autowired
     private InstanceUtil instanceUtil;
 
+    // 发布订阅消息
+    private ActorRef publisher;
+
     @Override
     public void add(String instanceId, String identity, Boolean isCleanSession) {
         ConnectSession session = ConnectSession.builder().instanceId(instanceId).identity(identity)
-                .topics(Collections.emptyList()).build();
+            .topics(Collections.emptyList()).build();
         // 如果是持久化 Session 需要放入Redis保存
         containerManager.take(CacheGroup.SESSION).add(identity, session);
 
@@ -59,15 +67,13 @@ public class DefaultSessionManager implements SessionManager {
     @Override
     public ConnectSession get(String identity) {
         // 先写死
-        return ConnectSession.builder().instanceId("localhost:1884").build();
+        return ConnectSession.builder().instanceId(instanceUtil.getInstanceId()).build();
     }
 
     @Override
     public void add(String identity, SessionMessage message) {
         // 持久化
         hbaseTemplate.saveOrUpdate(SessionMessage.TABLE_NAME, message, new SessionMessageMapper());
-        // 发布订阅消息
-        ActorRef publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
         SessionEvent event = new SessionEvent(this, IdUtils.idGen());
         event.setIdentity(identity);
         event.setTopic(message.getTopic());
@@ -80,9 +86,21 @@ public class DefaultSessionManager implements SessionManager {
     public void doReady(String topic) {
         // 发布订阅模式的订阅者
         actorSystem.actorOf(SpringProps.create(actorSystem, Subscriber.class, topic, eventPublisher),
-                "subscriber");
+            "subscriber");
         // 点对点模式的接收者，接收者名称为实例ID
         actorSystem.actorOf(SpringProps.create(actorSystem, Receiver.class, eventPublisher),
-                instanceUtil.getInstanceId());
+            instanceUtil.getInstanceId());
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        log.info("afterPropertiesSet");
+        // 发布订阅消息
+        publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        log.info("setApplicationContext");
     }
 }
