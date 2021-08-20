@@ -1,6 +1,5 @@
 package com.study.iot.mqtt.transport.listener;
 
-import com.study.iot.mqtt.akka.event.SessionEvent;
 import com.study.iot.mqtt.common.domain.WillMessage;
 import com.study.iot.mqtt.common.utils.ObjectUtils;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -42,23 +41,23 @@ public class WillEventListener {
     private HbaseTemplate hbaseTemplate;
 
     @EventListener
-    public void listen(SessionEvent event) {
+    public void listen(WillMessage event) {
         log.info("receive will event info: {}", event);
         // 查询连接信息
         Optional.ofNullable(containerManager.take(CacheGroup.ID_TOPIC).list(event.getTopic()))
             .orElse(Collections.emptyList())
             .forEach(identity -> {
-                DisposableConnection disposableConnection = (DisposableConnection) containerManager
-                    .take(CacheGroup.CHANNEL).get(String.valueOf(identity));
+                DisposableConnection disposable = (DisposableConnection) containerManager.take(CacheGroup.CHANNEL)
+                    .get(String.valueOf(identity));
                 // 如果有连接就执行下面的逻辑
-                if (!ObjectUtils.isNull(disposableConnection)) {
+                if (!ObjectUtils.isNull(disposable)) {
                     // 获取消息体
-                    WillMessage willMessage = hbaseTemplate.get(WillMessage.TABLE_NAME, event.getRow(),
+                    WillMessage message = hbaseTemplate.get(WillMessage.TABLE_NAME, event.getRow(),
                         new WillMessageMapper());
                     // 又来一个策略模式
-                    MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
+                    MqttQoS qoS = MqttQoS.valueOf(message.getQos());
                     Optional.ofNullable(strategyContainer.find(StrategyGroup.WILL, StrategyEnum.valueOf(qoS)))
-                        .ifPresent(capable -> ((WillCapable) capable).handle(disposableConnection, qoS, willMessage));
+                        .ifPresent(capable -> ((WillCapable) capable).handle(disposable, qoS, message));
                 }
             });
     }

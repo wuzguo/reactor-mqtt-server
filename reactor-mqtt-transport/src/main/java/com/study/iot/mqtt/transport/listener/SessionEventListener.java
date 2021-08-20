@@ -13,13 +13,12 @@ import com.study.iot.mqtt.transport.strategy.PublishCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyContainer;
 import com.study.iot.mqtt.transport.strategy.StrategyEnum;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import java.util.Collections;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.Optional;
 
 /**
  * <B>说明：描述</B>
@@ -47,20 +46,20 @@ public class SessionEventListener {
         log.info("receive subscribe event info: {}", event);
         // 查询连接信息
         Optional.ofNullable(containerManager.take(CacheGroup.ID_TOPIC).list(event.getTopic()))
-                .orElse(Collections.emptyList())
-                .forEach(identity -> {
-                    DisposableConnection disposableConnection = (DisposableConnection) containerManager
-                            .take(CacheGroup.CHANNEL).get(String.valueOf(identity));
-                    // 如果有连接就执行下面的逻辑
-                    if (!ObjectUtils.isNull(disposableConnection)) {
-                        // 获取消息体
-                        SessionMessage sessionMessage = hbaseTemplate.get(SessionMessage.TABLE_NAME,
-                                event.getRow(), new SessionMessageMapper());
-                        // 又来一个策略模式
-                        Optional.ofNullable(strategyContainer.find(StrategyGroup.PUBLISH,
-                                StrategyEnum.valueOf(MqttQoS.valueOf(sessionMessage.getQos()))))
-                                .ifPresent(capable -> ((PublishCapable) capable).handle(disposableConnection, sessionMessage));
-                    }
-                });
+            .orElse(Collections.emptyList())
+            .forEach(identity -> {
+                DisposableConnection disposable = (DisposableConnection) containerManager.take(CacheGroup.CHANNEL)
+                    .get(String.valueOf(identity));
+                // 如果有连接就执行下面的逻辑
+                if (!ObjectUtils.isNull(disposable)) {
+                    // 获取消息体
+                    SessionMessage message = hbaseTemplate.get(SessionMessage.TABLE_NAME, event.getRow(),
+                        new SessionMessageMapper());
+                    // 又来一个策略模式
+                    Optional.ofNullable(strategyContainer.find(StrategyGroup.PUBLISH,
+                            StrategyEnum.valueOf(MqttQoS.valueOf(message.getQos()))))
+                        .ifPresent(capable -> ((PublishCapable) capable).handle(disposable, message));
+                }
+            });
     }
 }
