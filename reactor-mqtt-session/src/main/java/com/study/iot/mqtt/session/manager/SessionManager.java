@@ -37,7 +37,7 @@ public interface SessionManager {
      * @param identity 客户端标识
      * @param message  消息体
      */
-    void add(String identity, SessionMessage message);
+    void saveAndTell(String identity, SessionMessage message);
 
 
     /**
@@ -46,7 +46,7 @@ public interface SessionManager {
      * @param identity 客户端标识
      * @param message  消息体
      */
-    void add(String identity, WillMessage message);
+    void save(String identity, WillMessage message);
 
     /**
      * 订阅消息

@@ -77,31 +77,11 @@ public class ServerConnection implements ServerSession {
             }));
     }
 
-    /**
-     * 发送遗嘱消息
-     *
-     * @param connection {@link Connection}
-     */
-    private void sendWillMessage(Connection connection) {
-        Optional.ofNullable(connection.channel().attr(AttributeKeys.willMessage)).map(Attribute::get)
-            .ifPresent(willMessage -> Optional.ofNullable(containerManager.topic(CacheGroup.TOPIC)
-                .getConnections(willMessage.getTopic()))
-                .ifPresent(disposables -> disposables.forEach(disposable -> {
-                    MqttQoS qoS = MqttQoS.valueOf(willMessage.getQos());
-                    Optional.ofNullable(
-                        messageRouter.getContainer().find(StrategyGroup.WILL, StrategyEnum.valueOf(qoS)))
-                        .ifPresent(capable -> ((WillCapable) capable)
-                            .handle((DisposableConnection) disposable, qoS, willMessage));
-                })));
-    }
-
     @Override
     public void setDisposeDeal(DisposableConnection disposableConnection) {
         Connection connection = disposableConnection.getConnection();
         // 自己超时关闭的时候会走这段代码，要清除缓存中的连接信息
         connection.onDispose(() -> {
-            // 发送遗嘱消息
-            this.sendWillMessage(connection);
             // 删除设备标识
             Optional.ofNullable(connection.channel().attr(AttributeKeys.identity)).map(Attribute::get)
                 .ifPresent(identity -> {

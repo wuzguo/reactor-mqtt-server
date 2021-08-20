@@ -6,7 +6,6 @@ import com.study.iot.mqtt.akka.actor.Publisher;
 import com.study.iot.mqtt.akka.actor.Receiver;
 import com.study.iot.mqtt.akka.actor.Subscriber;
 import com.study.iot.mqtt.akka.event.SessionEvent;
-import com.study.iot.mqtt.akka.event.WillEvent;
 import com.study.iot.mqtt.akka.spring.SpringProps;
 import com.study.iot.mqtt.common.domain.ConnectSession;
 import com.study.iot.mqtt.common.domain.SessionMessage;
@@ -65,12 +64,11 @@ public class DefaultSessionManager implements SessionManager, InitializingBean {
 
     @Override
     public ConnectSession get(String identity) {
-        // 先写死
         return ConnectSession.builder().instanceId(instanceUtil.getInstanceId()).build();
     }
 
     @Override
-    public void add(String identity, SessionMessage message) {
+    public void saveAndTell(String identity, SessionMessage message) {
         // 持久化，这里应该要有本地缓存，再放数据库
         hbaseTemplate.saveOrUpdate(SessionMessage.TABLE_NAME, message, new SessionMessageMapper());
         SessionEvent event = new SessionEvent(this, IdUtils.idGen());
@@ -82,15 +80,9 @@ public class DefaultSessionManager implements SessionManager, InitializingBean {
     }
 
     @Override
-    public void add(String identity, WillMessage message) {
+    public void save(String identity, WillMessage message) {
         // 持久化，这里应该要有本地缓存，再放数据库
         hbaseTemplate.saveOrUpdate(WillMessage.TABLE_NAME, message, new WillMessageMapper());
-        WillEvent event = new WillEvent(this, IdUtils.idGen());
-        event.setIdentity(identity);
-        event.setTopic(message.getTopic());
-        event.setInstanceId(instanceUtil.getInstanceId());
-        event.setRow(message.getRow());
-        publisher.tell(event, ActorRef.noSender());
     }
 
     @Override
