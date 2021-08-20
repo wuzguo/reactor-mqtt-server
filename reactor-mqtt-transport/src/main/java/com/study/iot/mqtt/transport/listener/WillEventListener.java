@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.transport.listener;
 
+import com.study.iot.mqtt.akka.event.WillEvent;
 import com.study.iot.mqtt.common.domain.WillMessage;
 import com.study.iot.mqtt.common.utils.ObjectUtils;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -41,7 +42,7 @@ public class WillEventListener {
     private HbaseTemplate hbaseTemplate;
 
     @EventListener
-    public void listen(WillMessage event) {
+    public void listen(WillEvent event) {
         log.info("receive will event info: {}", event);
         // 查询连接信息
         Optional.ofNullable(containerManager.take(CacheGroup.ID_TOPIC).list(event.getTopic()))

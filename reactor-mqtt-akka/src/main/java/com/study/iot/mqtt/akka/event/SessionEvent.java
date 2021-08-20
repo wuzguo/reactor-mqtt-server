@@ -14,8 +14,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SessionEvent extends BaseEvent {
-
-
     /**
      * 发送消息的客户端ID
      */

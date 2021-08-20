@@ -148,8 +148,10 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
                     payload.willMessageInBytes(), variableHeader.willQos());
             }
             // 注册发送遗嘱消息
-            Connection connection = disposable.getConnection();
-            connection.onDispose(() -> this.sendWillMessage(identity, payload.willTopic()));
+            if (StringUtils.isNotBlank(payload.willTopic())) {
+                Connection connection = disposable.getConnection();
+                connection.onDispose(() -> this.sendWillMessage(identity, payload.willTopic()));
+            }
         });
     }
 
