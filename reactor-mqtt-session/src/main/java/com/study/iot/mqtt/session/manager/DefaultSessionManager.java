@@ -6,15 +6,18 @@ import com.study.iot.mqtt.akka.actor.Publisher;
 import com.study.iot.mqtt.akka.actor.Receiver;
 import com.study.iot.mqtt.akka.actor.Subscriber;
 import com.study.iot.mqtt.akka.event.SessionEvent;
+import com.study.iot.mqtt.akka.event.WillEvent;
 import com.study.iot.mqtt.akka.spring.SpringProps;
 import com.study.iot.mqtt.common.domain.ConnectSession;
 import com.study.iot.mqtt.common.domain.SessionMessage;
+import com.study.iot.mqtt.common.domain.WillMessage;
 import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.session.config.InstanceUtil;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.hbase.HbaseTemplate;
 import com.study.iot.mqtt.store.mapper.SessionMessageMapper;
+import com.study.iot.mqtt.store.mapper.WillMessageMapper;
 import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -58,7 +61,6 @@ public class DefaultSessionManager implements SessionManager, InitializingBean {
             .topics(Collections.emptyList()).build();
         // 如果是持久化 Session 需要放入Redis保存
         containerManager.take(CacheGroup.SESSION).add(identity, session);
-
     }
 
     @Override
@@ -69,9 +71,21 @@ public class DefaultSessionManager implements SessionManager, InitializingBean {
 
     @Override
     public void add(String identity, SessionMessage message) {
-        // 持久化
+        // 持久化，这里应该要有本地缓存，再放数据库
         hbaseTemplate.saveOrUpdate(SessionMessage.TABLE_NAME, message, new SessionMessageMapper());
         SessionEvent event = new SessionEvent(this, IdUtils.idGen());
+        event.setIdentity(identity);
+        event.setTopic(message.getTopic());
+        event.setInstanceId(instanceUtil.getInstanceId());
+        event.setRow(message.getRow());
+        publisher.tell(event, ActorRef.noSender());
+    }
+
+    @Override
+    public void add(String identity, WillMessage message) {
+        // 持久化，这里应该要有本地缓存，再放数据库
+        hbaseTemplate.saveOrUpdate(WillMessage.TABLE_NAME, message, new WillMessageMapper());
+        WillEvent event = new WillEvent(this, IdUtils.idGen());
         event.setIdentity(identity);
         event.setTopic(message.getTopic());
         event.setInstanceId(instanceUtil.getInstanceId());

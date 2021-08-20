@@ -78,7 +78,7 @@ public class ServerPublishHandler implements ConnectCapable {
      * 转换
      *
      * @param byteBuf {@link ByteBuf}
-     * @return {@link byte}
+     * @return {@link Byte}
      */
     private byte[] copyByteBuf(ByteBuf byteBuf) {
         byte[] bytes = new byte[byteBuf.readableBytes()];

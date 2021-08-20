@@ -9,18 +9,18 @@ import lombok.experimental.SuperBuilder;
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/5/20 8:56
+ * @date 2021/8/20 11:47
  */
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
-public class SessionMessage extends BaseMessage {
+public class WillMessage extends BaseMessage {
 
     /**
      * 表名
      */
-    public static final String TABLE_NAME = "reactor-session-message";
+    public static final String TABLE_NAME = "reactor-will-message";
 
     /**
      * 列族
@@ -53,19 +53,9 @@ public class SessionMessage extends BaseMessage {
     private Boolean retain;
 
     /**
-     * 消息类型
-     */
-    private Integer messageType;
-
-    /**
      * 消息质量
      */
     private Integer qos;
-
-    /**
-     * 是否重发
-     */
-    private Boolean dup;
 
     /**
      * 消息

@@ -2,6 +2,7 @@ package com.study.iot.mqtt.session.manager;
 
 import com.study.iot.mqtt.common.domain.ConnectSession;
 import com.study.iot.mqtt.common.domain.SessionMessage;
+import com.study.iot.mqtt.common.domain.WillMessage;
 
 /**
  * <B>说明：描述</B>
@@ -37,6 +38,15 @@ public interface SessionManager {
      * @param message  消息体
      */
     void add(String identity, SessionMessage message);
+
+
+    /**
+     * 添加消息
+     *
+     * @param identity 客户端标识
+     * @param message  消息体
+     */
+    void add(String identity, WillMessage message);
 
     /**
      * 订阅消息

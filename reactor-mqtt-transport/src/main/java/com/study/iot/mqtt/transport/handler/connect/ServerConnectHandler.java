@@ -2,7 +2,8 @@ package com.study.iot.mqtt.transport.handler.connect;
 
 
 import com.study.iot.mqtt.auth.service.Authentication;
-import com.study.iot.mqtt.common.message.WillMessage;
+import com.study.iot.mqtt.common.domain.WillMessage;
+import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.common.utils.StringUtils;
 import com.study.iot.mqtt.protocol.AttributeKeys;
 import com.study.iot.mqtt.protocol.MessageBuilder;
@@ -131,7 +132,7 @@ public class ServerConnectHandler implements ConnectCapable {
             this.acceptConnect(connection, identity, variableHeader.keepAliveTimeSeconds());
             // 如果有遗嘱消息，这里需要处理
             if (variableHeader.isWillFlag()) {
-                this.setWillMessage(connection, payload.willTopic(), variableHeader.isWillRetain(),
+                this.setWillMessage(identity, payload.willTopic(), variableHeader.isWillRetain(),
                     payload.willMessageInBytes(), variableHeader.willQos());
             }
         });
@@ -141,18 +142,23 @@ public class ServerConnectHandler implements ConnectCapable {
     /**
      * 设置遗嘱消息
      *
-     * @param connection 连接
+     * @param identity 连接标识
      * @param topicName  Topic
      * @param isRetain   保留消息
      * @param message    消息
      * @param qoS        QOS
      */
-    private void setWillMessage(DisposableConnection connection, String topicName, boolean isRetain,
-        byte[] message, int qoS) {
-        WillMessage willMessage = WillMessage.builder().copyByteBuf(message)
-            .qos(qoS).isRetain(isRetain).topic(topicName).build();
-        // 设置遗嘱消息，这里可以放在缓存中去
-        connection.getConnection().channel().attr(AttributeKeys.willMessage).set(willMessage);
+    private void setWillMessage(String identity, String topicName, boolean isRetain, byte[] message, int qoS) {
+        // 消息不能放在本地，要放在数据库中，因为有集群
+        WillMessage willMessage = WillMessage.builder().row(IdUtils.idGen().toString())
+            .identity(identity)
+            .sessionId(IdUtils.idGen().toString())
+            .messageId(-1)
+            .topic(topicName)
+            .retain(isRetain)
+            .qos(qoS)
+            .copyByteBuf(message).build();
+        sessionManager.add(identity, willMessage);
     }
 
     /**
