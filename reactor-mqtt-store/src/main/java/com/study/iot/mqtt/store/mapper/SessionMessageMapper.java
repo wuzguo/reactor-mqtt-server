@@ -85,11 +85,11 @@ public class SessionMessageMapper implements TableMapper<SessionMessage> {
                 .row(Bytes.toString(result.getValue(COLUMN_FAMILY, ROW)))
                 .identity(Bytes.toString(result.getValue(COLUMN_FAMILY, IDENTITY)))
                 .sessionId(Bytes.toString(result.getValue(COLUMN_FAMILY, SESSION_ID)))
-                .messageId(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, MESSAGE_ID))))
+                .messageId(Bytes.toInt(result.getValue(COLUMN_FAMILY, MESSAGE_ID)))
                 .topic(Bytes.toString(result.getValue(COLUMN_FAMILY, TOPIC)))
                 .retain(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMN_FAMILY, RETAIN))))
-                .messageType(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, MESSAGE_TYPE))))
-                .qos(Integer.valueOf(Bytes.toString(result.getValue(COLUMN_FAMILY, QOS))))
+                .messageType(Bytes.toInt(result.getValue(COLUMN_FAMILY, MESSAGE_TYPE)))
+                .qos(Bytes.toInt(result.getValue(COLUMN_FAMILY, QOS)))
                 .dup(Boolean.getBoolean(Bytes.toString(result.getValue(COLUMN_FAMILY, DUP))))
                 .copyByteBuf(result.getValue(COLUMN_FAMILY, COPY_BYTE_BUF))
                 .build();
@@ -100,15 +100,15 @@ public class SessionMessageMapper implements TableMapper<SessionMessage> {
         // rowKey
         Put put = new Put(Bytes.toBytes(message.getRow()));
         put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), ROW, Bytes.toBytes(message.getRow()));
-        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), IDENTITY, Bytes.toBytes(message.getRow()));
-        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), SESSION_ID, Bytes.toBytes(message.getRow()));
-        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), MESSAGE_ID, Bytes.toBytes(message.getRow()));
-        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), TOPIC, Bytes.toBytes(message.getRow()));
-        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), RETAIN, Bytes.toBytes(message.getRow()));
-        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), MESSAGE_TYPE, Bytes.toBytes(message.getRow()));
-        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), QOS, Bytes.toBytes(message.getRow()));
-        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), DUP, Bytes.toBytes(message.getRow()));
-        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), COPY_BYTE_BUF, Bytes.toBytes(message.getRow()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), IDENTITY, Bytes.toBytes(message.getIdentity()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), SESSION_ID, Bytes.toBytes(message.getSessionId()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), MESSAGE_ID, Bytes.toBytes(message.getMessageId()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), TOPIC, Bytes.toBytes(message.getTopic()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), RETAIN, Bytes.toBytes(message.getRetain()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), MESSAGE_TYPE, Bytes.toBytes(message.getMessageType()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), QOS, Bytes.toBytes(message.getQos()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), DUP, Bytes.toBytes(message.getDup()));
+        put.addColumn(Bytes.toBytes(SessionMessage.COLUMN_FAMILY), COPY_BYTE_BUF, message.getCopyByteBuf());
         return Lists.newArrayList(put);
     }
 }

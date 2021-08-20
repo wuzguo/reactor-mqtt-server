@@ -17,11 +17,8 @@ import com.study.iot.mqtt.store.hbase.HbaseTemplate;
 import com.study.iot.mqtt.store.mapper.SessionMessageMapper;
 import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +32,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class DefaultSessionManager implements SessionManager, InitializingBean, ApplicationContextAware {
+public class DefaultSessionManager implements SessionManager, InitializingBean {
 
     @Autowired
     private ActorSystem actorSystem;
@@ -94,13 +91,7 @@ public class DefaultSessionManager implements SessionManager, InitializingBean, 
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info("afterPropertiesSet");
         // 发布订阅消息
-        publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        log.info("setApplicationContext");
+        publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "session-publisher");
     }
 }

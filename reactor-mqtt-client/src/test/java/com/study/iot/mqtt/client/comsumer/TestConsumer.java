@@ -34,7 +34,7 @@ public class TestConsumer {
     @Test
     public void testConsumer() throws InterruptedException {
         ConnectOptions options = new ConnectOptions("123456", "e10adc3949ba59abbe56e057f20f883e")
-            .setClientId("329a0cc95adb4030bb183a2e0535280b")
+            .setClientId("329a0cc95adb4030bb183a2e0535280d")
             .setWillMessage("hello，I'm consumer")
             .setWillTopic("/session/will/consumer")
             .setWillQos(MqttQoS.AT_LEAST_ONCE)

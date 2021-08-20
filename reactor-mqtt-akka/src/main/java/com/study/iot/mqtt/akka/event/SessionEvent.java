@@ -17,12 +17,12 @@ public class SessionEvent extends BaseEvent {
 
 
     /**
-     * 客户端标识
+     * 发送消息的客户端ID
      */
     private String identity;
 
     /**
-     * 对应的实例ID
+     * 发送消息的实例ID
      */
     private String instanceId;
 
@@ -32,7 +32,7 @@ public class SessionEvent extends BaseEvent {
     private String row;
 
     /**
-     * AKKA 主题
+     * 消息的Topic
      */
     private String topic;
 

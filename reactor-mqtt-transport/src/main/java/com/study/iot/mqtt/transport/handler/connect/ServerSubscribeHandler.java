@@ -66,20 +66,24 @@ public class ServerSubscribeHandler implements ConnectCapable {
         MqttSubAckMessage mqttSubAckMessage = MessageBuilder.buildSubAck(messageId, qosLevels);
         disposableConnection.sendMessage(mqttSubAckMessage).subscribe();
         List<MqttTopicSubscription> subscriptions = subscribeMessage.payload().topicSubscriptions();
+        // 获取订阅的Topic名称
+        Set<String> topicNames = subscriptions.stream().map(MqttTopicSubscription::topicName).collect(Collectors.toSet());
+        // 获取当前客户端ID
+        String identity = disposableConnection.getConnection().channel().attr(AttributeKeys.identity).get();
 
-        Set<String> topicNames = subscriptions.stream().map(MqttTopicSubscription::topicName)
-            .collect(Collectors.toSet());
         // 发布订阅
         SubscribeEvent event = new SubscribeEvent(this, IdUtils.idGen());
         event.setTopicNames(topicNames);
         event.setInstanceId(instanceUtil.getInstanceId());
-        event.setIdentity(disposableConnection.getConnection().channel().attr(AttributeKeys.identity).get());
+        event.setIdentity(identity);
         eventService.tellEvent(event);
         // 遍历
         subscriptions.forEach(topicSubscription -> {
             String topicName = topicSubscription.topicName();
             // 存储本地的订阅主题
             containerManager.topic(CacheGroup.TOPIC).add(topicName, disposableConnection);
+            // 保存Topic和客户端ID的对应关系
+            containerManager.take(CacheGroup.ID_TOPIC).add(topicName, identity);
             Optional.ofNullable(containerManager.take(CacheGroup.MESSAGE).get(topicName)).ifPresent(serializable -> {
                 RetainMessage retainMessage = (RetainMessage) serializable;
                 if (retainMessage.getQos() == 0) {

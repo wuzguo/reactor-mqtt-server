@@ -5,6 +5,7 @@ import akka.actor.ActorSystem;
 import com.study.iot.mqtt.akka.actor.Publisher;
 import com.study.iot.mqtt.akka.event.BaseEvent;
 import com.study.iot.mqtt.akka.spring.SpringProps;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +18,12 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class EventService {
+public class EventService implements InitializingBean {
 
     @Autowired
     private ActorSystem actorSystem;
+
+    private ActorRef publisher;
 
     /**
      * 发布事件
@@ -28,7 +31,11 @@ public class EventService {
      * @param event {@link BaseEvent}
      */
     public void tellEvent(BaseEvent event) {
-        ActorRef publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "publisher");
         publisher.tell(event, ActorRef.noSender());
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        publisher = actorSystem.actorOf(SpringProps.create(actorSystem, Publisher.class), "event-publisher");
     }
 }
