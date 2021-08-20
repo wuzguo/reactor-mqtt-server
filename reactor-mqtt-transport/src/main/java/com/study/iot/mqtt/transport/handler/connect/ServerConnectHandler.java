@@ -144,13 +144,12 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
             this.acceptConnect(disposable, identity, variableHeader.keepAliveTimeSeconds());
             // 如果有遗嘱消息，这里需要处理
             if (variableHeader.isWillFlag()) {
-                this.setWillMessage(identity, payload.willTopic(), variableHeader.isWillRetain(),
+                // 返回消息ID
+                String row = this.setWillMessage(identity, payload.willTopic(), variableHeader.isWillRetain(),
                     payload.willMessageInBytes(), variableHeader.willQos());
-            }
-            // 注册发送遗嘱消息
-            if (StringUtils.isNotBlank(payload.willTopic())) {
+                // 注册发送遗嘱消息
                 Connection connection = disposable.getConnection();
-                connection.onDispose(() -> this.sendWillMessage(identity, payload.willTopic()));
+                connection.onDispose(() -> this.sendWillMessage(identity, row, payload.willTopic()));
             }
         });
     }
@@ -161,12 +160,12 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
      * @param identity  标识
      * @param topicName 主题名称
      */
-    private void sendWillMessage(String identity, String topicName) {
+    private void sendWillMessage(String identity, String row, String topicName) {
         WillEvent event = new WillEvent(this, IdUtils.idGen());
         event.setIdentity(identity);
         event.setTopic(topicName);
         event.setInstanceId(instanceUtil.getInstanceId());
-        event.setRow(IdUtils.idGen().toString());
+        event.setRow(row);
         publisher.tell(event, ActorRef.noSender());
     }
 
@@ -179,9 +178,11 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
      * @param message   消息
      * @param qoS       QOS
      */
-    private void setWillMessage(String identity, String topicName, boolean isRetain, byte[] message, int qoS) {
+    private String setWillMessage(String identity, String topicName, boolean isRetain, byte[] message, int qoS) {
         // 消息不能放在本地，要放在数据库中，因为有集群
-        WillMessage willMessage = WillMessage.builder().row(IdUtils.idGen().toString())
+        String row = IdUtils.idGen().toString();
+        // 构造消息
+        WillMessage willMessage = WillMessage.builder().row(row)
             .identity(identity)
             .sessionId(IdUtils.idGen().toString())
             .messageId(-1)
@@ -189,7 +190,10 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
             .retain(isRetain)
             .qos(qoS)
             .copyByteBuf(message).build();
+        // 入库
         sessionManager.save(identity, willMessage);
+        // 返回，这里要把消息ID保存在连接上下文里面
+        return row;
     }
 
     /**
