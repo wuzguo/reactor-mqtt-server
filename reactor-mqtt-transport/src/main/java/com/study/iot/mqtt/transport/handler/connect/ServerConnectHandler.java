@@ -127,10 +127,10 @@ public class ServerConnectHandler implements ConnectCapable {
             // 创建Session的保存
             sessionManager.add(instanceUtil.getInstanceId(), identity, variableHeader.isCleanSession());
             // 连接成功，超时时间来自客户端的设置
-            acceptConnect(connection, identity, variableHeader.keepAliveTimeSeconds());
+            this.acceptConnect(connection, identity, variableHeader.keepAliveTimeSeconds());
             // 如果有遗嘱消息，这里需要处理
             if (variableHeader.isWillFlag()) {
-                setWillMessage(connection, payload.willTopic(), variableHeader.isWillRetain(),
+                this.setWillMessage(connection, payload.willTopic(), variableHeader.isWillRetain(),
                     payload.willMessageInBytes(), variableHeader.willQos());
             }
         });
