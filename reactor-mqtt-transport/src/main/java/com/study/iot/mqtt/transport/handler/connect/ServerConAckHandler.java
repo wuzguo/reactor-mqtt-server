@@ -22,6 +22,6 @@ public class ServerConAckHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection connection, MqttMessage mqttMessage) {
-        log.info("connectAck message: {}, connection: {}", mqttMessage, connection);
+        log.info("connectAck message: {}", mqttMessage);
     }
 }

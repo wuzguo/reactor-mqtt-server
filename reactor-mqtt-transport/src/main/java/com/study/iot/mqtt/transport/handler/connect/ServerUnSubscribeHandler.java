@@ -34,16 +34,15 @@ public class ServerUnSubscribeHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("unSubscribe message: {}, connection: {}", mqttMessage, disposable);
+        log.info("unSubscribe message: {}", mqttMessage);
 
         MqttUnsubscribeMessage unsubscribeMessage = (MqttUnsubscribeMessage) mqttMessage;
-        MqttUnsubAckMessage mqttUnsubAckMessage =
-            MessageBuilder.buildUnsubAck(unsubscribeMessage.variableHeader().messageId());
-        disposable.sendMessage(mqttUnsubAckMessage).subscribe();
-        Optional.ofNullable(unsubscribeMessage.payload().topics())
-            .ifPresent(topics -> topics.forEach(topic -> {
-                TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
-                topicContainer.remove(topic, disposable);
-            }));
+        MqttUnsubAckMessage unsubAckMessage = MessageBuilder.buildUnsubAck(
+            unsubscribeMessage.variableHeader().messageId());
+        disposable.sendMessage(unsubAckMessage).subscribe();
+        Optional.ofNullable(unsubscribeMessage.payload().topics()).ifPresent(topics -> topics.forEach(topic -> {
+            TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
+            topicContainer.remove(topic, disposable);
+        }));
     }
 }

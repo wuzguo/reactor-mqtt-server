@@ -75,7 +75,7 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
     @Override
     @MqttMetric(MetricMatterName.TOTAL_CONNECTION_COUNT)
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("connect message: {}, connection: {}", mqttMessage, disposable);
+        log.info("connect message: {}", mqttMessage);
         MqttConnectMessage message = (MqttConnectMessage) mqttMessage;
 
         // 消息解码器出现异常

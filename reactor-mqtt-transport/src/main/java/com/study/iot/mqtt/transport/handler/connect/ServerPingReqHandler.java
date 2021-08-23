@@ -25,7 +25,7 @@ public class ServerPingReqHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("pingReq message: {}, connection: {}", mqttMessage, disposable);
+        log.info("pingReq message: {}", mqttMessage);
         MqttMessage message = MessageBuilder.buildPing(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE,
             false, 0);
         disposable.sendMessage(message);

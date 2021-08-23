@@ -22,7 +22,7 @@ public class ServerDisConnectHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("disConnect message: {}, connection: {}", mqttMessage, disposable);
+        log.info("disConnect message: {}", mqttMessage);
         disposable.dispose();
     }
 }

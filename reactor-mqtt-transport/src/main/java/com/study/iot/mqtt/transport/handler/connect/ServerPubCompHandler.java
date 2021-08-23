@@ -23,7 +23,7 @@ public class ServerPubCompHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("pubComp message: {}, connection: {}", mqttMessage, disposable);
+        log.info("pubComp message: {}", mqttMessage);
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         disposable.cancelDisposable(variableHeader.messageId());
     }

@@ -22,6 +22,6 @@ public class ServerPingRespHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("pingResp message: {}, connection: {}", mqttMessage, disposable);
+        log.info("pingResp message: {}", mqttMessage);
     }
 }

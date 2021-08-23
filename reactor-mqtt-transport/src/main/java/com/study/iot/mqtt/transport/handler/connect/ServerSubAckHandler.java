@@ -23,6 +23,6 @@ public class ServerSubAckHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("subAck message: {}, connection: {}", mqttMessage, disposable);
+        log.info("subAck message: {}", mqttMessage);
     }
 }

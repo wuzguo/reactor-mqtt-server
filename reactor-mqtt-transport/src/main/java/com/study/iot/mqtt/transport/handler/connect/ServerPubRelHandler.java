@@ -37,7 +37,7 @@ public class ServerPubRelHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("pubRel message: {}, connection: {}", mqttMessage, disposable);
+        log.info("pubRel message: {}", mqttMessage);
         MqttFixedHeader header = mqttMessage.fixedHeader();
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = variableHeader.messageId();

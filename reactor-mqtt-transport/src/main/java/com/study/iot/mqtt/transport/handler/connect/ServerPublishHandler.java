@@ -44,7 +44,7 @@ public class ServerPublishHandler implements ConnectCapable {
     @Override
     @MqttMetric(MetricMatterName.TOTAL_PUBLISH_COUNT)
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("publish message: {}, connection: {}", mqttMessage, disposable);
+        log.info("publish message: {}", mqttMessage);
         MqttFixedHeader fixedHeader = mqttMessage.fixedHeader();
         MqttPublishMessage publishMessage = (MqttPublishMessage) mqttMessage;
         MqttPublishVariableHeader variableHeader = publishMessage.variableHeader();

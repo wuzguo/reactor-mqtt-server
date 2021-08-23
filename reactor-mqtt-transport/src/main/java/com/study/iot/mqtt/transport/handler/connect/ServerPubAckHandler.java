@@ -23,7 +23,7 @@ public class ServerPubAckHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("pubAck message: {}, connection: {}", mqttMessage, disposable);
+        log.info("pubAck message: {}", mqttMessage);
         MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         disposable.cancelDisposable(variableHeader.messageId());
     }

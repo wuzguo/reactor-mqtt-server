@@ -23,7 +23,6 @@ public class ServerUnSubAckHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("unSubAck message: {}, connection: {}", mqttMessage, disposable);
-
+        log.info("unSubAck message: {}", mqttMessage);
     }
 }

@@ -55,7 +55,7 @@ public class ServerSubscribeHandler implements ConnectCapable {
     @Override
     @MqttMetric(MetricMatterName.TOTAL_RECEIVE_COUNT)
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("subscribe message: {}, connection: {}", mqttMessage, disposable);
+        log.info("subscribe message: {}", mqttMessage);
         MqttFixedHeader header = mqttMessage.fixedHeader();
         MqttSubscribeMessage subscribeMessage = (MqttSubscribeMessage) mqttMessage;
 
