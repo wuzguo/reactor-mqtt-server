@@ -31,13 +31,13 @@ public class ServerMessageRouter {
 
     public void handle(MqttMessage message, DisposableConnection disposableConnection) {
         log.info("accept message channel {}，message {}", disposableConnection.getConnection().channel(), message);
-
+        // 如果消息解密不成功
         if (!message.decoderResult().isSuccess()) {
             log.error("accept message  error {}", message.decoderResult());
             return;
         }
 
-        // 消息分发
+        // 消息分发，策略模式
         Optional.ofNullable(container.find(StrategyGroup.CONNECT, StrategyEnum.valueOf(message.fixedHeader().messageType())))
             .ifPresent(capable -> ((ConnectCapable) capable).handle(disposableConnection, message));
     }
