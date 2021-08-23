@@ -53,7 +53,7 @@ public class CacheTopicManager {
 
     public void addConnection(String topic, Disposable connection) {
         String[] methodArray = topic.split("/");
-        mapPath.putData(methodArray, connection);
+        mapPath.put(methodArray, connection);
         mapDisposableCache.invalidate(topic);
     }
 

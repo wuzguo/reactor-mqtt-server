@@ -1,10 +1,9 @@
 package com.study.iot.mqtt.store.container.path;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -15,25 +14,24 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2021/5/7 16:18
  */
 
-
 @Slf4j
 public class TopicMap<K, V> {
 
     private final Map<K, Node<K, V>> mapNodes = Maps.newConcurrentMap();
 
-    public boolean putData(K[] topic, V v) {
+    public boolean put(K[] topic, V v) {
         if (topic.length == 1) {
-            Node<K, V> kvNode = buildOne(topic[0], v);
+            Node<K, V> kvNode = build(topic[0], v);
             if (kvNode != null && kvNode.topic.equals(topic[0])) {
                 return true;
             }
         } else {
-            Node<K, V> kvNode = buildOne(topic[0], null);
+            Node<K, V> kvNode = build(topic[0], null);
             for (int i = 1; i < topic.length; i++) {
                 if (i == topic.length - 1) {
-                    kvNode = kvNode.putNextValue(topic[i], v);
+                    kvNode = kvNode.put(topic[i], v);
                 } else {
-                    kvNode = kvNode.putNextValue(topic[i], null);
+                    kvNode = kvNode.put(topic[i], null);
                 }
             }
         }
@@ -42,13 +40,13 @@ public class TopicMap<K, V> {
 
     public boolean delete(K[] ks, V v) {
         if (ks.length == 1) {
-            return mapNodes.get(ks[0]).delValue(v);
+            return mapNodes.get(ks[0]).remove(v);
         } else {
             Node<K, V> kvNode = mapNodes.get(ks[0]);
             for (int i = 1; i < ks.length && kvNode != null; i++) {
-                kvNode = kvNode.getNext(ks[i]);
+                kvNode = kvNode.get(ks[i]);
             }
-            return kvNode.delValue(v);
+            return kvNode.remove(v);
 
         }
     }
@@ -59,10 +57,10 @@ public class TopicMap<K, V> {
         } else {
             Node<K, V> node = mapNodes.get(ks[0]);
             if (node != null) {
-                List<V> all = new ArrayList<>();
+                List<V> all = Lists.newArrayList();
                 all.addAll(node.get());
                 for (int i = 1; i < ks.length; i++) {
-                    node = node.getNext(ks[i]);
+                    node = node.get(ks[i]);
                     if (node == null) {
                         break;
                     }
@@ -74,24 +72,25 @@ public class TopicMap<K, V> {
         }
     }
 
-    public Node<K, V> buildOne(K k, V v) {
-
+    public Node<K, V> build(K k, V v) {
         Node<K, V> node = this.mapNodes.computeIfAbsent(k, key -> {
-            Node<K, V> kObjectNode = new Node<>(k);
-            return kObjectNode;
+            Node<K, V> kNode = new Node<>(k);
+            return kNode;
         });
+
         if (v != null) {
             node.put(v);
         }
         return node;
     }
 
-
     class Node<K, V> {
 
         private final K topic;
+
         private final Map<K, Node<K, V>> mapNodes = Maps.newConcurrentMap();
-        List<V> vs = new CopyOnWriteArrayList<>();
+
+        private final List<V> vs = Lists.newCopyOnWriteArrayList();
 
         Node(K topic) {
             this.topic = topic;
@@ -101,11 +100,11 @@ public class TopicMap<K, V> {
             return topic;
         }
 
-        public boolean delValue(V v) {
+        public boolean remove(V v) {
             return vs.remove(v);
         }
 
-        public Node<K, V> putNextValue(K k, V v) {
+        public Node<K, V> put(K k, V v) {
             Node<K, V> kvNode = mapNodes.computeIfAbsent(k, key -> new Node<>(k));
             if (v != null) {
                 kvNode.put(v);
@@ -113,16 +112,13 @@ public class TopicMap<K, V> {
             return kvNode;
         }
 
-
-        public Node<K, V> getNext(K k) {
+        public Node<K, V> get(K k) {
             return mapNodes.get(k);
         }
-
 
         public boolean put(V v) {
             return vs.add(v);
         }
-
 
         public List<V> get() {
             return vs;
