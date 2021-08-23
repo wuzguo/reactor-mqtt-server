@@ -88,8 +88,6 @@ public class ServerConnection implements ServerSession {
                     containerManager.take(CacheGroup.CHANNEL).remove(identity);
                     connection.channel().attr(AttributeKeys.identity).set(null);
                 });
-            // 删除连接
-            connection.channel().attr(AttributeKeys.disposableConnection).set(null);
             // 删除topic订阅
             Optional.ofNullable(disposableConnection.getTopics())
                 .ifPresent(topics -> topics.forEach(topic -> {

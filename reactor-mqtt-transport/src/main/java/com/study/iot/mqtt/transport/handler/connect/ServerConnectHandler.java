@@ -212,8 +212,6 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
         connection.channel().attr(AttributeKeys.keepalive).set(keepAliveSeconds);
         // 设置设备标识
         connection.channel().attr(AttributeKeys.identity).set(identity);
-        // 设置 connection
-        connection.channel().attr(AttributeKeys.disposableConnection).set(disposableConnection);
         // 保持标识和连接的关系
         containerManager.take(CacheGroup.CHANNEL).add(identity, disposableConnection);
         // 取消关闭连接

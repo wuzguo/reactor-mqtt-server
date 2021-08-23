@@ -1,10 +1,7 @@
 package com.study.iot.mqtt.protocol;
 
 
-import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.protocol.session.ClientSession;
-import com.study.iot.mqtt.protocol.session.ServerSession;
-import com.study.iot.mqtt.common.message.WillMessage;
 import io.netty.util.AttributeKey;
 import lombok.experimental.UtilityClass;
 import reactor.core.Disposable;
@@ -20,18 +17,23 @@ import reactor.core.Disposable;
 @UtilityClass
 public class AttributeKeys {
 
+    /**
+     * 客户端连接
+     */
     public AttributeKey<ClientSession> clientConnection = AttributeKey.valueOf("client_connection");
 
-    public AttributeKey<ServerSession> serverConnection = AttributeKey.valueOf("server_connection");
-
+    /**
+     * 关闭连接
+     */
     public AttributeKey<Disposable> closeConnection = AttributeKey.valueOf("close_connection");
 
-    public AttributeKey<DisposableConnection> disposableConnection = AttributeKey.valueOf("disposable_connection");
-
+    /**
+     * 连接标识
+     */
     public AttributeKey<String> identity = AttributeKey.valueOf("identity");
 
+    /**
+     * 连接存活时间
+     */
     public AttributeKey<Integer> keepalive = AttributeKey.valueOf("keep_alive");
-
-    public AttributeKey<WillMessage> willMessage = AttributeKey.valueOf("will_message");
-
 }
