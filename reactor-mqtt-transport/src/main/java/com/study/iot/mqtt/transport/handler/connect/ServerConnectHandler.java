@@ -112,7 +112,8 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
 
         // 用户名和密码
         String key = payload.userName();
-        String secret = payload.passwordInBytes() == null ? null : new String(payload.passwordInBytes(), CharsetUtil.UTF_8);
+        String secret =
+            payload.passwordInBytes() == null ? null : new String(payload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtils.isAnyBlank(key, secret)) {
             MqttConnAckMessage ackMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
@@ -141,6 +142,8 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
             sessionManager.add(instanceUtil.getInstanceId(), identity, variableHeader.isCleanSession());
             // 连接成功，超时时间来自客户端的设置
             this.acceptConnect(disposable, identity, variableHeader.keepAliveTimeSeconds());
+            // 发送连接成功的消息
+            disposable.sendMessage(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED)).subscribe();
             // 如果有遗嘱消息，这里需要处理
             if (variableHeader.isWillFlag()) {
                 // 返回消息ID
@@ -214,11 +217,8 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
         // 保持标识和连接的关系
         containerManager.take(CacheGroup.CHANNEL).add(identity, disposableConnection);
         // 取消关闭连接
-        Optional.ofNullable(disposableConnection.getConnection().channel().attr(AttributeKeys.closeConnection))
-            .map(Attribute::get).ifPresent(Disposable::dispose);
-        // 发送连接成功的消息
-        disposableConnection.sendMessage(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED))
-            .subscribe();
+        Optional.ofNullable(connection.channel().attr(AttributeKeys.closeConnection)).map(Attribute::get)
+            .ifPresent(Disposable::dispose);
     }
 
     @Override
