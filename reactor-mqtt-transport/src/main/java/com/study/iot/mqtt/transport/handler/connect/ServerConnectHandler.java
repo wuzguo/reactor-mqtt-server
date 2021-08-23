@@ -112,8 +112,7 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
 
         // 用户名和密码
         String key = payload.userName();
-        String secret =
-            payload.passwordInBytes() == null ? null : new String(payload.passwordInBytes(), CharsetUtil.UTF_8);
+        String secret = payload.passwordInBytes() == null ? null : new String(payload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtils.isAnyBlank(key, secret)) {
             MqttConnAckMessage ackMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
