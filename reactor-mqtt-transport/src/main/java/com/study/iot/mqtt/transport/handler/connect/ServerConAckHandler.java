@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.CONNACK)
-public class ServerConnectAckHandler implements ConnectCapable {
+public class ServerConAckHandler implements ConnectCapable {
 
     @Override
     public void handle(DisposableConnection connection, MqttMessage mqttMessage) {
