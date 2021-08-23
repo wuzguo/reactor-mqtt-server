@@ -39,6 +39,17 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public final class MessageBuilder {
 
+    /**
+     * 构造发布消息
+     *
+     * @param isDup     是否重复分发标志
+     * @param qoS       消息质量等级
+     * @param isRetain  保留标志
+     * @param messageId 消息ID
+     * @param topic     主题
+     * @param message   消息内容
+     * @return {@link MqttPublishMessage}
+     */
     public static MqttPublishMessage buildPub(boolean isDup, MqttQoS qoS, boolean isRetain, int messageId, String topic,
         byte[] message) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH, isDup, qoS, isRetain, 0);
@@ -46,22 +57,53 @@ public final class MessageBuilder {
         return new MqttPublishMessage(fixedHeader, variableHeader, Unpooled.wrappedBuffer(message));
     }
 
-    public static MqttMessage buildPing(MqttMessageType messageType, boolean isDup, MqttQoS qosLevel,
+    /**
+     * 构造MQTT消息
+     *
+     * @param messageType     消息类型
+     * @param isDup           是否重复分发标志
+     * @param qoS             消息质量等级
+     * @param isRetain        保留标志
+     * @param remainingLength 剩余长度
+     * @return {@link MqttMessage}
+     */
+    public static MqttMessage buildPing(MqttMessageType messageType, boolean isDup, MqttQoS qoS,
         boolean isRetain, int remainingLength) {
-        return new MqttMessage(new MqttFixedHeader(messageType, isDup, qosLevel, isRetain, remainingLength));
+        return new MqttMessage(new MqttFixedHeader(messageType, isDup, qoS, isRetain, remainingLength));
     }
 
-
+    /**
+     * 构造发布确认消息
+     *
+     * @param isDup     是否重复分发标志
+     * @param qoS       消息质量等级
+     * @param isRetain  保留标志
+     * @param messageId 消息ID
+     * @return {@link MqttPubAckMessage}
+     */
     public static MqttPubAckMessage buildPubAck(boolean isDup, MqttQoS qoS, boolean isRetain, int messageId) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBACK, isDup, qoS, isRetain, 2);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
         return new MqttPubAckMessage(fixedHeader, variableHeader);
     }
 
+    /**
+     * 构造确认连接请求消息
+     *
+     * @param mqttConnectReturnCode {@link MqttConnectReturnCode}
+     * @param sessionPresent        {@link Boolean} 是否保存Session
+     * @return {@link MqttConnAckMessage}
+     */
     public static MqttConnAckMessage buildConnAck(MqttConnectReturnCode mqttConnectReturnCode, boolean sessionPresent) {
         return MqttMessageBuilders.connAck().returnCode(mqttConnectReturnCode).sessionPresent(sessionPresent).build();
     }
 
+    /**
+     * 构造发布确认消息
+     *
+     * @param messageId 消息ID
+     * @return {@link MqttPubAckMessage}
+     */
     public static MqttPubAckMessage buildPubRec(int messageId) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC, false, MqttQoS.AT_LEAST_ONCE,
             false, 0x02);
@@ -69,6 +111,12 @@ public final class MessageBuilder {
         return new MqttPubAckMessage(fixedHeader, variableHeader);
     }
 
+    /**
+     * 构造发布确认消息
+     *
+     * @param messageId 消息ID
+     * @return {@link MqttPubAckMessage}
+     */
     public static MqttPubAckMessage buildPubRel(int messageId) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL, false, MqttQoS.AT_LEAST_ONCE,
             false, 0x02);
@@ -76,7 +124,12 @@ public final class MessageBuilder {
         return new MqttPubAckMessage(fixedHeader, variableHeader);
     }
 
-
+    /**
+     * 构造发布确认消息
+     *
+     * @param messageId 消息ID
+     * @return {@link MqttPubAckMessage}
+     */
     public static MqttPubAckMessage buildPubComp(int messageId) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PUBCOMP, false, MqttQoS.AT_MOST_ONCE,
             false, 0x02);
@@ -84,6 +137,13 @@ public final class MessageBuilder {
         return new MqttPubAckMessage(fixedHeader, variableHeader);
     }
 
+    /**
+     * 构造订阅确认消息
+     *
+     * @param messageId 消息ID
+     * @param qos       {@link List} 消息质量等级
+     * @return {@link MqttPubAckMessage}
+     */
     public static MqttSubAckMessage buildFailureSubAck(int messageId, List<Integer> qos) {
         return buildSubAck(messageId, qos, MqttQoS.FAILURE);
     }
