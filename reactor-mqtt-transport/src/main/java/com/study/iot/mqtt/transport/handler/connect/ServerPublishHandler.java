@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import reactor.netty.Connection;
 
 /**
- * <B>说明：描述</B>
+ * <B>说明：发布消息</B>
  *
  * @author zak.wu
  * @version 1.0.0
@@ -43,12 +43,12 @@ public class ServerPublishHandler implements ConnectCapable {
 
     @Override
     @MqttMetric(MetricMatterName.TOTAL_PUBLISH_COUNT)
-    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
-        log.info("server Publish message: {}, connection: {}", message, disposableConnection);
-        MqttFixedHeader fixedHeader = message.fixedHeader();
-        MqttPublishMessage mqttMessage = (MqttPublishMessage) message;
-        MqttPublishVariableHeader variableHeader = mqttMessage.variableHeader();
-        byte[] bytes = copyByteBuf(mqttMessage.payload());
+    public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
+        log.info("publish message: {}, connection: {}", mqttMessage, disposable);
+        MqttFixedHeader fixedHeader = mqttMessage.fixedHeader();
+        MqttPublishMessage publishMessage = (MqttPublishMessage) mqttMessage;
+        MqttPublishVariableHeader variableHeader = publishMessage.variableHeader();
+        byte[] bytes = copyByteBuf(publishMessage.payload());
         //保留消息
         if (fixedHeader.isRetain()) {
             RetainMessage retainMessage = RetainMessage.builder().topic(variableHeader.topicName())
@@ -58,9 +58,10 @@ public class ServerPublishHandler implements ConnectCapable {
         }
 
         // 持久化消息，这里可以使用发布订阅模式
-        Connection connection = disposableConnection.getConnection();
+        Connection connection = disposable.getConnection();
         // 当前发送消息的客户端ID
         String identity = connection.channel().attr(AttributeKeys.identity).get();
+        // 构造消息
         SessionMessage sessionMessage = SessionMessage.builder().row(IdUtils.idGen().toString())
             .identity(identity)
             .sessionId(IdUtils.idGen().toString())

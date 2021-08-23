@@ -9,7 +9,7 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * <B>说明：描述</B>
+ * <B>说明：心跳响应</B>
  *
  * @author zak.wu
  * @version 1.0.0
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerPingRespHandler implements ConnectCapable {
 
     @Override
-    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
-        log.info("server PingResp message: {}, connection: {}", message, disposableConnection);
+    public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
+        log.info("pingResp message: {}, connection: {}", mqttMessage, disposable);
     }
 }

@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * <B>说明：描述</B>
+ * <B>说明：订阅主题</B>
  *
  * @author zak.wu
  * @version 1.0.0
@@ -54,22 +54,22 @@ public class ServerSubscribeHandler implements ConnectCapable {
 
     @Override
     @MqttMetric(MetricMatterName.TOTAL_RECEIVE_COUNT)
-    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
-        log.info("server Subscribe message: {}, connection: {}", message, disposableConnection);
-        MqttFixedHeader header = message.fixedHeader();
-        MqttSubscribeMessage subscribeMessage = (MqttSubscribeMessage) message;
+    public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
+        log.info("subscribe message: {}, connection: {}", mqttMessage, disposable);
+        MqttFixedHeader header = mqttMessage.fixedHeader();
+        MqttSubscribeMessage subscribeMessage = (MqttSubscribeMessage) mqttMessage;
 
         List<Integer> qosLevels = subscribeMessage.payload().topicSubscriptions().stream()
             .map(topicSubscription -> topicSubscription.qualityOfService().value()).collect(Collectors.toList());
         // 消息ID
         int messageId = subscribeMessage.variableHeader().messageId();
         MqttSubAckMessage mqttSubAckMessage = MessageBuilder.buildSubAck(messageId, qosLevels);
-        disposableConnection.sendMessage(mqttSubAckMessage).subscribe();
+        disposable.sendMessage(mqttSubAckMessage).subscribe();
         List<MqttTopicSubscription> subscriptions = subscribeMessage.payload().topicSubscriptions();
         // 获取订阅的Topic名称
         Set<String> topicNames = subscriptions.stream().map(MqttTopicSubscription::topicName).collect(Collectors.toSet());
         // 获取当前客户端ID
-        String identity = disposableConnection.getConnection().channel().attr(AttributeKeys.identity).get();
+        String identity = disposable.getConnection().channel().attr(AttributeKeys.identity).get();
 
         // 发布订阅
         SubscribeEvent event = new SubscribeEvent(this, IdUtils.idGen());
@@ -81,22 +81,22 @@ public class ServerSubscribeHandler implements ConnectCapable {
         subscriptions.forEach(topicSubscription -> {
             String topicName = topicSubscription.topicName();
             // 存储本地的订阅主题
-            containerManager.topic(CacheGroup.TOPIC).add(topicName, disposableConnection);
+            containerManager.topic(CacheGroup.TOPIC).add(topicName, disposable);
             // 保存Topic和客户端ID的对应关系
             containerManager.take(CacheGroup.ID_TOPIC).add(topicName, identity);
             Optional.ofNullable(containerManager.take(CacheGroup.MESSAGE).get(topicName)).ifPresent(serializable -> {
                 RetainMessage retainMessage = (RetainMessage) serializable;
                 if (retainMessage.getQos() == 0) {
-                    MqttPublishMessage mqttMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),
+                    MqttPublishMessage publishMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),
                         MqttQoS.valueOf(retainMessage.getQos()), retainMessage.getIsRetain(), 1,
                         retainMessage.getTopic(), retainMessage.getCopyByteBuf());
-                    disposableConnection.sendMessage(mqttMessage).subscribe();
+                    disposable.sendMessage(mqttMessage).subscribe();
                 } else {
                     int connMessageId = IdUtils.messageId();
                     // retry
-                    MqttPublishMessage mqttMessage = MessageBuilder.buildPub(true, header.qosLevel(),
+                    MqttPublishMessage publishMessage = MessageBuilder.buildPub(true, header.qosLevel(),
                         header.isRetain(), connMessageId, retainMessage.getTopic(), retainMessage.getCopyByteBuf());
-                    disposableConnection.sendMessageRetry(connMessageId, mqttMessage);
+                    disposable.sendMessageRetry(connMessageId, mqttMessage);
                 }
             });
         });

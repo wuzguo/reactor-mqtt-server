@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * <B>说明：描述</B>
+ * <B>说明：发布释放（QoS 2，第二步）</B>
  *
  * @author zak.wu
  * @version 1.0.0
@@ -36,28 +36,28 @@ public class ServerPubRelHandler implements ConnectCapable {
     private ContainerManager containerManager;
 
     @Override
-    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
-        log.info("server PubRel message: {}, connection: {}", message, disposableConnection);
-        MqttFixedHeader header = message.fixedHeader();
-        MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
+    public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
+        log.info("pubRel message: {}, connection: {}", mqttMessage, disposable);
+        MqttFixedHeader header = mqttMessage.fixedHeader();
+        MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = variableHeader.messageId();
         // cancel replay rec
-        disposableConnection.cancelDisposable(messageId);
+        disposable.cancelDisposable(messageId);
         MqttPubAckMessage mqttPubRecMessage = MessageBuilder.buildPubComp(messageId);
         // send comp
-        disposableConnection.sendMessage(mqttPubRecMessage).subscribe();
-        disposableConnection.getAndRemoveQos2Message(messageId)
+        disposable.sendMessage(mqttPubRecMessage).subscribe();
+        disposable.getAndRemoveQos2Message(messageId)
             .ifPresent(transportMessage -> {
                 TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
                 topicContainer.getConnections(transportMessage.getTopic())
-                    .stream().map(disposable -> (DisposableConnection) disposable)
-                    .filter(disposable -> !disposableConnection.equals(disposable) && !disposable.isDispose())
-                    .forEach(disposable -> {
+                    .stream().map(disposableConnection -> (DisposableConnection) disposableConnection)
+                    .filter(disposableConnection -> !disposable.equals(disposableConnection) && !disposableConnection.isDispose())
+                    .forEach(disposableConnection -> {
                         int connMessageId = IdUtils.messageId();
-                        MqttPublishMessage mqttMessage = MessageBuilder.buildPub(false,
+                        MqttPublishMessage publishMessage = MessageBuilder.buildPub(false,
                             MqttQoS.valueOf(transportMessage.getQos()), header.isRetain(), connMessageId,
                             transportMessage.getTopic(), transportMessage.getCopyByteBuf());
-                        disposable.sendMessageRetry(connMessageId, mqttMessage).subscribe();
+                        disposableConnection.sendMessageRetry(connMessageId, publishMessage).subscribe();
                     });
             });
     }

@@ -11,7 +11,7 @@ import io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * <B>说明：描述</B>
+ * <B>说明：发布收到（QoS 2，第一步）</B>
  *
  * @author zak.wu
  * @version 1.0.0
@@ -23,11 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerPubRecHandler implements ConnectCapable {
 
     @Override
-    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
-        log.info("server PubRec message: {}, connection: {}", message, disposableConnection);
-        MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) message.variableHeader();
+    public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
+        log.info("pubRec message: {}, connection: {}", mqttMessage, disposable);
+        MqttMessageIdVariableHeader variableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = variableHeader.messageId();
-        disposableConnection.sendMessageRetry(messageId, MessageBuilder.buildPubRel(messageId));
-        disposableConnection.cancelDisposable(messageId);
+        disposable.sendMessageRetry(messageId, MessageBuilder.buildPubRel(messageId));
+        disposable.cancelDisposable(messageId);
     }
 }

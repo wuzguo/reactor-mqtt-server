@@ -43,7 +43,7 @@ import reactor.core.Disposable;
 import reactor.netty.Connection;
 
 /**
- * <B>说明：描述</B>
+ * <B>说明：连接服务端</B>
  *
  * @author zak.wu
  * @version 1.0.0
@@ -75,7 +75,7 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
     @Override
     @MqttMetric(MetricMatterName.TOTAL_CONNECTION_COUNT)
     public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("server connect message: {}, connection: {}", mqttMessage, disposable);
+        log.info("connect message: {}, connection: {}", mqttMessage, disposable);
         MqttConnectMessage message = (MqttConnectMessage) mqttMessage;
 
         // 消息解码器出现异常

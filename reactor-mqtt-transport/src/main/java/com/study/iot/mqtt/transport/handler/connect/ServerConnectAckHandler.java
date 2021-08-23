@@ -9,20 +9,19 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * <B>说明：断开连接</B>
+ * <B>说明：确认连接</B>
  *
  * @author zak.wu
  * @version 1.0.0
- * @date 2021/4/22 9:20
+ * @date 2021/8/23 10:48
  */
 
 @Slf4j
-@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.DISCONNECT)
-public class ServerDisConnectHandler implements ConnectCapable {
+@StrategyService(group = StrategyGroup.CONNECT, type = StrategyEnum.CONNACK)
+public class ServerConnectAckHandler implements ConnectCapable {
 
     @Override
-    public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
-        log.info("disConnect message: {}, connection: {}", mqttMessage, disposable);
-        disposable.dispose();
+    public void handle(DisposableConnection connection, MqttMessage mqttMessage) {
+        log.info("connectAck message: {}, connection: {}", mqttMessage, connection);
     }
 }

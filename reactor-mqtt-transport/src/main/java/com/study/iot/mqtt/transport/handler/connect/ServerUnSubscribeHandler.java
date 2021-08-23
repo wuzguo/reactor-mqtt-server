@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * <B>说明：描述</B>
+ * <B>说明：取消订阅</B>
  *
  * @author zak.wu
  * @version 1.0.0
@@ -33,17 +33,17 @@ public class ServerUnSubscribeHandler implements ConnectCapable {
     private ContainerManager containerManager;
 
     @Override
-    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
-        log.info("server UnSubscribe message: {}, connection: {}", message, disposableConnection);
+    public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
+        log.info("unSubscribe message: {}, connection: {}", mqttMessage, disposable);
 
-        MqttUnsubscribeMessage unsubscribeMessage = (MqttUnsubscribeMessage) message;
+        MqttUnsubscribeMessage unsubscribeMessage = (MqttUnsubscribeMessage) mqttMessage;
         MqttUnsubAckMessage mqttUnsubAckMessage =
             MessageBuilder.buildUnsubAck(unsubscribeMessage.variableHeader().messageId());
-        disposableConnection.sendMessage(mqttUnsubAckMessage).subscribe();
+        disposable.sendMessage(mqttUnsubAckMessage).subscribe();
         Optional.ofNullable(unsubscribeMessage.payload().topics())
             .ifPresent(topics -> topics.forEach(topic -> {
                 TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
-                topicContainer.remove(topic, disposableConnection);
+                topicContainer.remove(topic, disposable);
             }));
     }
 }

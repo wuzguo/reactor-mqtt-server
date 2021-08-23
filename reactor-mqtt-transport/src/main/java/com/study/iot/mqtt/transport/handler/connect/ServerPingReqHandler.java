@@ -12,7 +12,7 @@ import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * <B>说明：描述</B>
+ * <B>说明：心跳请求</B>
  *
  * @author zak.wu
  * @version 1.0.0
@@ -24,10 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerPingReqHandler implements ConnectCapable {
 
     @Override
-    public void handle(DisposableConnection disposableConnection, MqttMessage message) {
-        log.info("server PingReq message: {}, connection: {}", message, disposableConnection);
-        MqttMessage mqttMessage = MessageBuilder.buildPing(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE,
+    public void handle(DisposableConnection disposable, MqttMessage mqttMessage) {
+        log.info("pingReq message: {}, connection: {}", mqttMessage, disposable);
+        MqttMessage message = MessageBuilder.buildPing(MqttMessageType.PINGRESP, false, MqttQoS.AT_MOST_ONCE,
             false, 0);
-        disposableConnection.sendMessage(mqttMessage);
+        disposable.sendMessage(message);
     }
 }
