@@ -99,6 +99,19 @@ public final class MessageBuilder {
     }
 
     /**
+     * 构造连接确认消息
+     *
+     * @param connectReturnCode {@link MqttConnectReturnCode}
+     * @return {@link MqttConnAckMessage}
+     */
+    public static MqttConnAckMessage buildConnectAck(MqttConnectReturnCode connectReturnCode) {
+        MqttConnAckVariableHeader variableHeader = new MqttConnAckVariableHeader(connectReturnCode, true);
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(
+            MqttMessageType.CONNACK, false, MqttQoS.AT_MOST_ONCE, false, 0x02);
+        return new MqttConnAckMessage(fixedHeader, variableHeader);
+    }
+
+    /**
      * 构造发布确认消息
      *
      * @param messageId 消息ID
@@ -148,6 +161,14 @@ public final class MessageBuilder {
         return buildSubAck(messageId, qos, MqttQoS.FAILURE);
     }
 
+    /**
+     * 构造订阅确认消息
+     *
+     * @param messageId 消息ID
+     * @param qos       {@link List} 消息质量等级
+     * @param mqttQoS   消息质量等级
+     * @return {@link MqttSubAckMessage}
+     */
     public static MqttSubAckMessage buildSubAck(int messageId, List<Integer> qos, MqttQoS mqttQoS) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.SUBACK, false, mqttQoS, false, 0);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
@@ -155,6 +176,13 @@ public final class MessageBuilder {
         return new MqttSubAckMessage(fixedHeader, variableHeader, payload);
     }
 
+    /**
+     * 构造订阅确认消息
+     *
+     * @param messageId 消息ID
+     * @param qos       消息质量等级
+     * @return {@link MqttSubAckMessage}
+     */
     public static MqttSubAckMessage buildSubAck(int messageId, List<Integer> qos) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.SUBACK, false, MqttQoS.AT_MOST_ONCE,
             false, 0);
@@ -163,7 +191,12 @@ public final class MessageBuilder {
         return new MqttSubAckMessage(fixedHeader, variableHeader, payload);
     }
 
-
+    /**
+     * 构造取消订阅确认消息
+     *
+     * @param messageId 消息ID
+     * @return {@link MqttUnsubAckMessage}
+     */
     public static MqttUnsubAckMessage buildUnsubAck(int messageId) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.UNSUBACK, false, MqttQoS.AT_MOST_ONCE,
             false, 0x02);
@@ -171,13 +204,13 @@ public final class MessageBuilder {
         return new MqttUnsubAckMessage(fixedHeader, variableHeader);
     }
 
-    public static MqttConnAckMessage buildConnectAck(MqttConnectReturnCode connectReturnCode) {
-        MqttConnAckVariableHeader variableHeader = new MqttConnAckVariableHeader(connectReturnCode, true);
-        MqttFixedHeader fixedHeader = new MqttFixedHeader(
-            MqttMessageType.CONNACK, false, MqttQoS.AT_MOST_ONCE, false, 0x02);
-        return new MqttConnAckMessage(fixedHeader, variableHeader);
-    }
-
+    /**
+     * 构造订阅消息
+     *
+     * @param messageId          消息ID
+     * @param topicSubscriptions {@link MqttTopicSubscription}
+     * @return {@link MqttSubscribeMessage}
+     */
     public static MqttSubscribeMessage buildSub(int messageId, List<MqttTopicSubscription> topicSubscriptions) {
         MqttSubscribePayload payload = new MqttSubscribePayload(topicSubscriptions);
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.SUBSCRIBE, false, MqttQoS.AT_LEAST_ONCE,
@@ -186,6 +219,13 @@ public final class MessageBuilder {
         return new MqttSubscribeMessage(fixedHeader, variableHeader, payload);
     }
 
+    /**
+     * 构造取消订阅消息
+     *
+     * @param messageId 消息ID
+     * @param topics    主题集合
+     * @return {@link MqttUnsubscribeMessage}
+     */
     public static MqttUnsubscribeMessage buildUnSub(int messageId, List<String> topics) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.UNSUBSCRIBE, false, MqttQoS.AT_LEAST_ONCE,
             false, 0x02);
@@ -193,6 +233,21 @@ public final class MessageBuilder {
         return new MqttUnsubscribeMessage(fixedHeader, variableHeader, new MqttUnsubscribePayload(topics));
     }
 
+    /**
+     * 构造连接消息
+     *
+     * @param identity             连接标识符
+     * @param willTopic            遗嘱主题
+     * @param willMessage          遗嘱内容
+     * @param username             用户名
+     * @param password             密码
+     * @param isUsername           是否有有用户名
+     * @param isPassword           是否有密码
+     * @param isWill               是否有遗嘱
+     * @param willQos              遗嘱消息质量等级
+     * @param keepAliveTimeSeconds 连接存活时间
+     * @return {@link MqttConnectMessage}
+     */
     public static MqttConnectMessage buildConnect(String identity, String willTopic, String willMessage,
         String username, String password, boolean isUsername, boolean isPassword, boolean isWill, int willQos,
         int keepAliveTimeSeconds) {
