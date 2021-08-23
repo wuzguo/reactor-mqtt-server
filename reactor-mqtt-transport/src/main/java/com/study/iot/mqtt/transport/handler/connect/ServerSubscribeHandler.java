@@ -84,19 +84,19 @@ public class ServerSubscribeHandler implements ConnectCapable {
             containerManager.topic(CacheGroup.TOPIC).add(topicName, disposable);
             // 保存Topic和客户端ID的对应关系
             containerManager.take(CacheGroup.ID_TOPIC).add(topicName, identity);
-            Optional.ofNullable(containerManager.take(CacheGroup.MESSAGE).get(topicName)).ifPresent(serializable -> {
-                RetainMessage retainMessage = (RetainMessage) serializable;
+            Optional.ofNullable(containerManager.take(CacheGroup.MESSAGE).get(topicName)).ifPresent(message -> {
+                RetainMessage retainMessage = (RetainMessage) message;
                 if (retainMessage.getQos() == 0) {
                     MqttPublishMessage publishMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),
                         MqttQoS.valueOf(retainMessage.getQos()), retainMessage.getIsRetain(), 1,
                         retainMessage.getTopic(), retainMessage.getCopyByteBuf());
-                    disposable.sendMessage(mqttMessage).subscribe();
+                    disposable.sendMessage(publishMessage).subscribe();
                 } else {
                     int connMessageId = IdUtils.messageId();
                     // retry
                     MqttPublishMessage publishMessage = MessageBuilder.buildPub(true, header.qosLevel(),
                         header.isRetain(), connMessageId, retainMessage.getTopic(), retainMessage.getCopyByteBuf());
-                    disposable.sendMessageRetry(connMessageId, mqttMessage);
+                    disposable.sendMessageRetry(connMessageId, publishMessage);
                 }
             });
         });

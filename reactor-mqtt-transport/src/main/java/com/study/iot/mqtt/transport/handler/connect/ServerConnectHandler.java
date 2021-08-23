@@ -181,10 +181,8 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
      * @param qoS       QOS
      */
     private String setWillMessage(String identity, String topicName, boolean isRetain, byte[] message, int qoS) {
-        // 消息不能放在本地，要放在数据库中，因为有集群
-        String row = IdUtils.idGen().toString();
-        // 构造消息
-        WillMessage willMessage = WillMessage.builder().row(row)
+        // 构造消息，消息不能放在本地，要放在数据库中，因为有集群
+        WillMessage willMessage = WillMessage.builder().row(IdUtils.idGen().toString())
             .identity(identity)
             .sessionId(IdUtils.idGen().toString())
             .messageId(-1)
@@ -195,7 +193,7 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
         // 入库
         sessionManager.save(identity, willMessage);
         // 返回，这里要把消息ID保存在连接上下文里面
-        return row;
+        return willMessage.getRow();
     }
 
     /**

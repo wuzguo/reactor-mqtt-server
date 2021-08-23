@@ -72,6 +72,7 @@ public class ServerPublishHandler implements ConnectCapable {
             .qos(fixedHeader.qosLevel().value())
             .dup(fixedHeader.isDup())
             .copyByteBuf(bytes).build();
+        // 保存并在集群中发布消息
         sessionManager.saveAndTell(identity, sessionMessage);
     }
 
