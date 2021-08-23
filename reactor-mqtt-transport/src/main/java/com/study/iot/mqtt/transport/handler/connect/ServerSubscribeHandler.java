@@ -84,6 +84,7 @@ public class ServerSubscribeHandler implements ConnectCapable {
             containerManager.topic(CacheGroup.TOPIC).add(topicName, disposable);
             // 保存Topic和客户端ID的对应关系
             containerManager.take(CacheGroup.ID_TOPIC).add(topicName, identity);
+            // 获取保存的消息
             Optional.ofNullable(containerManager.take(CacheGroup.MESSAGE).get(topicName)).ifPresent(message -> {
                 RetainMessage retainMessage = (RetainMessage) message;
                 if (retainMessage.getQos() == 0) {

@@ -30,8 +30,8 @@ public class ClientPublishExactlyHandler implements PublishCapable {
         int messageId = variableHeader.packetId();
         connection.sendMessageRetry(messageId, MessageBuilder.buildPubRec(messageId));
 
-        TransportMessage transportMessage = TransportMessage.builder().isRetain(header.isRetain())
-            .isDup(false)
+        TransportMessage transportMessage = TransportMessage.builder().retain(header.isRetain())
+            .dup(false)
             .topic(variableHeader.topicName())
             .copyByteBuf(bytes)
             .qos(header.qosLevel().value())
