@@ -26,8 +26,9 @@ public class ServerPublishExactlyHandler implements PublishCapable {
         //  send rec
         int messageId = message.getMessageId();
         MqttMessage mqttMessage = MessageBuilder.buildPubRec(messageId);
+        // 发送消息
         disposableConnection.sendMessageRetry(messageId, mqttMessage);
-
+        // 保存消息
         TransportMessage transportMessage = TransportMessage.builder().isRetain(message.getRetain())
             .isDup(false).topic(message.getTopic())
             .copyByteBuf(message.getCopyByteBuf())
