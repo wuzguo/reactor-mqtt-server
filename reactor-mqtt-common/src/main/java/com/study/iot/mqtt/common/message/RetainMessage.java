@@ -1,10 +1,8 @@
 package com.study.iot.mqtt.common.message;
 
-import java.io.Serializable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
 /**
  * <B>说明：描述</B>
@@ -14,19 +12,44 @@ import lombok.NoArgsConstructor;
  * @date 2021/4/30 8:46
  */
 
-@Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class RetainMessage implements Serializable {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
+public class RetainMessage extends BaseMessage {
 
-    private Boolean isDup;
+    /**
+     * 表名
+     */
+    public static final String TABLE_NAME = "reactor-retain-message";
 
-    private Boolean isRetain;
+    /**
+     * 列族
+     */
+    public static final String COLUMN_FAMILY = "columns";
 
+    /**
+     * 是否重复分发标志
+     */
+    private Boolean dup;
+
+    /**
+     * 保留标准
+     */
+    private Boolean retain;
+
+    /**
+     * 消息质量
+     */
     private Integer qos;
 
+
+    /**
+     * 主题
+     */
     private String topic;
 
+    /**
+     * 消息
+     */
     private byte[] copyByteBuf;
 }

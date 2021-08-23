@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
-import com.study.iot.mqtt.common.domain.SessionMessage;
+import com.study.iot.mqtt.common.message.SessionMessage;
 import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;

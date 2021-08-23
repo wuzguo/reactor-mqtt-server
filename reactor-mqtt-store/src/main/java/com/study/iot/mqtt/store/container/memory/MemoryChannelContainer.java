@@ -50,7 +50,6 @@ public class MemoryChannelContainer implements StorageContainer<Disposable> {
         return Lists.newArrayList(mapDisposable.values());
     }
 
-
     @Override
     public Disposable getAndRemove(String identity) {
         return mapDisposable.remove(identity);

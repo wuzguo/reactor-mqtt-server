@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.store.mapper;
 
 import com.google.common.collect.Lists;
-import com.study.iot.mqtt.common.domain.SessionMessage;
-import com.study.iot.mqtt.common.domain.WillMessage;
+import com.study.iot.mqtt.common.message.SessionMessage;
+import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.store.hbase.TableMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.List;

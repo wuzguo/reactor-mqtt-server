@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.listener;
 
 import com.study.iot.mqtt.akka.event.SessionEvent;
-import com.study.iot.mqtt.common.domain.SessionMessage;
+import com.study.iot.mqtt.common.message.SessionMessage;
 import com.study.iot.mqtt.common.utils.ObjectUtils;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.store.constant.CacheGroup;

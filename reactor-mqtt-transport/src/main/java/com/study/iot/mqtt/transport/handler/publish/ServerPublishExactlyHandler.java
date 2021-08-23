@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.handler.publish;
 
-import com.study.iot.mqtt.common.domain.SessionMessage;
+import com.study.iot.mqtt.common.message.SessionMessage;
 import com.study.iot.mqtt.common.message.TransportMessage;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
@@ -32,8 +32,8 @@ public class ServerPublishExactlyHandler implements PublishCapable {
         // 发送消息
         disposableConnection.sendMessageRetry(messageId, mqttMessage);
         // 保存消息
-        TransportMessage transportMessage = TransportMessage.builder().isRetain(message.getRetain())
-            .isDup(false).topic(message.getTopic())
+        TransportMessage transportMessage = TransportMessage.builder().retain(message.getRetain())
+            .dup(false).topic(message.getTopic())
             .copyByteBuf(message.getCopyByteBuf())
             .qos(message.getQos())
             .build();

@@ -1,8 +1,8 @@
 package com.study.iot.mqtt.session.manager;
 
 import com.study.iot.mqtt.common.domain.ConnectSession;
-import com.study.iot.mqtt.common.domain.SessionMessage;
-import com.study.iot.mqtt.common.domain.WillMessage;
+import com.study.iot.mqtt.common.message.SessionMessage;
+import com.study.iot.mqtt.common.message.WillMessage;
 
 /**
  * <B>说明：描述</B>

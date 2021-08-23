@@ -75,7 +75,6 @@ public class DisposableConnection implements Disposable {
         mapQosMessages.put(messageId, message);
     }
 
-
     public Optional<TransportMessage> getAndRemoveQos2Message(Integer messageId) {
         TransportMessage message = mapQosMessages.get(messageId);
         mapQosMessages.remove(messageId);

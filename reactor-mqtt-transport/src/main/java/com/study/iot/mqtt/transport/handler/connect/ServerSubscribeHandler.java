@@ -87,8 +87,8 @@ public class ServerSubscribeHandler implements ConnectCapable {
             Optional.ofNullable(containerManager.take(CacheGroup.MESSAGE).get(topicName)).ifPresent(message -> {
                 RetainMessage retainMessage = (RetainMessage) message;
                 if (retainMessage.getQos() == 0) {
-                    MqttPublishMessage publishMessage = MessageBuilder.buildPub(retainMessage.getIsDup(),
-                        MqttQoS.valueOf(retainMessage.getQos()), retainMessage.getIsRetain(), 1,
+                    MqttPublishMessage publishMessage = MessageBuilder.buildPub(retainMessage.getDup(),
+                        MqttQoS.valueOf(retainMessage.getQos()), retainMessage.getRetain(), 1,
                         retainMessage.getTopic(), retainMessage.getCopyByteBuf());
                     disposable.sendMessage(publishMessage).subscribe();
                 } else {

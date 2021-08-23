@@ -7,7 +7,8 @@ import com.study.iot.mqtt.akka.actor.Publisher;
 import com.study.iot.mqtt.akka.event.WillEvent;
 import com.study.iot.mqtt.akka.spring.SpringProps;
 import com.study.iot.mqtt.auth.service.Authentication;
-import com.study.iot.mqtt.common.domain.WillMessage;
+import com.study.iot.mqtt.common.domain.ConnectSession;
+import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.common.utils.StringUtils;
 import com.study.iot.mqtt.protocol.AttributeKeys;
@@ -34,7 +35,6 @@ import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.codec.mqtt.MqttUnacceptableProtocolVersionException;
 import io.netty.util.Attribute;
 import io.netty.util.CharsetUtil;
-import java.io.Serializable;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -100,20 +100,22 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
 
         MqttConnectVariableHeader variableHeader = message.variableHeader();
         MqttConnectPayload payload = message.payload();
-        StorageContainer<Serializable> storageContainer = containerManager.take(CacheGroup.CHANNEL);
+        StorageContainer<Disposable> storageContainer = containerManager.take(CacheGroup.CHANNEL);
         String identity = payload.clientIdentifier();
+        // 如果已经存在
         if (storageContainer.containsKey(identity)) {
-            MqttConnAckMessage ackMessage = MessageBuilder
-                .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED, false);
-            disposable.sendMessage(ackMessage).subscribe();
-            disposable.dispose();
-            return;
+            DisposableConnection disposableConnection = (DisposableConnection) storageContainer.get(identity);
+            disposableConnection.dispose();
+            // 如果Session不存在
+            ConnectSession session = (ConnectSession) containerManager.take(CacheGroup.SESSION).get(identity);
+            if (session.isCleanSession()) {
+
+            }
         }
 
         // 用户名和密码
         String key = payload.userName();
-        String secret =
-            payload.passwordInBytes() == null ? null : new String(payload.passwordInBytes(), CharsetUtil.UTF_8);
+        String secret = payload.passwordInBytes() == null ? null : new String(payload.passwordInBytes(), CharsetUtil.UTF_8);
         if (StringUtils.isAnyBlank(key, secret)) {
             MqttConnAckMessage ackMessage = MessageBuilder
                 .buildConnAck(MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD, false);
@@ -138,20 +140,22 @@ public class ServerConnectHandler implements ConnectCapable, InitializingBean {
                 return;
             }
 
-            // 创建Session的保存
+            // 创建Session的保存，如果 CleanSession = 0，服务端必须基于当前会话的状态恢复与客户端的通信。
+            // 如果清理会话 CleanSession = 1，客户端和服务端必须丢弃之前的任何会话并开始一个新的会话。
             sessionManager.add(instanceUtil.getInstanceId(), identity, variableHeader.isCleanSession());
             // 连接成功，超时时间来自客户端的设置
             this.acceptConnect(disposable, identity, variableHeader.keepAliveTimeSeconds());
             // 发送连接成功的消息
-            disposable.sendMessage(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED)).subscribe();
+            disposable.sendMessage(MessageBuilder.buildConnectAck(MqttConnectReturnCode.CONNECTION_ACCEPTED))
+                .subscribe();
             // 如果有遗嘱消息，这里需要处理
             if (variableHeader.isWillFlag()) {
                 // 返回消息ID
-                String row = this.setWillMessage(identity, payload.willTopic(), variableHeader.isWillRetain(),
+                String rowId = this.setWillMessage(identity, payload.willTopic(), variableHeader.isWillRetain(),
                     payload.willMessageInBytes(), variableHeader.willQos());
                 // 注册发送遗嘱消息
                 Connection connection = disposable.getConnection();
-                connection.onDispose(() -> this.sendWillMessage(identity, row, payload.willTopic()));
+                connection.onDispose(() -> this.sendWillMessage(identity, rowId, payload.willTopic()));
             }
         });
     }

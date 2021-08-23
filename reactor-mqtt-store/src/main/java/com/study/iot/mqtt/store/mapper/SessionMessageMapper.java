@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.store.mapper;
 
 import com.google.common.collect.Lists;
-import com.study.iot.mqtt.common.domain.SessionMessage;
+import com.study.iot.mqtt.common.message.SessionMessage;
 import com.study.iot.mqtt.store.hbase.TableMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.Mutation;

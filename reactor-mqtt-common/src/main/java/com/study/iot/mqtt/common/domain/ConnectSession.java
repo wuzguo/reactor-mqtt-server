@@ -1,5 +1,6 @@
 package com.study.iot.mqtt.common.domain;
 
+import com.study.iot.mqtt.common.message.BaseMessage;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Queue;
@@ -32,6 +33,16 @@ public class ConnectSession implements Serializable {
      * 对应的实例ID
      */
     private String instanceId;
+
+
+    public Boolean isCleanSession() {
+        return cleanSession;
+    }
+
+    /**
+     * ClearSession
+     */
+    private Boolean cleanSession;
 
     /**
      * 订阅的Topic

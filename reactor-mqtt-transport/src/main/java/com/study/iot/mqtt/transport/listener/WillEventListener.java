@@ -1,7 +1,7 @@
 package com.study.iot.mqtt.transport.listener;
 
 import com.study.iot.mqtt.akka.event.WillEvent;
-import com.study.iot.mqtt.common.domain.WillMessage;
+import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.common.utils.ObjectUtils;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import com.study.iot.mqtt.store.constant.CacheGroup;

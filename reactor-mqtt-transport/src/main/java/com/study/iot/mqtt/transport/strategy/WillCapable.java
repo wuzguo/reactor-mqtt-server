@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.strategy;
 
-import com.study.iot.mqtt.common.domain.WillMessage;
+import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;
 import io.netty.handler.codec.mqtt.MqttQoS;
 

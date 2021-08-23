@@ -1,4 +1,4 @@
-package com.study.iot.mqtt.common.domain;
+package com.study.iot.mqtt.common.message;
 
 import java.io.Serializable;
 import lombok.Data;

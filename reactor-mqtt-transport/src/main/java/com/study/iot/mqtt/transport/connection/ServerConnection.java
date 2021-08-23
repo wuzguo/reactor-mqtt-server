@@ -6,12 +6,8 @@ import com.study.iot.mqtt.protocol.session.ServerSession;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.ContainerManager;
 import com.study.iot.mqtt.store.container.TopicContainer;
-import com.study.iot.mqtt.transport.constant.StrategyGroup;
 import com.study.iot.mqtt.transport.router.ServerMessageRouter;
-import com.study.iot.mqtt.transport.strategy.StrategyEnum;
-import com.study.iot.mqtt.transport.strategy.WillCapable;
 import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.Attribute;
 import java.time.Duration;
 import java.util.List;
@@ -62,15 +58,15 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public Mono<List<Disposable>> getConnections() {
-        List<Object> disposables = containerManager.take(CacheGroup.CHANNEL).getAll();
-        return Mono.just(disposables.stream().map(serializable -> (Disposable) serializable)
+        return Mono.just(containerManager.take(CacheGroup.CHANNEL).getAll().stream()
+            .map(disposable -> (Disposable) disposable)
             .collect(Collectors.toList()));
     }
 
     @Override
     public Mono<Void> closeConnect(String identity) {
         return Mono.fromRunnable(() -> Optional.ofNullable(containerManager.take(CacheGroup.CHANNEL)
-            .getAndRemove(identity))
+                .getAndRemove(identity))
             .ifPresent(serializable -> {
                 Disposable disposable = (Disposable) serializable;
                 disposable.dispose();

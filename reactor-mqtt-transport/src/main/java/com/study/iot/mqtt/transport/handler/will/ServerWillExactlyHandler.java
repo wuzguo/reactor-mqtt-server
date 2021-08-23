@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.handler.will;
 
-import com.study.iot.mqtt.common.domain.WillMessage;
+import com.study.iot.mqtt.common.message.WillMessage;
 import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.protocol.MessageBuilder;
 import com.study.iot.mqtt.protocol.connection.DisposableConnection;

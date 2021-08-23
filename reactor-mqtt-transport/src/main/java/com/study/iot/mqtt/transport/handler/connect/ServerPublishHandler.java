@@ -1,6 +1,6 @@
 package com.study.iot.mqtt.transport.handler.connect;
 
-import com.study.iot.mqtt.common.domain.SessionMessage;
+import com.study.iot.mqtt.common.message.SessionMessage;
 import com.study.iot.mqtt.common.message.RetainMessage;
 import com.study.iot.mqtt.common.utils.IdUtils;
 import com.study.iot.mqtt.protocol.AttributeKeys;
@@ -52,7 +52,7 @@ public class ServerPublishHandler implements ConnectCapable {
         //保留消息
         if (fixedHeader.isRetain()) {
             RetainMessage retainMessage = RetainMessage.builder().topic(variableHeader.topicName())
-                .isRetain(fixedHeader.isRetain()).isDup(fixedHeader.isDup()).qos(fixedHeader.qosLevel().value())
+                .retain(fixedHeader.isRetain()).dup(fixedHeader.isDup()).qos(fixedHeader.qosLevel().value())
                 .copyByteBuf(bytes).build();
             containerManager.take(CacheGroup.MESSAGE).add(variableHeader.topicName(), retainMessage);
         }
