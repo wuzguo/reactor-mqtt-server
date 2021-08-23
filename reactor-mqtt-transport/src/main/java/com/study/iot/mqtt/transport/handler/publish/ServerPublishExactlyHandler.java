@@ -9,6 +9,7 @@ import com.study.iot.mqtt.transport.strategy.PublishCapable;
 import com.study.iot.mqtt.transport.strategy.StrategyEnum;
 import com.study.iot.mqtt.transport.strategy.StrategyService;
 import io.netty.handler.codec.mqtt.MqttMessage;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <B>说明：描述</B>
@@ -18,11 +19,13 @@ import io.netty.handler.codec.mqtt.MqttMessage;
  * @date 2021/5/7 13:54
  */
 
+@Slf4j
 @StrategyService(group = StrategyGroup.PUBLISH, type = StrategyEnum.EXACTLY_ONCE)
 public class ServerPublishExactlyHandler implements PublishCapable {
 
     @Override
     public void handle(DisposableConnection disposableConnection, SessionMessage message) {
+        log.info("publish exactly_once message: {}", message);
         //  send rec
         int messageId = message.getMessageId();
         MqttMessage mqttMessage = MessageBuilder.buildPubRec(messageId);

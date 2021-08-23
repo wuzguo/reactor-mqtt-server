@@ -36,6 +36,7 @@ public class ServerPublishAtLeastHandler implements PublishCapable {
 
     @Override
     public void handle(DisposableConnection disposableConnection, SessionMessage message) {
+        log.info("publish at_last_once message: {}", message);
         // back
         MqttQoS mqttQoS = MqttQoS.valueOf(message.getQos());
 

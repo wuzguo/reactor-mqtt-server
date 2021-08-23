@@ -35,6 +35,7 @@ public class ServerPublishAtMostHandler implements PublishCapable {
 
     @Override
     public void handle(DisposableConnection disposableConnection, SessionMessage message) {
+        log.info("publish at_most_once message: {}", message);
         // 过滤掉本身 已经关闭的dispose
         TopicContainer topicContainer = containerManager.topic(CacheGroup.TOPIC);
         Optional.ofNullable(topicContainer.getConnections(message.getTopic())).orElse(Collections.emptyList())
