@@ -241,21 +241,21 @@ public final class MessageBuilder {
      * @param willMessage          遗嘱内容
      * @param username             用户名
      * @param password             密码
-     * @param isUsername           是否有有用户名
-     * @param isPassword           是否有密码
-     * @param isWill               是否有遗嘱
+     * @param hasUsername          是否有有用户名
+     * @param hasPassword          是否有密码
+     * @param isWillFlag           是否有遗嘱
      * @param willQos              遗嘱消息质量等级
      * @param keepAliveTimeSeconds 连接存活时间
      * @return {@link MqttConnectMessage}
      */
     public static MqttConnectMessage buildConnect(String identity, String willTopic, String willMessage,
-        String username, String password, boolean isUsername, boolean isPassword, boolean isWill, int willQos,
+        String username, String password, boolean hasUsername, boolean hasPassword, boolean isWillFlag, int willQos,
         int keepAliveTimeSeconds) {
         MqttConnectVariableHeader variableHeader = new MqttConnectVariableHeader(
-            MqttVersion.MQTT_3_1_1.protocolName(), MqttVersion.MQTT_3_1_1.protocolLevel(), isUsername, isPassword,
-            false, willQos, isWill, false, keepAliveTimeSeconds);
+            MqttVersion.MQTT_3_1_1.protocolName(), MqttVersion.MQTT_3_1_1.protocolLevel(), hasUsername, hasPassword,
+            false, willQos, isWillFlag, false, keepAliveTimeSeconds);
         MqttConnectPayload payload = new MqttConnectPayload(identity, willTopic,
-            isWill ? willMessage.getBytes() : null, username, isPassword ? password.getBytes() : null);
+            isWillFlag ? willMessage.getBytes() : null, username, hasPassword ? password.getBytes() : null);
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT, false, MqttQoS.AT_MOST_ONCE,
             false, 10);
         return new MqttConnectMessage(fixedHeader, variableHeader, payload);
