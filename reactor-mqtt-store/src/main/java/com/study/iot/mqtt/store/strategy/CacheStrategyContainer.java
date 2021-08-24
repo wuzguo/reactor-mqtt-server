@@ -33,7 +33,7 @@ public class CacheStrategyContainer implements ApplicationContextAware {
     }
 
     private void initializingContainer(ApplicationContext applicationContext) {
-        Optional.of(applicationContext.getBeansWithAnnotation(CacheStrategyService.class))
+        Optional.of(applicationContext.getBeansWithAnnotation(StrategyService.class))
             .ifPresent(annotationBeans -> annotationBeans.forEach((beanName, instance) -> {
                 if (!CacheCapable.class.isAssignableFrom(instance.getClass())) {
                     log.error("{} must implemented interface StrategyCapable.", instance.getClass());
@@ -42,15 +42,15 @@ public class CacheStrategyContainer implements ApplicationContextAware {
                 }
 
                 Class<? extends CacheCapable> strategyClass = (Class<? extends CacheCapable>) instance.getClass();
-                CacheStrategyService cacheStrategyService = strategyClass.getAnnotation(CacheStrategyService.class);
+                StrategyService strategyService = strategyClass.getAnnotation(StrategyService.class);
 
-                String group = cacheStrategyService.group();
+                String group = strategyService.group();
                 Map<CacheEnum, Class<? extends CacheCapable>> storage = CONTAINER.get(group);
                 if (storage == null) {
                     storage = Maps.newConcurrentMap();
                 }
 
-                CacheEnum value = cacheStrategyService.type();
+                CacheEnum value = strategyService.type();
                 storage.putIfAbsent(value, strategyClass);
                 CONTAINER.put(group, storage);
             }));

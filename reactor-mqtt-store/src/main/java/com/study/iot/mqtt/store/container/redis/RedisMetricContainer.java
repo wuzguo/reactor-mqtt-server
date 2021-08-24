@@ -4,7 +4,7 @@ import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.MetricContainer;
 import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
 import com.study.iot.mqtt.common.enums.CacheEnum;
-import com.study.iot.mqtt.store.strategy.CacheStrategyService;
+import com.study.iot.mqtt.store.strategy.StrategyService;
 import com.study.iot.mqtt.common.utils.ObjectUtils;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
  * @date 2021/5/12 9:31
  */
 
-@CacheStrategyService(group = CacheGroup.METRIC, type = CacheEnum.REDIS)
+@StrategyService(group = CacheGroup.METRIC, type = CacheEnum.REDIS)
 public class RedisMetricContainer implements MetricContainer {
 
     @Autowired

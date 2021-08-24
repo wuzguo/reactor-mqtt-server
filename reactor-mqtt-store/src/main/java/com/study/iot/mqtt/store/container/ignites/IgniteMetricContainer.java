@@ -5,7 +5,7 @@ import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.MetricContainer;
 import com.study.iot.mqtt.store.properties.IgniteProperties;
 import com.study.iot.mqtt.common.enums.CacheEnum;
-import com.study.iot.mqtt.store.strategy.CacheStrategyService;
+import com.study.iot.mqtt.store.strategy.StrategyService;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.LongAdder;
@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
  */
 
 @ConditionalOnBean(value = IgniteProperties.class)
-@CacheStrategyService(group = CacheGroup.METRIC, type = CacheEnum.IGNITE)
+@StrategyService(group = CacheGroup.METRIC, type = CacheEnum.IGNITE)
 public class IgniteMetricContainer implements MetricContainer {
 
     @Resource

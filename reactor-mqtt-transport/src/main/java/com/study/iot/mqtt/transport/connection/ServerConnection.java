@@ -65,12 +65,12 @@ public class ServerConnection implements ServerSession {
 
     @Override
     public Mono<Void> closeConnect(String identity) {
-        return Mono.fromRunnable(() -> Optional.ofNullable(containerManager.take(CacheGroup.CHANNEL)
-                .getAndRemove(identity))
-            .ifPresent(serializable -> {
-                Disposable disposable = (Disposable) serializable;
-                disposable.dispose();
-            }));
+        return Mono.fromRunnable(
+            () -> Optional.ofNullable(containerManager.take(CacheGroup.CHANNEL).getAndRemove(identity))
+                .ifPresent(serializable -> {
+                    Disposable disposable = (Disposable) serializable;
+                    disposable.dispose();
+                }));
     }
 
     @Override

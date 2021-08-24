@@ -4,7 +4,7 @@ import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.store.properties.IgniteProperties;
 import com.study.iot.mqtt.common.enums.CacheEnum;
-import com.study.iot.mqtt.store.strategy.CacheStrategyService;
+import com.study.iot.mqtt.store.strategy.StrategyService;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -23,7 +23,7 @@ import reactor.core.Disposable;
  */
 
 @ConditionalOnBean(value = IgniteProperties.class)
-@CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheEnum.IGNITE)
+@StrategyService(group = CacheGroup.CHANNEL, type = CacheEnum.IGNITE)
 public class IgniteChannelContainer implements StorageContainer<Disposable> {
 
     @Resource

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @Documented
 @Inherited
 @Service
-public @interface CacheStrategyService {
+public @interface StrategyService {
 
     @AliasFor(value = "value", annotation = Service.class)
     String value() default "";

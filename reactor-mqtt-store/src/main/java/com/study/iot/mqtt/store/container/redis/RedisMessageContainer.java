@@ -5,7 +5,7 @@ import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
 import com.study.iot.mqtt.common.enums.CacheEnum;
-import com.study.iot.mqtt.store.strategy.CacheStrategyService;
+import com.study.iot.mqtt.store.strategy.StrategyService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2021/5/7 16:18
  */
 
-@CacheStrategyService(group = CacheGroup.MESSAGE, type = CacheEnum.REDIS)
+@StrategyService(group = CacheGroup.MESSAGE, type = CacheEnum.REDIS)
 public class RedisMessageContainer implements StorageContainer<RetainMessage> {
 
     @Autowired

@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.StorageContainer;
 import com.study.iot.mqtt.common.enums.CacheEnum;
-import com.study.iot.mqtt.store.strategy.CacheStrategyService;
+import com.study.iot.mqtt.store.strategy.StrategyService;
 import java.util.List;
 import java.util.Map;
 import reactor.core.Disposable;
@@ -20,7 +20,7 @@ import reactor.core.Disposable;
  * @date 2021/5/7 16:18
  */
 
-@CacheStrategyService(group = CacheGroup.CHANNEL, type = CacheEnum.MEMORY)
+@StrategyService(group = CacheGroup.CHANNEL, type = CacheEnum.MEMORY)
 public class MemoryChannelContainer implements StorageContainer<Disposable> {
 
     private final Map<String, Disposable> mapDisposable = Maps.newConcurrentMap();

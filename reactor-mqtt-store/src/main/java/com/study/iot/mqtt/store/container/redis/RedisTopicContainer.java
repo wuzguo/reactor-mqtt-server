@@ -6,7 +6,7 @@ import com.study.iot.mqtt.store.constant.CacheGroup;
 import com.study.iot.mqtt.store.container.TopicContainer;
 import com.study.iot.mqtt.store.redis.RedisCacheTemplate;
 import com.study.iot.mqtt.common.enums.CacheEnum;
-import com.study.iot.mqtt.store.strategy.CacheStrategyService;
+import com.study.iot.mqtt.store.strategy.StrategyService;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +21,7 @@ import reactor.core.Disposable;
  * @date 2021/5/7 16:18
  */
 
-@CacheStrategyService(group = CacheGroup.TOPIC, type = CacheEnum.MEMORY)
+@StrategyService(group = CacheGroup.TOPIC, type = CacheEnum.MEMORY)
 public class RedisTopicContainer implements TopicContainer {
 
     @Autowired
