@@ -25,13 +25,13 @@ spring:
       # 主机地址
       host: localhost
       # 端口
-      port: 1800
+      port: 8802
       # WS端口
-      ws-port: 1802
+      ws-port: 8804
       # CoAP端口
-      co-port: 1804
+      co-port: 8806
       # XMPP 端口
-      xm-port: 1806
+      xm-port: 8808
       # 心跳时间(秒)
       heart: 100000
       #开启日志
