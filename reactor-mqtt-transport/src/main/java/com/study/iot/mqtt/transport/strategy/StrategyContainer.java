@@ -32,6 +32,10 @@ public class StrategyContainer implements ApplicationContextAware {
         initializingContainer(applicationContext);
     }
 
+    /**
+     * 初始化
+     * @param applicationContext {@link ApplicationContext}
+     */
     private void initializingContainer(ApplicationContext applicationContext) {
         Optional.of(applicationContext.getBeansWithAnnotation(StrategyService.class))
             .ifPresent(annotationBeans -> annotationBeans.forEach((beanName, instance) -> {
