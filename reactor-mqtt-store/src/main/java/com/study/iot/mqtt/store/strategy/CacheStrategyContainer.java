@@ -38,7 +38,7 @@ public class CacheStrategyContainer implements ApplicationContextAware {
                 if (!CacheCapable.class.isAssignableFrom(instance.getClass())) {
                     log.error("{} must implemented interface StrategyCapable.", instance.getClass());
                     throw new BeanDefinitionValidationException(String
-                        .format("%s must implemented interface CacheCapable.", instance.getClass()));
+                        .format("%s must implemented interface StrategyCapable.", instance.getClass()));
                 }
 
                 Class<? extends CacheCapable> strategyClass = (Class<? extends CacheCapable>) instance.getClass();
@@ -69,7 +69,7 @@ public class CacheStrategyContainer implements ApplicationContextAware {
         if (storage == null) {
             log.error("group '{}' not found in value container", group);
             throw new BeanDefinitionValidationException(String
-                .format("StrategyService group '%s' not found in value container", group));
+                .format("group '%s' not found in value container", group));
 
         }
 
@@ -77,7 +77,7 @@ public class CacheStrategyContainer implements ApplicationContextAware {
         if (strategy == null) {
             log.error("value '{}' not found in value group '{}'", value, group);
             throw new BeanDefinitionValidationException(String
-                .format("StrategyService value '%s' not found in value group '%s'", value, group));
+                .format("value '%s' not found in value group '%s'", value, group));
 
         }
         return (T) applicationContext.getBean(strategy);

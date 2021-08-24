@@ -69,7 +69,7 @@ public class StrategyContainer implements ApplicationContextAware {
         if (storage == null) {
             log.error("group '{}' not found in value container", group);
             throw new BeanDefinitionValidationException(String
-                .format("StrategyService group '%s' not found in value container", group));
+                .format("group '%s' not found in value container", group));
 
         }
 
@@ -77,7 +77,7 @@ public class StrategyContainer implements ApplicationContextAware {
         if (strategy == null) {
             log.error("value '{}' not found in value group '{}'", value, group);
             throw new BeanDefinitionValidationException(String
-                .format("StrategyService value '%s' not found in value group '%s'", value, group));
+                .format("value '%s' not found in value group '%s'", value, group));
 
         }
         return (T) applicationContext.getBean(strategy);
